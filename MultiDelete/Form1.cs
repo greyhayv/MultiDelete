@@ -38,15 +38,18 @@ namespace MultiDelete
 
         private void deleteWorlds()
         {
+            //Gets Variables from TextFiles
             string[] savesPaths = File.ReadAllLines(programsPath + @"\savesPaths.txt");
             string[] startWith = File.ReadAllLines(programsPath + @"\startWith.txt");
             string[] include = File.ReadAllLines(programsPath + @"\include.txt");
             string[] endWith = File.ReadAllLines(programsPath + @"\endWith.txt");
             string deleteAllWorlds = File.ReadAllText(programsPath + @"\deleteAllWorlds.txt");
+            //Resets Location and Font of Label
             label1.Location = new Point(-8, 41);
             label1.Font = new Font("Roboto", 16);
             if (savesPaths.Length == 0)
             {
+                //Checks if Saves-Paths are configured
                 label1.Text = "Please add a Saves-Path in the Settingmenu!";
                 label1.Location = new Point(-8, 23);
                 button1.Text = "OK";
@@ -55,6 +58,7 @@ namespace MultiDelete
             {
                 if(startWith.Length == 0 && include.Length == 0 && endWith.Length == 0)
                 {
+                    //Checks if Worlds to delete is configured
                     label1.Text = "Please select what worlds to delete in the Settingsmenu!";
                     label1.Font = new Font("Roboto", 13);
                     label1.Location = new Point(-8, 23);
@@ -62,6 +66,7 @@ namespace MultiDelete
                     button1.Visible = true;
                 } else
                 {
+                    //Checks if same Savespath is added twice
                     bool areSamePaths = false;
                     for(int i = 0; i < savesPaths.Length; i++)
                     {
@@ -82,6 +87,7 @@ namespace MultiDelete
                         button1.Visible = true;
                     } else
                     {
+                        //Searches all Worlds To delete
                         label1.Text = "Searching Worlds (0)";
                         List<string> worldsToDelete = new List<string>();
                         int deletedWorlds = 0;
@@ -137,6 +143,7 @@ namespace MultiDelete
                                 }
                             }
                         }
+                        //deletes All found Worlds
                         label1.Location = new Point(-8, 23);
                         label1.Text = "Deleting Worlds (0/" + worldsToDelete.Count.ToString() + ")";
                         progressBar1.Maximum = worldsToDelete.Count;
@@ -172,6 +179,7 @@ namespace MultiDelete
 
         private void settingsButton_Click(object sender, EventArgs e)
         {
+            //Opens Settingsmenu
             focusButton.Focus();
             settingsMenu.ShowDialog();
         }
@@ -188,6 +196,7 @@ namespace MultiDelete
 
         private void button1_Click_2(object sender, EventArgs e)
         {
+            //Opens Mainmenu
             label1.Visible = false;
             button1.Visible = false;
             deleteWorldsButton.Visible = true;

@@ -12,6 +12,7 @@ namespace MultiDelete
 {
     public partial class settingsMenu : Form
     {
+        //Variables
         List<TextBox> savesPathEntrys = new List<TextBox>();
         List<TextBox> startWithEntrys = new List<TextBox>();
         List<TextBox> includesEntrys = new List<TextBox>();
@@ -26,6 +27,7 @@ namespace MultiDelete
 
         private void settingsMenu_Load(object sender, EventArgs e)
         {
+            //Resets settingsMenu
             for(int i = 0; i < savesPathEntrys.Count; i++)
             {
                 this.Controls.Remove(savesPathEntrys[i]);
@@ -51,6 +53,7 @@ namespace MultiDelete
             endWithEntrys = new List<TextBox>();
             createNewTextBox("endWith");
 
+            //Create Program Files if they dont already exist
             if (!Directory.Exists(programsPath))
             {
                 Directory.CreateDirectory(programsPath);
@@ -144,6 +147,7 @@ namespace MultiDelete
 
         private void settingsMenu_FormClosed(object sender, EventArgs e)
         {
+            //Saves settings to Files
             string text = "";
             for(int i = 0; i < savesPathEntrys.Count; i++)
             {
@@ -196,6 +200,7 @@ namespace MultiDelete
 
         private void textChanged(object sender, EventArgs e)
         {
+            //Deletes TextBoxes if they are empty
             for (int i = 0; i < savesPathEntrys.Count; i++)
             {
                 if (savesPathEntrys[i].Text == "")
@@ -211,11 +216,13 @@ namespace MultiDelete
                     }
                 }
             }
+            //Creates a new TextBox if last TextBox has Text
             if(savesPathEntrys[savesPathEntrys.Count - 1].Text != "")
             {
                 createNewTextBox("savesPath");
             }
 
+            //Deletes TextBoxes if they are empty
             for (int i = 0; i < startWithEntrys.Count; i++)
             {
                 if (startWithEntrys[i].Text == "")
@@ -231,11 +238,13 @@ namespace MultiDelete
                     }
                 }
             }
+            //Creates a new TextBox if last TextBox has Text
             if (startWithEntrys[startWithEntrys.Count - 1].Text != "")
             {
                 createNewTextBox("startsWith");
             }
 
+            //Deletes TextBoxes if they are empty
             for (int i = 0; i < includesEntrys.Count; i++)
             {
                 if (includesEntrys[i].Text == "")
@@ -251,11 +260,13 @@ namespace MultiDelete
                     }
                 }
             }
+            //Creates a new TextBox if last TextBox has Text
             if (includesEntrys[includesEntrys.Count - 1].Text != "")
             {
                 createNewTextBox("includes");
             }
 
+            //Deletes TextBoxes if they are empty
             for (int i = 0; i < endWithEntrys.Count; i++)
             {
                 if (endWithEntrys[i].Text == "")
@@ -271,6 +282,7 @@ namespace MultiDelete
                     }
                 }
             }
+            //Creates a new TextBox if last TextBox has Text
             if (endWithEntrys[endWithEntrys.Count - 1].Text != "")
             {
                 createNewTextBox("endWith");
@@ -284,6 +296,7 @@ namespace MultiDelete
 
         private void createNewTextBox(string type)
         {
+            //Create and Configures new TextBox
             TextBox textBox = new TextBox();
             textBox.BackColor = ColorTranslator.FromHtml("#4C4C4C");
             textBox.BorderStyle = BorderStyle.FixedSingle;
@@ -291,6 +304,7 @@ namespace MultiDelete
             textBox.Size = new Size(200, 22);
             textBox.TextChanged += new System.EventHandler(textChanged);
             this.Controls.Add(textBox);
+            //Adds TextBox to List
             if(type == "savesPath")
             {
                 savesPathEntrys.Add(textBox);
@@ -312,6 +326,7 @@ namespace MultiDelete
 
         private void deleteTextBox(int i, string type)
         {
+            //Deletes TextBox and removes it from List
             if(type == "savesPath")
             {
                 this.Controls.Remove(savesPathEntrys[i]);
@@ -342,6 +357,7 @@ namespace MultiDelete
 
         private void arrangeObjects()
         {
+            //Changes Position of objects
             for (int i = 0; i < savesPathEntrys.Count; i++)
             {
                 savesPathEntrys[i].Location = new Point(12, (92 + 28 * i) + this.AutoScrollPosition.Y);
@@ -363,6 +379,7 @@ namespace MultiDelete
                 endWithEntrys[i].Location = new Point(12, (291 + 28 * i + 28 * (savesPathEntrys.Count - 1) + 28 * (startWithEntrys.Count - 1) + 28 * (includesEntrys.Count - 1)) + this.AutoScrollPosition.Y);
             }
             checkBox1.Location = new Point(12, (320 + 28 * (savesPathEntrys.Count - 1) + 28 * (startWithEntrys.Count - 1) + 28 * (includesEntrys.Count - 1) + 28 * (endWithEntrys.Count - 1)) + this.AutoScrollPosition.Y);
+            //Focuses last TextBox if TextBox was deleted
             if(focusEntry == "savesPath")
             {
                 this.ActiveControl = savesPathEntrys[savesPathEntrys.Count - 1];
@@ -386,6 +403,7 @@ namespace MultiDelete
         {
             if(checkBox1.Checked == true)
             {
+                //Disables TextBoxes if DeleteAllWorlds checkBox is checked
                 foreach(TextBox textBox in startWithEntrys)
                 {
                     textBox.Enabled = false;
@@ -400,6 +418,7 @@ namespace MultiDelete
                 }
             } else
             {
+                //Enabled TextBoxes if DeleteAllWorlds checkBox is not checked
                 foreach (TextBox textBox in startWithEntrys)
                 {
                     textBox.Enabled = true;
