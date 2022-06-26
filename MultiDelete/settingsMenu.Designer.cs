@@ -115,9 +115,9 @@ namespace MultiDelete
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(194)))), ((int)(((byte)(194)))), ((int)(((byte)(194)))));
             this.checkBox1.Location = new System.Drawing.Point(12, 291);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(99, 23);
+            this.checkBox1.Size = new System.Drawing.Size(146, 23);
             this.checkBox1.TabIndex = 9;
-            this.checkBox1.Text = "All Worlds";
+            this.checkBox1.Text = "Delete all Worlds";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
