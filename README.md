@@ -1,5 +1,5 @@
 # MultiDelete
-A Tool to delete not needed Minecraft Worlds in multiple Instances of Minecraft.
+A Tool to delete not needed Minecraft Worlds in multiple Instances of Minecraft with just one click.
 
 ![Deleting Worlds](https://user-images.githubusercontent.com/107059342/175829141-d05fb713-1f1a-4aa6-93b5-7f8b7bba8262.png)
 
