@@ -7,3 +7,6 @@ A Tool to delete not needed Minecraft Worlds in multiple Instances of Minecraft.
 MultiDelete lets you configure which Instances to delete Worlds in and exactly which Worlds to delete!
 
 ![Settings Menu](https://user-images.githubusercontent.com/107059342/175830441-87a67d30-cc49-491a-b114-4f2634122791.png)
+
+## Installation
+Click on the latest release, download the installer and execute it.
