@@ -32,6 +32,7 @@ namespace MultiDelete
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MultiDelete));
             this.deleteWorldsButton = new System.Windows.Forms.Button();
             this.settingsButton = new System.Windows.Forms.Button();
             this.focusButton = new System.Windows.Forms.Button();
@@ -138,6 +139,7 @@ namespace MultiDelete
             this.Controls.Add(this.settingsButton);
             this.Controls.Add(this.deleteWorldsButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MultiDelete";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
