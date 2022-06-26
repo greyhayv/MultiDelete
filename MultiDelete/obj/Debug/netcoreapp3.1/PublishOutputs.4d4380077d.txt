@@ -1,0 +1,5 @@
+C:\Development\MultiDelete\project\MultiDelete\bin\Debug\netcoreapp3.1\publish\MultiDelete.exe
+C:\Development\MultiDelete\project\MultiDelete\bin\Debug\netcoreapp3.1\publish\MultiDelete.dll
+C:\Development\MultiDelete\project\MultiDelete\bin\Debug\netcoreapp3.1\publish\MultiDelete.deps.json
+C:\Development\MultiDelete\project\MultiDelete\bin\Debug\netcoreapp3.1\publish\MultiDelete.runtimeconfig.json
+C:\Development\MultiDelete\project\MultiDelete\bin\Debug\netcoreapp3.1\publish\MultiDelete.pdb
