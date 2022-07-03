@@ -16,6 +16,8 @@ namespace MultiDelete
     {
         static settingsMenu settingsMenu = new settingsMenu();
         string programsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete";
+        List<string> worldsToDelete = new List<string>();
+        bool cancelDeletion = false;
 
         public MultiDelete()
         {
@@ -27,17 +29,48 @@ namespace MultiDelete
             
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void deleteWorldsButton_Click(object sender, EventArgs e)
         {
             deleteWorldsButton.Visible = false;
             settingsButton.Visible = false;
             focusButton.Focus();
             label1.Visible = true;
-            deleteWorlds();
+            await Task.Run(() => searchWorlds());
         }
 
-        private void deleteWorlds()
+        private void settingsButton_Click(object sender, EventArgs e)
         {
+            //Opens Settingsmenu
+            focusButton.Focus();
+            settingsMenu.ShowDialog();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //Opens Mainmenu
+            label1.Visible = false;
+            button1.Visible = false;
+            deleteWorldsButton.Visible = true;
+            progressBar1.Visible = false;
+            settingsButton.Visible = true;
+            button2.Visible = false;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //Opens Mainmenu and cancels WorldDeletion
+            label1.Visible = false;
+            button1.Visible = false;
+            deleteWorldsButton.Visible = true;
+            progressBar1.Visible = false;
+            settingsButton.Visible = true;
+            button2.Visible = false;
+            cancelDeletion = true;
+        }
+
+        private void searchWorlds()
+        {
+            worldsToDelete = new List<string>();
             //Gets Variables from TextFiles
             string[] savesPaths = File.ReadAllLines(programsPath + @"\savesPaths.txt");
             string[] startWith = File.ReadAllLines(programsPath + @"\startWith.txt");
@@ -45,61 +78,69 @@ namespace MultiDelete
             string[] endWith = File.ReadAllLines(programsPath + @"\endWith.txt");
             string deleteAllWorlds = File.ReadAllText(programsPath + @"\deleteAllWorlds.txt");
             //Resets Location and Font of Label
-            label1.Location = new Point(-8, 41);
-            label1.Font = new Font("Roboto", 16);
+            changeLocation(label1, new Point(-8, 41));
+            changeFont(label1, new Font("Roboto", 16));
             if (savesPaths.Length == 0)
             {
                 //Checks if Saves-Paths are configured
-                label1.Text = "Please add a Saves-Path in the Settingmenu!";
-                label1.Location = new Point(-8, 23);
-                button1.Text = "OK";
-                button1.Visible = true;
-            } else
+                changeText(label1, "Please add a Saves-Path in the Settingmenu!");
+                changeLocation(label1, new Point(-8, 23));
+                changeText(button1, "OK");
+                changeVisibilaty(button1, true);
+            }
+            else
             {
-                if(startWith.Length == 0 && include.Length == 0 && endWith.Length == 0)
+                //Checks if Worlds to delete is configured
+                if (startWith.Length == 0 && include.Length == 0 && endWith.Length == 0)
                 {
-                    //Checks if Worlds to delete is configured
-                    label1.Text = "Please select what worlds to delete in the Settingsmenu!";
-                    label1.Font = new Font("Roboto", 13);
-                    label1.Location = new Point(-8, 23);
-                    button1.Text = "OK";
-                    button1.Visible = true;
-                } else
+                    changeText(label1, "Please select what worlds to delete in the Settingsmenu!");
+                    changeFont(label1, new Font("Roboto", 13));
+                    changeLocation(label1, new Point(-8, 23));
+                    changeText(button1, "OK");
+                    changeVisibilaty(button1, true);
+                }
+                else
                 {
                     //Checks if same Savespath is added twice
                     bool areSamePaths = false;
-                    for(int i = 0; i < savesPaths.Length; i++)
+                    for (int i = 0; i < savesPaths.Length; i++)
                     {
-                        for(int i2 = 0; i2 < savesPaths.Length; i2++)
+                        for (int i2 = 0; i2 < savesPaths.Length; i2++)
                         {
-                            if(savesPaths[i] == savesPaths[i2] && i != i2)
+                            if (savesPaths[i] == savesPaths[i2] && i != i2)
                             {
                                 areSamePaths = true;
                             }
                         }
                     }
-                    if(areSamePaths == true)
+                    if (areSamePaths == true)
                     {
-                        label1.Text = "You cant select the same Saves-Path twice!";
-                        label1.Font = new Font("Roboto", 13);
-                        label1.Location = new Point(-8, 23);
-                        button1.Text = "OK";
-                        button1.Visible = true;
-                    } else
+                        changeText(label1, "You cant select the same Saves-Path twice!");
+                        changeFont(label1, new Font("Roboto", 13));
+                        changeLocation(label1, new Point(-8, 23));
+                        changeText(button1, "OK");
+                        changeVisibilaty(button1, true);
+                    }
+                    else
                     {
                         //Searches all Worlds To delete
-                        label1.Text = "Searching Worlds (0)";
-                        List<string> worldsToDelete = new List<string>();
-                        int deletedWorlds = 0;
+                        changeVisibilaty(button2, true);
+                        changeText(label1, "Searching Worlds (0)");
+                        worldsToDelete = new List<string>();
                         foreach (string path in savesPaths)
                         {
                             foreach (string world in Directory.GetDirectories(path))
                             {
+                                if (cancelDeletion == true)
+                                {
+                                    cancelDeletion = false;
+                                    return;
+                                }
                                 if (deleteAllWorlds == "true")
                                 {
                                     worldsToDelete.Add(world);
-                                    label1.Text = "Searching Worlds (" + worldsToDelete.Count.ToString() + ")";
-                                    this.Refresh();
+                                    changeText(label1, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                    refreshUI();
                                 }
                                 else
                                 {
@@ -111,8 +152,8 @@ namespace MultiDelete
                                             if (worldName.StartsWith(str))
                                             {
                                                 worldsToDelete.Add(world);
-                                                label1.Text = "Searching Worlds (" + worldsToDelete.Count.ToString() + ")";
-                                                this.Refresh();
+                                                changeText(label1, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                refreshUI();
                                             }
                                         }
                                     }
@@ -123,8 +164,8 @@ namespace MultiDelete
                                             if (worldName.Contains(str))
                                             {
                                                 worldsToDelete.Add(world);
-                                                label1.Text = "Searching Worlds (" + worldsToDelete.Count.ToString() + ")";
-                                                this.Refresh();
+                                                changeText(label1, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                refreshUI();
                                             }
                                         }
                                     }
@@ -135,73 +176,104 @@ namespace MultiDelete
                                             if (worldName.EndsWith(str))
                                             {
                                                 worldsToDelete.Add(world);
-                                                label1.Text = "Searching Worlds (" + worldsToDelete.Count.ToString() + ")";
-                                                this.Refresh();
+                                                changeText(label1, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                refreshUI();
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                        //deletes All found Worlds
-                        label1.Location = new Point(-8, 23);
-                        label1.Text = "Deleting Worlds (0/" + worldsToDelete.Count.ToString() + ")";
-                        progressBar1.Maximum = worldsToDelete.Count;
-                        progressBar1.Value = 0;
-                        progressBar1.Visible = true;
-                        foreach (string world in worldsToDelete)
-                        {
-                            Directory.Delete(world, true);
-                            deletedWorlds += 1;
-                            label1.Text = "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")";
-                            progressBar1.Value = deletedWorlds;
-                            this.Refresh();
-                        }
-                        progressBar1.Visible = false;
-                        if (worldsToDelete.Count == 0)
-                        {
-                            label1.Text = "No Worlds got found!";
-                        }
-                        else if (worldsToDelete.Count == 1)
-                        {
-                            label1.Text = "Deleted 1 World!";
-                        }
-                        else
-                        {
-                            label1.Text = "Deleted " + worldsToDelete.Count.ToString() + " Worlds!";
-                        }
-                        button1.Text = "Done";
-                        button1.Visible = true;
+                        deleteWorlds();
                     }
                 }
             }
         }
 
-        private void settingsButton_Click(object sender, EventArgs e)
+        private void deleteWorlds()
         {
-            //Opens Settingsmenu
-            focusButton.Focus();
-            settingsMenu.ShowDialog();
+            //deletes All found Worlds
+            int deletedWorlds = 0;
+            changeLocation(label1, new Point(-8, 10));
+            changeText(label1, "Deleting Worlds (0/" + worldsToDelete.Count.ToString() + ")");
+            changeMaximum(progressBar1, worldsToDelete.Count);
+            changeValue(progressBar1, 0);
+            changeVisibilaty(progressBar1, true);
+            foreach (string world in worldsToDelete)
+            {
+                if(cancelDeletion == true)
+                {
+                    cancelDeletion = false;
+                    return;
+                }
+                Directory.Delete(world, true);
+                deletedWorlds += 1;
+                changeText(label1, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                changeValue(progressBar1, deletedWorlds);
+                refreshUI();
+            }
+            changeVisibilaty(progressBar1, false);
+            if (worldsToDelete.Count == 0)
+            {
+                changeText(label1, "No Worlds got found!");
+            }
+            else if (worldsToDelete.Count == 1)
+            {
+                changeText(label1, "Deleted 1 World!");
+            }
+            else
+            {
+                changeText(label1, "Deleted " + worldsToDelete.Count.ToString() + " Worlds!");
+            }
+            changeText(button1, "Done");
+            changeLocation(label1, new Point(-8, 23));
+            changeVisibilaty(button1, true);
+            changeVisibilaty(button2, false);
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
+        private void changeText(Label label, String text)
         {
-
+            label.BeginInvoke((Action)(() => label.Text = text));
         }
 
-        private void focusButton_Click(object sender, EventArgs e)
+        private void changeText(Button button, String text)
         {
-
+            button.BeginInvoke((Action)(() => button.Text = text));
         }
 
-        private void button1_Click_2(object sender, EventArgs e)
+        private void changeVisibilaty(Button button, bool visible)
         {
-            //Opens Mainmenu
-            label1.Visible = false;
-            button1.Visible = false;
-            deleteWorldsButton.Visible = true;
-            progressBar1.Visible = false;
-            settingsButton.Visible = true;
+            button.BeginInvoke((Action)(() => button.Visible = visible));
+        }
+
+        private void changeVisibilaty(ProgressBar progressBar, bool visible)
+        {
+            progressBar.BeginInvoke((Action)(() => progressBar.Visible = visible));
+        }
+
+        private void changeFont(Label label, Font font)
+        {
+            label.BeginInvoke((Action) (() => label.Font = font));
+        }
+
+        private void changeLocation(Label label, Point location)
+        {
+            label.BeginInvoke((Action)(() => label.Location = location));
+        }
+
+        private void changeMaximum(ProgressBar progressBar, int max)
+        {
+            progressBar.BeginInvoke((Action)(() => progressBar.Maximum = max));
+        }
+
+        private void changeValue(ProgressBar progressBar, int value)
+        {
+            progressBar.BeginInvoke((Action)(() => progressBar.Value = value));
+        }
+
+        private void refreshUI()
+        {
+            this.Invoke((Action)(() => this.Refresh()));
         }
     }
 }
