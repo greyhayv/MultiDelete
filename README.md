@@ -6,7 +6,7 @@ Features:
 -You can pick what the world name has to start with, include or end with. (So you dont accidentally delete Practice Maps)  
 -Cancel Button
 
-![Deleting Worlds](https://user-images.githubusercontent.com/107059342/175829141-d05fb713-1f1a-4aa6-93b5-7f8b7bba8262.png)
+![Deleting Worlds](https://user-images.githubusercontent.com/107059342/177053350-293e1eaa-a499-49c4-a5c5-41f73faddfa3.png)
 
 ## Settings
 MultiDelete lets you configure which Instances to delete Worlds in and exactly which Worlds to delete!
