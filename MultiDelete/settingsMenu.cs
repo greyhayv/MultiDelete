@@ -14,6 +14,7 @@ namespace MultiDelete
     {
         //Variables
         List<TextBox> savesPathEntrys = new List<TextBox>();
+        List<Button> selectSavesPathButtons = new List<Button>();
         List<TextBox> startWithEntrys = new List<TextBox>();
         List<TextBox> includesEntrys = new List<TextBox>();
         List<TextBox> endWithEntrys = new List<TextBox>();
@@ -28,7 +29,12 @@ namespace MultiDelete
         private void settingsMenu_Load(object sender, EventArgs e)
         {
             //Resets settingsMenu
-            for(int i = 0; i < savesPathEntrys.Count; i++)
+            for (int i = 0; i < selectSavesPathButtons.Count; i++)
+            {
+                this.Controls.Remove(selectSavesPathButtons[i]);
+            }
+            selectSavesPathButtons = new List<Button>();
+            for (int i = 0; i < savesPathEntrys.Count; i++)
             {
                 this.Controls.Remove(savesPathEntrys[i]);
             }
@@ -296,7 +302,7 @@ namespace MultiDelete
 
         private void createNewTextBox(string type)
         {
-            //Create and Configures new TextBox
+            //Create and configure new TextBox
             TextBox textBox = new TextBox();
             textBox.BackColor = ColorTranslator.FromHtml("#4C4C4C");
             textBox.BorderStyle = BorderStyle.FixedSingle;
@@ -308,6 +314,19 @@ namespace MultiDelete
             if(type == "savesPath")
             {
                 savesPathEntrys.Add(textBox);
+
+                //Create and configure new Button to select saves Path
+                Button selectSavesPathButton = new Button();
+                selectSavesPathButton.Size = new Size(22, 22);
+                selectSavesPathButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
+                selectSavesPathButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+                selectSavesPathButton.TabStop = false;
+                selectSavesPathButton.UseVisualStyleBackColor = false;
+                selectSavesPathButton.Image = global::MultiDelete.Properties.Resources.foldericon;
+                selectSavesPathButton.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
+                selectSavesPathButton.Click += new System.EventHandler(selectSavesPathButton_Click);
+                this.Controls.Add(selectSavesPathButton);
+                selectSavesPathButtons.Add(selectSavesPathButton);
             }
             if(type == "startsWith")
             {
@@ -332,6 +351,9 @@ namespace MultiDelete
                 this.Controls.Remove(savesPathEntrys[i]);
                 savesPathEntrys.RemoveAt(i);
                 focusEntry = "savesPath";
+
+                this.Controls.Remove(selectSavesPathButtons[i]);
+                selectSavesPathButtons.RemoveAt(i);
             }
             if (type == "startsWith")
             {
@@ -361,6 +383,10 @@ namespace MultiDelete
             for (int i = 0; i < savesPathEntrys.Count; i++)
             {
                 savesPathEntrys[i].Location = new Point(12, (92 + 28 * i) + this.AutoScrollPosition.Y);
+            }
+            for(int i = 0; i < selectSavesPathButtons.Count; i++)
+            {
+                selectSavesPathButtons[i].Location = new Point(222, (92 + 28 * i) + this.AutoScrollPosition.Y);
             }
             label3.Location = new Point(12, (132 + 28 * (savesPathEntrys.Count - 1)) + this.AutoScrollPosition.Y);
             label4.Location = new Point(12, (155 + 28 * (savesPathEntrys.Count - 1)) + this.AutoScrollPosition.Y);
@@ -431,6 +457,23 @@ namespace MultiDelete
                 {
                     textBox.Enabled = true;
                 }
+            }
+        }
+
+        private void selectSavesPathButton_Click(object sender, EventArgs e)
+        {
+            int index = 0;
+            for(int i = 0; i < selectSavesPathButtons.Count; i++)
+            {
+                if (selectSavesPathButtons[i].Equals(sender))
+                {
+                    index = i;
+                }
+            }
+            using (var fbd = new FolderBrowserDialog())
+            {
+                fbd.ShowDialog();
+                savesPathEntrys[index].Text = fbd.SelectedPath;
             }
         }
     }
