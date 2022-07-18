@@ -78,8 +78,8 @@ namespace MultiDelete
             if (!File.Exists(programsPath + @"\startWith.txt"))
             {
                 File.CreateText(programsPath + @"\startWith.txt").Dispose();
-                startWithEntrys[0].Text = "RandomSpeedrun";
-                startWithEntrys[1].Text = "SetSpeedrun";
+                startWithEntrys[0].Text = "Random Speedrun";
+                startWithEntrys[1].Text = "Set Speedrun";
             } else
             {
                 string[] text = File.ReadAllLines(programsPath + @"\startWith.txt");
