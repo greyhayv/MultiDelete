@@ -605,6 +605,7 @@ namespace MultiDelete
 
         private void selectSavesPathButton_Click(object sender, EventArgs e)
         {
+            settingsPanel.Focus();
             int index = 0;
             for(int i = 0; i < selectSavesPathButtons.Count; i++)
             {
@@ -616,7 +617,10 @@ namespace MultiDelete
             using (var fbd = new FolderBrowserDialog())
             {
                 fbd.ShowDialog();
-                savesPathEntrys[index].Text = fbd.SelectedPath;
+                if(fbd.SelectedPath != "")
+                {
+                    savesPathEntrys[index].Text = fbd.SelectedPath;
+                }
             }
         }
     }
