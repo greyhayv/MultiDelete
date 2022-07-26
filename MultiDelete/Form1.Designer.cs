@@ -64,7 +64,7 @@ namespace MultiDelete
             this.settingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.settingsButton.Font = new System.Drawing.Font("Roboto", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.settingsButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(194)))), ((int)(((byte)(194)))), ((int)(((byte)(194)))));
-            this.settingsButton.Image = global::MultiDelete.Properties.Resources.Untitled2;
+            this.settingsButton.Image = global::MultiDelete.Properties.Resources.settingsIcon;
             this.settingsButton.Location = new System.Drawing.Point(447, 7);
             this.settingsButton.Name = "settingsButton";
             this.settingsButton.Padding = new System.Windows.Forms.Padding(0, 2, 1, 3);

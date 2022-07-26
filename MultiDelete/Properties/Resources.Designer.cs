@@ -83,39 +83,9 @@ namespace MultiDelete.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Untitled {
+        internal static System.Drawing.Bitmap settingsIcon {
             get {
-                object obj = ResourceManager.GetObject("Untitled", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Untitled1 {
-            get {
-                object obj = ResourceManager.GetObject("Untitled1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Untitled2 {
-            get {
-                object obj = ResourceManager.GetObject("Untitled2", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Untitled3 {
-            get {
-                object obj = ResourceManager.GetObject("Untitled3", resourceCulture);
+                object obj = ResourceManager.GetObject("settingsIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

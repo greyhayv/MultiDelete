@@ -18,8 +18,17 @@ namespace MultiDelete
         List<TextBox> startWithEntrys = new List<TextBox>();
         List<TextBox> includesEntrys = new List<TextBox>();
         List<TextBox> endWithEntrys = new List<TextBox>();
+        List<Panel> savesPathPanels = new List<Panel>();
         string programsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete";
         string focusEntry = "";
+
+        Label settingsHeading = new Label();
+        Label savesPathLabel = new Label();
+        Label deleteAllWorldsThatLabel = new Label();
+        Label startWithLabel = new Label();
+        Label includeLabel = new Label();
+        Label endWithLabel = new Label();
+        CheckBox deleteAllWorldsCheckBox = new CheckBox();
 
         public settingsMenu()
         {
@@ -28,36 +37,79 @@ namespace MultiDelete
 
         private void settingsMenu_Load(object sender, EventArgs e)
         {
+            //Configures Objects
+            settingsHeading.TextAlign = ContentAlignment.MiddleCenter;
+            settingsHeading.AutoSize = false;
+            settingsHeading.Font = new Font("Roboto", 20.25F, FontStyle.Bold, GraphicsUnit.Point);
+            settingsHeading.ForeColor = Color.FromArgb(194, 194, 194);
+            settingsHeading.Size = new Size(478, 33);
+            settingsHeading.TabStop = false;
+            settingsHeading.Text = "Settings";
+
+            savesPathLabel.AutoSize = false;
+            savesPathLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
+            savesPathLabel.ForeColor = Color.FromArgb(194, 194, 194);
+            savesPathLabel.Size = new Size(118, 23);
+            savesPathLabel.TabStop = false;
+            savesPathLabel.Text = "Saves-Paths:";
+
+            deleteAllWorldsThatLabel.AutoSize = false;
+            deleteAllWorldsThatLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
+            deleteAllWorldsThatLabel.ForeColor = Color.FromArgb(194, 194, 194);
+            deleteAllWorldsThatLabel.Location = new Point(12, 132);
+            deleteAllWorldsThatLabel.TabStop = false;
+            deleteAllWorldsThatLabel.Text = "Delete all Worlds that";
+
+            startWithLabel.AutoSize = false;
+            startWithLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
+            startWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
+            startWithLabel.Size = new Size(93, 23);
+            startWithLabel.TabStop = false;
+            startWithLabel.Text = "start with:";
+
+            includeLabel.AutoSize = false;
+            includeLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
+            includeLabel.ForeColor = Color.FromArgb(194, 194, 194);
+            includeLabel.Size = new Size(76, 23);
+            includeLabel.TabStop = false;
+            includeLabel.Text = "include:";
+
+            endWithLabel.AutoSize = false;
+            endWithLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
+            endWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
+            endWithLabel.Size = new Size(86, 23);
+            endWithLabel.TabStop = false;
+            endWithLabel.Text = "end with:";
+
+            deleteAllWorldsCheckBox.AutoSize = false;
+            deleteAllWorldsCheckBox.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            deleteAllWorldsCheckBox.ForeColor = Color.FromArgb(194, 194, 194);
+            deleteAllWorldsCheckBox.Size = new Size(146, 23);
+            deleteAllWorldsCheckBox.TabStop = false;
+            deleteAllWorldsCheckBox.Text = "Delete all Worlds";
+            deleteAllWorldsCheckBox.UseVisualStyleBackColor = true;
+            deleteAllWorldsCheckBox.CheckedChanged += new EventHandler(this.deleteAllWorldsCheckBox_CheckedChanged);
+
             //Resets settingsMenu
-            for (int i = 0; i < selectSavesPathButtons.Count; i++)
-            {
-                this.Controls.Remove(selectSavesPathButtons[i]);
-            }
+            settingsPanel.Controls.Clear();
+            settingsPanel.Controls.Add(settingsHeading);
+            settingsPanel.Controls.Add(savesPathLabel);
+            settingsPanel.Controls.Add(deleteAllWorldsThatLabel);
+            settingsPanel.Controls.Add(startWithLabel);
+            settingsPanel.Controls.Add(includeLabel);
+            settingsPanel.Controls.Add(endWithLabel);
+            settingsPanel.Controls.Add(deleteAllWorldsCheckBox);
+            savesPathPanels = new List<Panel>();
             selectSavesPathButtons = new List<Button>();
-            for (int i = 0; i < savesPathEntrys.Count; i++)
-            {
-                this.Controls.Remove(savesPathEntrys[i]);
-            }
             savesPathEntrys = new List<TextBox>();
-            createNewTextBox("savesPath");
-            for (int i = 0; i < startWithEntrys.Count; i++)
-            {
-                this.Controls.Remove(startWithEntrys[i]);
-            }
+            createNewTextBox("savesPath", false);
             startWithEntrys = new List<TextBox>();
-            createNewTextBox("startsWith");
-            for (int i = 0; i < includesEntrys.Count; i++)
-            {
-                this.Controls.Remove(includesEntrys[i]);
-            }
+            createNewTextBox("startsWith", false);
             includesEntrys = new List<TextBox>();
-            createNewTextBox("includes");
-            for (int i = 0; i < endWithEntrys.Count; i++)
-            {
-                this.Controls.Remove(endWithEntrys[i]);
-            }
+            createNewTextBox("includes", false);
             endWithEntrys = new List<TextBox>();
-            createNewTextBox("endWith");
+            createNewTextBox("endWith", false);
+            arrangeObjects();
 
             //Create Program Files if they dont already exist
             if (!Directory.Exists(programsPath))
@@ -118,7 +170,7 @@ namespace MultiDelete
                 string text = File.ReadAllText(programsPath + @"\deleteAllWorlds.txt");
                 if(text == "true")
                 {
-                    checkBox1.Checked = true;
+                    deleteAllWorldsCheckBox.Checked = true;
                     foreach (TextBox textBox in startWithEntrys)
                     {
                         textBox.Enabled = false;
@@ -134,7 +186,7 @@ namespace MultiDelete
 
                 } else
                 {
-                    checkBox1.Checked = false;
+                    deleteAllWorldsCheckBox.Checked = false;
                     foreach (TextBox textBox in startWithEntrys)
                     {
                         textBox.Enabled = true;
@@ -190,18 +242,13 @@ namespace MultiDelete
                 }
             }
             File.WriteAllText(programsPath + @"\endWith.txt", text);
-            if(checkBox1.Checked == true)
+            if(deleteAllWorldsCheckBox.Checked == true)
             {
                 File.WriteAllText(programsPath + @"\deleteAllWorlds.txt", "true");
             } else
             {
                 File.WriteAllText(programsPath + @"\deleteAllWorlds.txt", "false");
             }
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void textChanged(object sender, EventArgs e)
@@ -295,11 +342,6 @@ namespace MultiDelete
             }
         }
 
-        private void label2_Click(object sender, EventArgs e)
-        {
-            
-        }
-
         private void createNewTextBox(string type)
         {
             //Create and configure new TextBox
@@ -308,39 +350,110 @@ namespace MultiDelete
             textBox.BorderStyle = BorderStyle.FixedSingle;
             textBox.ForeColor = ColorTranslator.FromHtml("#C2C2C2");
             textBox.Size = new Size(200, 22);
-            textBox.TextChanged += new System.EventHandler(textChanged);
-            this.Controls.Add(textBox);
+            textBox.TabStop = false;
+            textBox.TextChanged += new EventHandler(textChanged);
             //Adds TextBox to List
             if(type == "savesPath")
             {
                 savesPathEntrys.Add(textBox);
 
-                //Create and configure new Button to select saves Path
+                //Creates and configures new Button to select saves Path
                 Button selectSavesPathButton = new Button();
                 selectSavesPathButton.Size = new Size(22, 22);
                 selectSavesPathButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
-                selectSavesPathButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+                selectSavesPathButton.FlatStyle = FlatStyle.Popup;
                 selectSavesPathButton.TabStop = false;
                 selectSavesPathButton.UseVisualStyleBackColor = false;
-                selectSavesPathButton.Image = global::MultiDelete.Properties.Resources.foldericon;
-                selectSavesPathButton.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
-                selectSavesPathButton.Click += new System.EventHandler(selectSavesPathButton_Click);
-                this.Controls.Add(selectSavesPathButton);
+                selectSavesPathButton.Image = Properties.Resources.foldericon;
+                selectSavesPathButton.Padding = new Padding(0, 0, 1, 0);
+                selectSavesPathButton.Click += new EventHandler(selectSavesPathButton_Click);
                 selectSavesPathButtons.Add(selectSavesPathButton);
+
+                //Creates and configures Panel with TextBox and Button
+                Panel savePathPanel = new Panel();
+                savePathPanel.Size = new Size(232, 22);
+                savePathPanel.Controls.Add(textBox);
+                textBox.Location = new Point(0, 0);
+                savePathPanel.Controls.Add(selectSavesPathButton);
+                selectSavesPathButton.Location = new Point(205, 0);
+                savesPathPanels.Add(savePathPanel);
+                settingsPanel.Controls.Add(savePathPanel);
             }
             if(type == "startsWith")
             {
                 startWithEntrys.Add(textBox);
+                settingsPanel.Controls.Add(textBox);
             }
             if (type == "includes")
             {
                 includesEntrys.Add(textBox);
+                settingsPanel.Controls.Add(textBox);
             }
             if (type == "endWith")
             {
                 endWithEntrys.Add(textBox);
+                settingsPanel.Controls.Add(textBox);
             }
             arrangeObjects();
+        }
+
+        private void createNewTextBox(string type, bool shouldArrangeObjects)
+        {
+            //Create and configure new TextBox
+            TextBox textBox = new TextBox();
+            textBox.BackColor = ColorTranslator.FromHtml("#4C4C4C");
+            textBox.BorderStyle = BorderStyle.FixedSingle;
+            textBox.ForeColor = ColorTranslator.FromHtml("#C2C2C2");
+            textBox.Size = new Size(200, 22);
+            textBox.TabStop = false;
+            textBox.TextChanged += new EventHandler(textChanged);
+            //Adds TextBox to List
+            if (type == "savesPath")
+            {
+                savesPathEntrys.Add(textBox);
+
+                //Creates and configures new Button to select saves Path
+                Button selectSavesPathButton = new Button();
+                selectSavesPathButton.Size = new Size(22, 22);
+                selectSavesPathButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
+                selectSavesPathButton.FlatStyle = FlatStyle.Popup;
+                selectSavesPathButton.TabStop = false;
+                selectSavesPathButton.UseVisualStyleBackColor = false;
+                selectSavesPathButton.Image = Properties.Resources.foldericon;
+                selectSavesPathButton.Padding = new Padding(0, 0, 1, 0);
+                selectSavesPathButton.Click += new EventHandler(selectSavesPathButton_Click);
+                selectSavesPathButtons.Add(selectSavesPathButton);
+
+                //Creates and configures Panel with TextBox and Button
+                Panel savePathPanel = new Panel();
+                savePathPanel.Size = new Size(232, 22);
+                savePathPanel.Controls.Add(textBox);
+                textBox.Location = new Point(0, 0);
+                savePathPanel.Controls.Add(selectSavesPathButton);
+                selectSavesPathButton.Location = new Point(205, 0);
+                savesPathPanels.Add(savePathPanel);
+                settingsPanel.Controls.Add(savePathPanel);
+            }
+            if (type == "startsWith")
+            {
+                startWithEntrys.Add(textBox);
+                settingsPanel.Controls.Add(textBox);
+            }
+            if (type == "includes")
+            {
+                includesEntrys.Add(textBox);
+                settingsPanel.Controls.Add(textBox);
+            }
+            if (type == "endWith")
+            {
+                endWithEntrys.Add(textBox);
+                settingsPanel.Controls.Add(textBox);
+            }
+            
+            if(shouldArrangeObjects)
+            {
+                arrangeObjects();
+            }
         }
 
         private void deleteTextBox(int i, string type)
@@ -348,67 +461,96 @@ namespace MultiDelete
             //Deletes TextBox and removes it from List
             if(type == "savesPath")
             {
-                this.Controls.Remove(savesPathEntrys[i]);
+                settingsPanel.Controls.Remove(savesPathPanels[i]);
                 savesPathEntrys.RemoveAt(i);
-                focusEntry = "savesPath";
 
-                this.Controls.Remove(selectSavesPathButtons[i]);
                 selectSavesPathButtons.RemoveAt(i);
+                savesPathPanels.RemoveAt(i);
+                focusEntry = "savesPath";
             }
             if (type == "startsWith")
             {
-                this.Controls.Remove(startWithEntrys[i]);
+                settingsPanel.Controls.Remove(startWithEntrys[i]);
                 startWithEntrys.RemoveAt(i);
                 focusEntry = "startsWith";
             }
             if (type == "includes")
             {
-                this.Controls.Remove(includesEntrys[i]);
+                settingsPanel.Controls.Remove(includesEntrys[i]);
                 includesEntrys.RemoveAt(i);
                 focusEntry = "includes";
             }
             if (type == "endWith")
             {
-                this.Controls.Remove(endWithEntrys[i]);
+                settingsPanel.Controls.Remove(endWithEntrys[i]);
                 endWithEntrys.RemoveAt(i);
                 focusEntry = "endWith";
             }
-            label1.Focus();
             arrangeObjects();
         }
 
         private void arrangeObjects()
         {
-            //Changes Position of objects
-            for (int i = 0; i < savesPathEntrys.Count; i++)
+            int index = 0;
+            //Arranges objects on Panel
+            settingsPanel.Controls.SetChildIndex(settingsHeading, 0);
+            index++;
+
+            settingsPanel.Controls.SetChildIndex(savesPathLabel, index);
+            index++;
+
+            foreach (Panel savesPathPanel in savesPathPanels)
             {
-                savesPathEntrys[i].Location = new Point(12, (92 + 28 * i) + this.AutoScrollPosition.Y);
+                settingsPanel.Controls.SetChildIndex(savesPathPanel, index);
+                index++;
             }
-            for(int i = 0; i < selectSavesPathButtons.Count; i++)
+
+            settingsPanel.Controls.SetChildIndex(deleteAllWorldsThatLabel, index);
+            index++;
+
+            settingsPanel.Controls.SetChildIndex(startWithLabel, index);
+            index++;
+
+            foreach (TextBox startsWithEntry in startWithEntrys)
             {
-                selectSavesPathButtons[i].Location = new Point(222, (92 + 28 * i) + this.AutoScrollPosition.Y);
+                settingsPanel.Controls.SetChildIndex(startsWithEntry, index);
+                index++;
             }
-            label3.Location = new Point(12, (132 + 28 * (savesPathEntrys.Count - 1)) + this.AutoScrollPosition.Y);
-            label4.Location = new Point(12, (155 + 28 * (savesPathEntrys.Count - 1)) + this.AutoScrollPosition.Y);
-            for (int i = 0; i < startWithEntrys.Count; i++)
+
+            settingsPanel.Controls.SetChildIndex(includeLabel, index);
+            index++;
+
+            foreach(TextBox includesEntry in includesEntrys)
             {
-                startWithEntrys[i].Location = new Point(12, (181 + 28 * i + 28 * (savesPathEntrys.Count - 1)) + this.AutoScrollPosition.Y);
+                settingsPanel.Controls.SetChildIndex(includesEntry, index);
+                index++;
             }
-            label5.Location = new Point(12, (210 + 28 * (savesPathEntrys.Count - 1) + 28 * (startWithEntrys.Count - 1)) + this.AutoScrollPosition.Y);
-            for (int i = 0; i < includesEntrys.Count; i++)
+
+            settingsPanel.Controls.SetChildIndex(endWithLabel, index);
+            index++;
+
+            foreach(TextBox endsWithEntry in endWithEntrys)
             {
-                includesEntrys[i].Location = new Point(12, (236 + 28 * i + 28 * (savesPathEntrys.Count - 1) + 28 * (startWithEntrys.Count - 1)) + this.AutoScrollPosition.Y);
+                settingsPanel.Controls.SetChildIndex(endsWithEntry, index);
+                index++;
             }
-            label6.Location = new Point(12, (265 + 28 * (savesPathEntrys.Count - 1) + 28 * (startWithEntrys.Count - 1) + 28 * (includesEntrys.Count - 1)) + this.AutoScrollPosition.Y);
-            for (int i = 0; i < endWithEntrys.Count; i++)
+            
+            settingsPanel.Controls.SetChildIndex(deleteAllWorldsCheckBox, index);
+
+            //Changes size of settingsHeading if Vertical scroolbar appears so the horizontal scroolbar doesnt appear
+            if(settingsPanel.ClientSize.Width < 484)
             {
-                endWithEntrys[i].Location = new Point(12, (291 + 28 * i + 28 * (savesPathEntrys.Count - 1) + 28 * (startWithEntrys.Count - 1) + 28 * (includesEntrys.Count - 1)) + this.AutoScrollPosition.Y);
+                settingsHeading.Size = new Size(461, 33);
+            } else
+            {
+                settingsHeading.Size = new Size(478, 33);
             }
-            checkBox1.Location = new Point(12, (320 + 28 * (savesPathEntrys.Count - 1) + 28 * (startWithEntrys.Count - 1) + 28 * (includesEntrys.Count - 1) + 28 * (endWithEntrys.Count - 1)) + this.AutoScrollPosition.Y);
+
             //Focuses last TextBox if TextBox was deleted
-            if(focusEntry == "savesPath")
+            if (focusEntry == "savesPath")
             {
                 this.ActiveControl = savesPathEntrys[savesPathEntrys.Count - 1];
+                savesPathEntrys[savesPathEntrys.Count - 1].Focus();
                 focusEntry = "";
             } else if(focusEntry == "startsWith")
             {
@@ -425,9 +567,10 @@ namespace MultiDelete
             }
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void deleteAllWorldsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            if(checkBox1.Checked == true)
+            CheckBox checkBox = (CheckBox) sender;
+            if(checkBox.Checked == true)
             {
                 //Disables TextBoxes if DeleteAllWorlds checkBox is checked
                 foreach(TextBox textBox in startWithEntrys)
