@@ -129,6 +129,16 @@ namespace MultiDelete
                         worldsToDelete = new List<string>();
                         foreach (string path in savesPaths)
                         {
+                            if(!Directory.Exists(path))
+                            {
+                                changeText(label1, "The Saves-Path '" + path + "' doesnt exist!");
+                                changeFont(label1, new Font("Roboto", 13));
+                                changeLocation(label1, new Point(-8, 23));
+                                changeText(button1, "OK");
+                                changeVisibilaty(button1, true);
+                                changeVisibilaty(button2, false);
+                                return;
+                            }
                             foreach (string world in Directory.GetDirectories(path))
                             {
                                 if (cancelDeletion == true)
