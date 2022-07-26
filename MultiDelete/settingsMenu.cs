@@ -184,6 +184,12 @@ namespace MultiDelete
                         textBox.Enabled = false;
                     }
 
+                    //Grays out labels if DeleteAllWorlds checkBox is checked
+                    deleteAllWorldsThatLabel.ForeColor = Color.FromArgb(94, 94, 94);
+                    startWithLabel.ForeColor = Color.FromArgb(94, 94, 94);
+                    includeLabel.ForeColor = Color.FromArgb(94, 94, 94);
+                    endWithLabel.ForeColor = Color.FromArgb(94, 94, 94);
+
                 } else
                 {
                     deleteAllWorldsCheckBox.Checked = false;
@@ -199,6 +205,11 @@ namespace MultiDelete
                     {
                         textBox.Enabled = true;
                     }
+
+                    deleteAllWorldsThatLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                    startWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                    includeLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                    endWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
                 }
             }
         }
@@ -586,6 +597,12 @@ namespace MultiDelete
                 {
                     textBox.Enabled = false;
                 }
+
+                //Grays out labels if DeleteAllWorlds checkBox is checked
+                deleteAllWorldsThatLabel.ForeColor = Color.FromArgb(94, 94, 94);
+                startWithLabel.ForeColor = Color.FromArgb(94, 94, 94);
+                includeLabel.ForeColor = Color.FromArgb(94, 94, 94);
+                endWithLabel.ForeColor = Color.FromArgb(94, 94, 94);
             } else
             {
                 //Enabled TextBoxes if DeleteAllWorlds checkBox is not checked
@@ -601,6 +618,11 @@ namespace MultiDelete
                 {
                     textBox.Enabled = true;
                 }
+
+                deleteAllWorldsThatLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                startWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                includeLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                endWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
             }
         }
 
