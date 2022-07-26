@@ -505,6 +505,9 @@ namespace MultiDelete
                 index++;
             }
 
+            settingsPanel.Controls.SetChildIndex(deleteAllWorldsCheckBox, index);
+            index++;
+
             settingsPanel.Controls.SetChildIndex(deleteAllWorldsThatLabel, index);
             index++;
 
@@ -534,8 +537,6 @@ namespace MultiDelete
                 settingsPanel.Controls.SetChildIndex(endsWithEntry, index);
                 index++;
             }
-            
-            settingsPanel.Controls.SetChildIndex(deleteAllWorldsCheckBox, index);
 
             //Changes size of settingsHeading if Vertical scroolbar appears so the horizontal scroolbar doesnt appear
             if(settingsPanel.ClientSize.Width < 484)
