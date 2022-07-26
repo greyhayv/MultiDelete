@@ -11,7 +11,7 @@ A GUI-Based, easy to use and install Tool to delete Minecraft Worlds in multiple
 ## Settings
 MultiDelete lets you configure which Instances to delete Worlds in and exactly which Worlds to delete!
 
-![Settings](https://user-images.githubusercontent.com/107059342/178141111-100afbec-9491-449f-816d-c7c2f241d776.png)
+![Settings](https://user-images.githubusercontent.com/107059342/181011933-f28e61a1-2950-470b-ba41-44d0dd78e1de.png)
 
 ## Installation
 Click on the latest release, download the installer, execute it and go through the steps.
