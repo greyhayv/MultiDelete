@@ -53,7 +53,7 @@ namespace MultiDelete
             savesPathLabel.TabStop = false;
             savesPathLabel.Text = "Saves-Paths:";
 
-            deleteAllWorldsThatLabel.AutoSize = false;
+            deleteAllWorldsThatLabel.AutoSize = true;
             deleteAllWorldsThatLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
             deleteAllWorldsThatLabel.ForeColor = Color.FromArgb(194, 194, 194);
             deleteAllWorldsThatLabel.Location = new Point(12, 132);
