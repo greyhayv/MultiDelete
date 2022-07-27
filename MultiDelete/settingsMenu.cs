@@ -13,7 +13,6 @@ namespace MultiDelete
     public partial class settingsMenu : Form
     {
         //Variables
-
         List<TextBox> savesPathEntrys = new List<TextBox>();
         List<Button> selectSavesPathButtons = new List<Button>();
         List<TextBox> startWithEntrys = new List<TextBox>();
@@ -101,6 +100,16 @@ namespace MultiDelete
             checkForUpdatesButton.Text = "Check for Updates";
             checkForUpdatesButton.UseVisualStyleBackColor = false;
             checkForUpdatesButton.Click += new EventHandler(checkForUpdatesButton_Click);
+
+            //Create ToolTips
+            ToolTip toolTip = new ToolTip();
+            toolTip.ShowAlways = true;
+            toolTip.SetToolTip(savesPathLabel, "Select in which saves folders worlds should get deleted in");
+            toolTip.SetToolTip(deleteAllWorldsCheckBox, "Select if all worlds should be deleted, no matter the name of it");
+            toolTip.SetToolTip(startWithLabel, "Select what the name of the world has to start with to be deleted");
+            toolTip.SetToolTip(includeLabel, "Select what the name of the world has to include with to be deleted");
+            toolTip.SetToolTip(endWithLabel, "Select what the name of the world has to end with to be deleted");
+            toolTip.SetToolTip(checkForUpdatesButton, "Check if a new Update is available");
 
             //Resets settingsMenu
             settingsPanel.Controls.Clear();
