@@ -33,6 +33,7 @@
             this.remindMeLaterButton = new System.Windows.Forms.Button();
             this.downloadButton = new System.Windows.Forms.Button();
             this.focusLabel = new System.Windows.Forms.Label();
+            this.closeButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // updatePanel
@@ -85,12 +86,30 @@
             this.focusLabel.Size = new System.Drawing.Size(0, 15);
             this.focusLabel.TabIndex = 3;
             // 
+            // closeButton
+            // 
+            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.closeButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(76)))));
+            this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.closeButton.Font = new System.Drawing.Font("Roboto", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.closeButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(194)))), ((int)(((byte)(194)))), ((int)(((byte)(194)))));
+            this.closeButton.Location = new System.Drawing.Point(5, 706);
+            this.closeButton.Name = "closeButton";
+            this.closeButton.Size = new System.Drawing.Size(474, 50);
+            this.closeButton.TabIndex = 4;
+            this.closeButton.TabStop = false;
+            this.closeButton.Text = "Close";
+            this.closeButton.UseVisualStyleBackColor = false;
+            this.closeButton.Visible = false;
+            this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
+            // 
             // updateScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.ClientSize = new System.Drawing.Size(484, 761);
+            this.Controls.Add(this.closeButton);
             this.Controls.Add(this.focusLabel);
             this.Controls.Add(this.downloadButton);
             this.Controls.Add(this.remindMeLaterButton);
@@ -113,5 +132,6 @@
         private System.Windows.Forms.Button remindMeLaterButton;
         private System.Windows.Forms.Button downloadButton;
         private System.Windows.Forms.Label focusLabel;
+        private System.Windows.Forms.Button closeButton;
     }
 }

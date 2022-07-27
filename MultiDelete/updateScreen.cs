@@ -35,9 +35,16 @@ namespace MultiDelete
             if(multiDelete.isUpdateAvailable())
             {
                 heading.Text = "Update Available!";
+                closeButton.Visible = false;
+                downloadButton.Visible = true;
+                remindMeLaterButton.Visible = true;
             } else
             {
                 heading.Text = "No Updates found!";
+                closeButton.Visible = true;
+                downloadButton.Visible = false;
+                remindMeLaterButton.Visible = false;
+
             }
             updatePanel.Controls.Add(heading);
 
@@ -132,6 +139,12 @@ namespace MultiDelete
             string url = "https://github.com/greyhayv/MultiDelete/releases/download/" + version + "/MultiDelete" + version.Substring(1) + "_Installer.exe";
             url = url.Replace("&", "^&");
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+        }
+
+        private void closeButton_Click(object sender, EventArgs e)
+        {
+            focusLabel.Focus();
+            Close();
         }
     }
 }
