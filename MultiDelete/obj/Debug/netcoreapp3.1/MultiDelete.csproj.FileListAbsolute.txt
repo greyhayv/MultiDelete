@@ -34,3 +34,4 @@ C:\Development\MultiDelete\project\MultiDelete\obj\Debug\netcoreapp3.1\MultiDele
 C:\Development\MultiDelete\project\MultiDelete\obj\Debug\netcoreapp3.1\MultiDelete.dll
 C:\Development\MultiDelete\project\MultiDelete\obj\Debug\netcoreapp3.1\MultiDelete.pdb
 C:\Development\MultiDelete\project\MultiDelete\obj\Debug\netcoreapp3.1\MultiDelete.genruntimeconfig.cache
+C:\Development\MultiDelete\project\MultiDelete\obj\Debug\netcoreapp3.1\MultiDelete.updateScreen.resources

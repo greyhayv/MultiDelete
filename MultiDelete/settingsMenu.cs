@@ -13,6 +13,7 @@ namespace MultiDelete
     public partial class settingsMenu : Form
     {
         //Variables
+
         List<TextBox> savesPathEntrys = new List<TextBox>();
         List<Button> selectSavesPathButtons = new List<Button>();
         List<TextBox> startWithEntrys = new List<TextBox>();
@@ -29,6 +30,7 @@ namespace MultiDelete
         Label includeLabel = new Label();
         Label endWithLabel = new Label();
         CheckBox deleteAllWorldsCheckBox = new CheckBox();
+        Button checkForUpdatesButton = new Button();
 
         public settingsMenu()
         {
@@ -90,6 +92,16 @@ namespace MultiDelete
             deleteAllWorldsCheckBox.UseVisualStyleBackColor = true;
             deleteAllWorldsCheckBox.CheckedChanged += new EventHandler(this.deleteAllWorldsCheckBox_CheckedChanged);
 
+            checkForUpdatesButton.BackColor = Color.FromArgb(76, 76, 76);
+            checkForUpdatesButton.FlatStyle = FlatStyle.Popup;
+            checkForUpdatesButton.Font = new Font("Roboto", 12.25F, FontStyle.Regular, GraphicsUnit.Point);
+            checkForUpdatesButton.ForeColor = Color.FromArgb(194, 194, 194);
+            checkForUpdatesButton.Size = new Size(150, 50);
+            checkForUpdatesButton.TabStop = false;
+            checkForUpdatesButton.Text = "Check for Updates";
+            checkForUpdatesButton.UseVisualStyleBackColor = false;
+            checkForUpdatesButton.Click += new EventHandler(checkForUpdatesButton_Click);
+
             //Resets settingsMenu
             settingsPanel.Controls.Clear();
             settingsPanel.Controls.Add(settingsHeading);
@@ -99,6 +111,7 @@ namespace MultiDelete
             settingsPanel.Controls.Add(includeLabel);
             settingsPanel.Controls.Add(endWithLabel);
             settingsPanel.Controls.Add(deleteAllWorldsCheckBox);
+            settingsPanel.Controls.Add(checkForUpdatesButton);
             savesPathPanels = new List<Panel>();
             selectSavesPathButtons = new List<Button>();
             savesPathEntrys = new List<TextBox>();
@@ -112,10 +125,6 @@ namespace MultiDelete
             arrangeObjects();
 
             //Create Program Files if they dont already exist
-            if (!Directory.Exists(programsPath))
-            {
-                Directory.CreateDirectory(programsPath);
-            }
             if (!File.Exists(programsPath + @"\savesPaths.txt"))
             {
                 File.CreateText(programsPath + @"\savesPaths.txt").Dispose();
@@ -212,6 +221,12 @@ namespace MultiDelete
                     endWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
                 }
             }
+        }
+
+        private void checkForUpdatesButton_Click(object sender, EventArgs e)
+        {
+            settingsPanel.Focus();
+            MultiDelete.checkForUpdates(true);
         }
 
         private void settingsMenu_FormClosed(object sender, EventArgs e)
@@ -548,6 +563,9 @@ namespace MultiDelete
                 settingsPanel.Controls.SetChildIndex(endsWithEntry, index);
                 index++;
             }
+
+            settingsPanel.Controls.SetChildIndex(checkForUpdatesButton, index);
+            index++;
 
             //Changes size of settingsHeading if Vertical scroolbar appears so the horizontal scroolbar doesnt appear
             if(settingsPanel.ClientSize.Width < 484)

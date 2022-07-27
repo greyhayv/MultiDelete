@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,10 +15,15 @@ namespace MultiDelete
 {
     public partial class MultiDelete : Form
     {
+        static string version = "v1.1.4";
+
         static settingsMenu settingsMenu = new settingsMenu();
-        string programsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete";
+        static updateScreen updateScreen = new updateScreen();
+        static string programsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete";
         List<string> worldsToDelete = new List<string>();
         bool cancelDeletion = false;
+        static bool updateAvailable = false;
+        static string newestVersion = "";
 
         public MultiDelete()
         {
@@ -26,7 +32,40 @@ namespace MultiDelete
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            
+            //Create Programm Folder if it doesnt exist
+            if (!Directory.Exists(programsPath))
+            {
+                Directory.CreateDirectory(programsPath);
+            }
+
+            checkForUpdates(false);
+        }
+
+        public static void checkForUpdates(bool openDialogIfNoNewVersion)
+        {
+            WebClient wc = new WebClient();
+            wc.DownloadFile("https://raw.githubusercontent.com/greyhayv/MultiDelete/master/version.txt", programsPath + @"\versionCheck.txt");
+            updateAvailable = false;
+
+            newestVersion = File.ReadAllText(programsPath + @"\versionCheck.txt");
+            if (!newestVersion.Equals(version))
+            {
+                updateAvailable = true;
+                updateScreen.ShowDialog();
+            } else if(openDialogIfNoNewVersion)
+            {
+                updateScreen.ShowDialog();
+            }
+        }
+
+        public bool isUpdateAvailable()
+        {
+            return updateAvailable;
+        }
+
+        public string getVersion()
+        {
+            return newestVersion;
         }
 
         private async void deleteWorldsButton_Click(object sender, EventArgs e)
