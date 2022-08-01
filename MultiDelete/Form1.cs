@@ -342,10 +342,5 @@ namespace MultiDelete
         {
             this.Invoke((Action)(() => this.Refresh()));
         }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }
