@@ -171,11 +171,18 @@ namespace MultiDelete
                             if(!Directory.Exists(path))
                             {
                                 changeText(label1, "The Saves-Path '" + path + "' doesnt exist!");
-                                changeFont(label1, new Font("Roboto", 13));
+                                changeFont(label1, new Font("Roboto", 13), true);
                                 changeLocation(label1, new Point(-8, 23));
                                 changeText(button1, "OK");
                                 changeVisibilaty(button1, true);
                                 changeVisibilaty(button2, false);
+
+                                //Make Font smaller if its to long to be displayed
+                                while(label1.Width < TextRenderer.MeasureText(label1.Text, label1.Font).Width)
+                                {
+                                    changeFont(label1, new Font("Roboto", label1.Font.Size - 0.5f), true);
+                                }
+
                                 return;
                             }
                             foreach (string world in Directory.GetDirectories(path))
@@ -305,6 +312,17 @@ namespace MultiDelete
             label.BeginInvoke((Action) (() => label.Font = font));
         }
 
+        private void changeFont(Label label, Font font, bool Invoke)
+        {
+            if(Invoke)
+            {
+                label.Invoke((Action)(() => label.Font = font));
+            } else
+            {
+                label.BeginInvoke((Action)(() => label.Font = font));
+            }
+        }
+
         private void changeLocation(Label label, Point location)
         {
             label.BeginInvoke((Action)(() => label.Location = location));
@@ -323,6 +341,11 @@ namespace MultiDelete
         private void refreshUI()
         {
             this.Invoke((Action)(() => this.Refresh()));
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
