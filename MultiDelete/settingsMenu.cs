@@ -29,6 +29,7 @@ namespace MultiDelete
         Label includeLabel = new Label();
         Label endWithLabel = new Label();
         CheckBox deleteAllWorldsCheckBox = new CheckBox();
+        CheckBox deleteRecordingsCheckBox = new CheckBox();
         Button checkForUpdatesButton = new Button();
 
         public settingsMenu()
@@ -91,6 +92,15 @@ namespace MultiDelete
             deleteAllWorldsCheckBox.UseVisualStyleBackColor = true;
             deleteAllWorldsCheckBox.CheckedChanged += new EventHandler(this.deleteAllWorldsCheckBox_CheckedChanged);
 
+            deleteRecordingsCheckBox.AutoSize = false;
+            deleteRecordingsCheckBox.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            deleteRecordingsCheckBox.ForeColor = Color.FromArgb(194, 194, 194);
+            deleteRecordingsCheckBox.Size = new Size(200, 23);
+            deleteRecordingsCheckBox.TabStop = false;
+            deleteRecordingsCheckBox.Text = "Delete Recordings";
+            deleteRecordingsCheckBox.UseVisualStyleBackColor = true;
+            deleteRecordingsCheckBox.CheckedChanged += new EventHandler(this.deleteRecordingsCheckBox_CheckedChanged);
+
             checkForUpdatesButton.BackColor = Color.FromArgb(76, 76, 76);
             checkForUpdatesButton.FlatStyle = FlatStyle.Popup;
             checkForUpdatesButton.Font = new Font("Roboto", 12.25F, FontStyle.Regular, GraphicsUnit.Point);
@@ -109,6 +119,7 @@ namespace MultiDelete
             toolTip.SetToolTip(startWithLabel, "Select what the name of the world has to start with to be deleted");
             toolTip.SetToolTip(includeLabel, "Select what the name of the world has to include with to be deleted");
             toolTip.SetToolTip(endWithLabel, "Select what the name of the world has to end with to be deleted");
+            toolTip.SetToolTip(deleteRecordingsCheckBox, "Select if MultiDelete should delete your Recordings");
             toolTip.SetToolTip(checkForUpdatesButton, "Check if a new Update is available");
 
             //Resets settingsMenu
@@ -120,6 +131,7 @@ namespace MultiDelete
             settingsPanel.Controls.Add(includeLabel);
             settingsPanel.Controls.Add(endWithLabel);
             settingsPanel.Controls.Add(deleteAllWorldsCheckBox);
+            settingsPanel.Controls.Add(deleteRecordingsCheckBox);
             settingsPanel.Controls.Add(checkForUpdatesButton);
             savesPathPanels = new List<Panel>();
             selectSavesPathButtons = new List<Button>();
@@ -230,6 +242,22 @@ namespace MultiDelete
                     endWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
                 }
             }
+            if (!File.Exists(programsPath + @"\deleteRecordings.txt"))
+            {
+                File.CreateText(programsPath + @"\deleteRecordings.txt").Dispose();
+            }
+            else
+            {
+                string text = File.ReadAllText(programsPath + @"\deleteRecordings.txt");
+                if (text == "true")
+                {
+                    deleteRecordingsCheckBox.Checked = true;
+                }
+                else
+                {
+                    deleteRecordingsCheckBox.Checked = false;
+                }
+            }
         }
 
         private void checkForUpdatesButton_Click(object sender, EventArgs e)
@@ -283,6 +311,14 @@ namespace MultiDelete
             } else
             {
                 File.WriteAllText(programsPath + @"\deleteAllWorlds.txt", "false");
+            }
+            if (deleteRecordingsCheckBox.Checked == true)
+            {
+                File.WriteAllText(programsPath + @"\deleteRecordings.txt", "true");
+            }
+            else
+            {
+                File.WriteAllText(programsPath + @"\deleteRecordings.txt", "false");
             }
         }
 
@@ -573,6 +609,9 @@ namespace MultiDelete
                 index++;
             }
 
+            settingsPanel.Controls.SetChildIndex(deleteRecordingsCheckBox, index);
+            index++;
+
             settingsPanel.Controls.SetChildIndex(checkForUpdatesButton, index);
             index++;
 
@@ -650,6 +689,19 @@ namespace MultiDelete
                 startWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
                 includeLabel.ForeColor = Color.FromArgb(194, 194, 194);
                 endWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
+            }
+        }
+
+        private void deleteRecordingsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox checkBox = (CheckBox)sender;
+            if (checkBox.Checked == true)
+            {
+                
+            }
+            else
+            {
+                
             }
         }
 

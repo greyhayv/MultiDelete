@@ -73,7 +73,7 @@ namespace MultiDelete
             deleteWorldsButton.Visible = false;
             settingsButton.Visible = false;
             focusButton.Focus();
-            label1.Visible = true;
+            infoLabel.Visible = true;
             await Task.Run(() => searchWorlds());
         }
 
@@ -87,23 +87,23 @@ namespace MultiDelete
         private void button1_Click(object sender, EventArgs e)
         {
             //Opens Mainmenu
-            label1.Visible = false;
-            button1.Visible = false;
+            infoLabel.Visible = false;
+            okButton.Visible = false;
             deleteWorldsButton.Visible = true;
             progressBar1.Visible = false;
             settingsButton.Visible = true;
-            button2.Visible = false;
+            cancelButton.Visible = false;
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             //Opens Mainmenu and cancels WorldDeletion
-            label1.Visible = false;
-            button1.Visible = false;
+            infoLabel.Visible = false;
+            okButton.Visible = false;
             deleteWorldsButton.Visible = true;
             progressBar1.Visible = false;
             settingsButton.Visible = true;
-            button2.Visible = false;
+            cancelButton.Visible = false;
             cancelDeletion = true;
         }
 
@@ -117,26 +117,26 @@ namespace MultiDelete
             string[] endWith = File.ReadAllLines(programsPath + @"\endWith.txt");
             string deleteAllWorlds = File.ReadAllText(programsPath + @"\deleteAllWorlds.txt");
             //Resets Location and Font of Label
-            changeLocation(label1, new Point(-8, 41));
-            changeFont(label1, new Font("Roboto", 16));
+            changeLocation(infoLabel, new Point(-8, 41));
+            changeFont(infoLabel, new Font("Roboto", 16));
             if (savesPaths.Length == 0)
             {
                 //Checks if Saves-Paths are configured
-                changeText(label1, "Please add a Saves-Path in the Settingmenu!");
-                changeLocation(label1, new Point(-8, 23));
-                changeText(button1, "OK");
-                changeVisibilaty(button1, true);
+                changeText(infoLabel, "Please add a Saves-Path in the Settingmenu!");
+                changeLocation(infoLabel, new Point(-8, 23));
+                changeText(okButton, "OK");
+                changeVisibilaty(okButton, true);
             }
             else
             {
                 //Checks if Worlds to delete is configured
                 if (startWith.Length == 0 && include.Length == 0 && endWith.Length == 0)
                 {
-                    changeText(label1, "Please select what worlds to delete in the Settingsmenu!");
-                    changeFont(label1, new Font("Roboto", 13));
-                    changeLocation(label1, new Point(-8, 23));
-                    changeText(button1, "OK");
-                    changeVisibilaty(button1, true);
+                    changeText(infoLabel, "Please select what worlds to delete in the Settingsmenu!");
+                    changeFont(infoLabel, new Font("Roboto", 13));
+                    changeLocation(infoLabel, new Point(-8, 23));
+                    changeText(okButton, "OK");
+                    changeVisibilaty(okButton, true);
                 }
                 else
                 {
@@ -154,33 +154,33 @@ namespace MultiDelete
                     }
                     if (areSamePaths == true)
                     {
-                        changeText(label1, "You cant select the same Saves-Path twice!");
-                        changeFont(label1, new Font("Roboto", 13));
-                        changeLocation(label1, new Point(-8, 23));
-                        changeText(button1, "OK");
-                        changeVisibilaty(button1, true);
+                        changeText(infoLabel, "You cant select the same Saves-Path twice!");
+                        changeFont(infoLabel, new Font("Roboto", 13));
+                        changeLocation(infoLabel, new Point(-8, 23));
+                        changeText(okButton, "OK");
+                        changeVisibilaty(okButton, true);
                     }
                     else
                     {
                         //Searches all Worlds To delete
-                        changeVisibilaty(button2, true);
-                        changeText(label1, "Searching Worlds (0)");
+                        changeVisibilaty(cancelButton, true);
+                        changeText(infoLabel, "Searching Worlds (0)");
                         worldsToDelete = new List<string>();
                         foreach (string path in savesPaths)
                         {
                             if(!Directory.Exists(path))
                             {
-                                changeText(label1, "The Saves-Path '" + path + "' doesnt exist!");
-                                changeFont(label1, new Font("Roboto", 13), true);
-                                changeLocation(label1, new Point(-8, 23));
-                                changeText(button1, "OK");
-                                changeVisibilaty(button1, true);
-                                changeVisibilaty(button2, false);
+                                changeText(infoLabel, "The Saves-Path '" + path + "' doesnt exist!");
+                                changeFont(infoLabel, new Font("Roboto", 13), true);
+                                changeLocation(infoLabel, new Point(-8, 23));
+                                changeText(okButton, "OK");
+                                changeVisibilaty(okButton, true);
+                                changeVisibilaty(cancelButton, false);
 
                                 //Make Font smaller if its to long to be displayed
-                                while(label1.Width < TextRenderer.MeasureText(label1.Text, label1.Font).Width)
+                                while(infoLabel.Width < TextRenderer.MeasureText(infoLabel.Text, infoLabel.Font).Width)
                                 {
-                                    changeFont(label1, new Font("Roboto", label1.Font.Size - 0.5f), true);
+                                    changeFont(infoLabel, new Font("Roboto", infoLabel.Font.Size - 0.5f), true);
                                 }
 
                                 return;
@@ -195,7 +195,7 @@ namespace MultiDelete
                                 if (deleteAllWorlds == "true")
                                 {
                                     worldsToDelete.Add(world);
-                                    changeText(label1, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                    changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
                                     refreshUI();
                                 }
                                 else
@@ -208,7 +208,7 @@ namespace MultiDelete
                                             if (worldName.StartsWith(str))
                                             {
                                                 worldsToDelete.Add(world);
-                                                changeText(label1, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
                                                 refreshUI();
                                             }
                                         }
@@ -220,7 +220,7 @@ namespace MultiDelete
                                             if (worldName.Contains(str))
                                             {
                                                 worldsToDelete.Add(world);
-                                                changeText(label1, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
                                                 refreshUI();
                                             }
                                         }
@@ -232,7 +232,7 @@ namespace MultiDelete
                                             if (worldName.EndsWith(str))
                                             {
                                                 worldsToDelete.Add(world);
-                                                changeText(label1, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
                                                 refreshUI();
                                             }
                                         }
@@ -250,8 +250,8 @@ namespace MultiDelete
         {
             //deletes All found Worlds
             int deletedWorlds = 0;
-            changeLocation(label1, new Point(-8, 10));
-            changeText(label1, "Deleting Worlds (0/" + worldsToDelete.Count.ToString() + ")");
+            changeLocation(infoLabel, new Point(-8, 10));
+            changeText(infoLabel, "Deleting Worlds (0/" + worldsToDelete.Count.ToString() + ")");
             changeMaximum(progressBar1, worldsToDelete.Count);
             changeValue(progressBar1, 0);
             changeVisibilaty(progressBar1, true);
@@ -264,27 +264,27 @@ namespace MultiDelete
                 }
                 Directory.Delete(world, true);
                 deletedWorlds += 1;
-                changeText(label1, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
                 changeValue(progressBar1, deletedWorlds);
                 refreshUI();
             }
             changeVisibilaty(progressBar1, false);
             if (worldsToDelete.Count == 0)
             {
-                changeText(label1, "No Worlds got found!");
+                changeText(infoLabel, "No Worlds got found!");
             }
             else if (worldsToDelete.Count == 1)
             {
-                changeText(label1, "Deleted 1 World!");
+                changeText(infoLabel, "Deleted 1 World!");
             }
             else
             {
-                changeText(label1, "Deleted " + worldsToDelete.Count.ToString() + " Worlds!");
+                changeText(infoLabel, "Deleted " + worldsToDelete.Count.ToString() + " Worlds!");
             }
-            changeText(button1, "Done");
-            changeLocation(label1, new Point(-8, 23));
-            changeVisibilaty(button1, true);
-            changeVisibilaty(button2, false);
+            changeText(okButton, "Done");
+            changeLocation(infoLabel, new Point(-8, 23));
+            changeVisibilaty(okButton, true);
+            changeVisibilaty(cancelButton, false);
         }
 
         private void changeText(Label label, String text)
