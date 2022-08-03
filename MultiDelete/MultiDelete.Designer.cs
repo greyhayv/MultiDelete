@@ -36,7 +36,7 @@ namespace MultiDelete
             this.deleteWorldsButton = new System.Windows.Forms.Button();
             this.settingsButton = new System.Windows.Forms.Button();
             this.focusButton = new System.Windows.Forms.Button();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.infoLabel = new System.Windows.Forms.Label();
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
@@ -85,15 +85,15 @@ namespace MultiDelete
             this.focusButton.Text = "button1";
             this.focusButton.UseVisualStyleBackColor = true;
             // 
-            // progressBar1
+            // progressBar
             // 
-            this.progressBar1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(76)))));
-            this.progressBar1.Location = new System.Drawing.Point(17, 44);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.progressBar1.Size = new System.Drawing.Size(450, 23);
-            this.progressBar1.TabIndex = 3;
-            this.progressBar1.Visible = false;
+            this.progressBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(76)))));
+            this.progressBar.Location = new System.Drawing.Point(17, 44);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.progressBar.Size = new System.Drawing.Size(450, 23);
+            this.progressBar.TabIndex = 3;
+            this.progressBar.Visible = false;
             // 
             // infoLabel
             // 
@@ -153,7 +153,7 @@ namespace MultiDelete
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.infoLabel);
-            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.focusButton);
             this.Controls.Add(this.settingsButton);
             this.Controls.Add(this.deleteWorldsButton);
@@ -173,7 +173,7 @@ namespace MultiDelete
         private Button deleteWorldsButton;
         private Button settingsButton;
         private Button focusButton;
-        private ProgressBar progressBar1;
+        private ProgressBar progressBar;
         private Label infoLabel;
         private Button okButton;
         private Button cancelButton;

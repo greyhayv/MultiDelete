@@ -30,7 +30,10 @@ namespace MultiDelete
         Label endWithLabel = new Label();
         CheckBox deleteAllWorldsCheckBox = new CheckBox();
         CheckBox deleteRecordingsCheckBox = new CheckBox();
+        TextBox recordingsPathTextBox = new TextBox();
         Button checkForUpdatesButton = new Button();
+        Button recordingsPathButton = new Button();
+        Panel recordingsPathPanel = new Panel();
 
         public settingsMenu()
         {
@@ -101,6 +104,28 @@ namespace MultiDelete
             deleteRecordingsCheckBox.UseVisualStyleBackColor = true;
             deleteRecordingsCheckBox.CheckedChanged += new EventHandler(this.deleteRecordingsCheckBox_CheckedChanged);
 
+            recordingsPathTextBox.BackColor = ColorTranslator.FromHtml("#4C4C4C");
+            recordingsPathTextBox.BorderStyle = BorderStyle.FixedSingle;
+            recordingsPathTextBox.ForeColor = ColorTranslator.FromHtml("#C2C2C2");
+            recordingsPathTextBox.Size = new Size(200, 22);
+            recordingsPathTextBox.TabStop = false;
+            recordingsPathTextBox.PlaceholderText = "Recordings Path";
+
+            recordingsPathButton.Size = new Size(22, 22);
+            recordingsPathButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
+            recordingsPathButton.FlatStyle = FlatStyle.Popup;
+            recordingsPathButton.TabStop = false;
+            recordingsPathButton.UseVisualStyleBackColor = false;
+            recordingsPathButton.Image = Properties.Resources.foldericon;
+            recordingsPathButton.Padding = new Padding(0, 0, 1, 0);
+            recordingsPathButton.Click += new EventHandler(recordingsPathButton_Click);
+
+            recordingsPathPanel.Size = new Size(232, 22);
+            recordingsPathPanel.Controls.Add(recordingsPathTextBox);
+            recordingsPathTextBox.Location = new Point(0, 0);
+            recordingsPathPanel.Controls.Add(recordingsPathButton);
+            recordingsPathButton.Location = new Point(205, 0);
+
             checkForUpdatesButton.BackColor = Color.FromArgb(76, 76, 76);
             checkForUpdatesButton.FlatStyle = FlatStyle.Popup;
             checkForUpdatesButton.Font = new Font("Roboto", 12.25F, FontStyle.Regular, GraphicsUnit.Point);
@@ -119,7 +144,8 @@ namespace MultiDelete
             toolTip.SetToolTip(startWithLabel, "Select what the name of the world has to start with to be deleted");
             toolTip.SetToolTip(includeLabel, "Select what the name of the world has to include with to be deleted");
             toolTip.SetToolTip(endWithLabel, "Select what the name of the world has to end with to be deleted");
-            toolTip.SetToolTip(deleteRecordingsCheckBox, "Select if MultiDelete should delete your Recordings");
+            toolTip.SetToolTip(deleteRecordingsCheckBox, "Select if MultiDelete should delete your Recordings. WARNING: THIS DELETES ALL FILES IN THE SELECTED DIRECTORY");
+            toolTip.SetToolTip(recordingsPathTextBox, "Select in which folder your Recordings are stored in");
             toolTip.SetToolTip(checkForUpdatesButton, "Check if a new Update is available");
 
             //Resets settingsMenu
@@ -132,6 +158,7 @@ namespace MultiDelete
             settingsPanel.Controls.Add(endWithLabel);
             settingsPanel.Controls.Add(deleteAllWorldsCheckBox);
             settingsPanel.Controls.Add(deleteRecordingsCheckBox);
+            settingsPanel.Controls.Add(recordingsPathPanel);
             settingsPanel.Controls.Add(checkForUpdatesButton);
             savesPathPanels = new List<Panel>();
             selectSavesPathButtons = new List<Button>();
@@ -145,7 +172,7 @@ namespace MultiDelete
             createNewTextBox("endWith", false);
             arrangeObjects();
 
-            //Create Program Files if they dont already exist
+            //Create Program Files if they dont already exist and set options
             if (!File.Exists(programsPath + @"\savesPaths.txt"))
             {
                 File.CreateText(programsPath + @"\savesPaths.txt").Dispose();
@@ -192,7 +219,15 @@ namespace MultiDelete
                     endWithEntrys[i].Text = text[i];
                 }
             }
-            if(!File.Exists(programsPath + @"\deleteAllWorlds.txt"))
+            if (!File.Exists(programsPath + @"\recordingsPath.txt"))
+            {
+                File.CreateText(programsPath + @"\recordingsPath.txt").Dispose();
+            }
+            else
+            {
+                recordingsPathTextBox.Text = File.ReadAllText(programsPath + @"\recordingsPath.txt");
+            }
+            if (!File.Exists(programsPath + @"\deleteAllWorlds.txt"))
             {
                 File.CreateText(programsPath + @"\deleteAllWorlds.txt").Dispose();
             } else
@@ -252,10 +287,14 @@ namespace MultiDelete
                 if (text == "true")
                 {
                     deleteRecordingsCheckBox.Checked = true;
+                    recordingsPathTextBox.Enabled = true;
+                    recordingsPathButton.Enabled = true;
                 }
                 else
                 {
                     deleteRecordingsCheckBox.Checked = false;
+                    recordingsPathTextBox.Enabled = false;
+                    recordingsPathButton.Enabled = false;
                 }
             }
         }
@@ -305,7 +344,8 @@ namespace MultiDelete
                 }
             }
             File.WriteAllText(programsPath + @"\endWith.txt", text);
-            if(deleteAllWorldsCheckBox.Checked == true)
+            File.WriteAllText(programsPath + @"\recordingsPath.txt", recordingsPathTextBox.Text);
+            if (deleteAllWorldsCheckBox.Checked == true)
             {
                 File.WriteAllText(programsPath + @"\deleteAllWorlds.txt", "true");
             } else
@@ -612,6 +652,9 @@ namespace MultiDelete
             settingsPanel.Controls.SetChildIndex(deleteRecordingsCheckBox, index);
             index++;
 
+            settingsPanel.Controls.SetChildIndex(recordingsPathPanel, index);
+            index++;
+
             settingsPanel.Controls.SetChildIndex(checkForUpdatesButton, index);
             index++;
 
@@ -697,11 +740,13 @@ namespace MultiDelete
             CheckBox checkBox = (CheckBox)sender;
             if (checkBox.Checked == true)
             {
-                
+                recordingsPathTextBox.Enabled = true;
+                recordingsPathButton.Enabled = true;
             }
             else
             {
-                
+                recordingsPathTextBox.Enabled = false;
+                recordingsPathButton.Enabled = false;
             }
         }
 
@@ -722,6 +767,19 @@ namespace MultiDelete
                 if(fbd.SelectedPath != "")
                 {
                     savesPathEntrys[index].Text = fbd.SelectedPath;
+                }
+            }
+        }
+
+        private void recordingsPathButton_Click(object sender, EventArgs e)
+        {
+            settingsPanel.Focus();
+            using (var fbd = new FolderBrowserDialog())
+            {
+                fbd.ShowDialog();
+                if (fbd.SelectedPath != "")
+                {
+                    recordingsPathTextBox.Text = fbd.SelectedPath;
                 }
             }
         }

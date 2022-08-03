@@ -21,6 +21,7 @@ namespace MultiDelete
         static updateScreen updateScreen = new updateScreen();
         static string programsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete";
         List<string> worldsToDelete = new List<string>();
+        List<string> recordingsToDelete = new List<string>();
         bool cancelDeletion = false;
         static bool updateAvailable = false;
         static string newestVersion = "";
@@ -90,7 +91,7 @@ namespace MultiDelete
             infoLabel.Visible = false;
             okButton.Visible = false;
             deleteWorldsButton.Visible = true;
-            progressBar1.Visible = false;
+            progressBar.Visible = false;
             settingsButton.Visible = true;
             cancelButton.Visible = false;
         }
@@ -101,7 +102,7 @@ namespace MultiDelete
             infoLabel.Visible = false;
             okButton.Visible = false;
             deleteWorldsButton.Visible = true;
-            progressBar1.Visible = false;
+            progressBar.Visible = false;
             settingsButton.Visible = true;
             cancelButton.Visible = false;
             cancelDeletion = true;
@@ -252,9 +253,9 @@ namespace MultiDelete
             int deletedWorlds = 0;
             changeLocation(infoLabel, new Point(-8, 10));
             changeText(infoLabel, "Deleting Worlds (0/" + worldsToDelete.Count.ToString() + ")");
-            changeMaximum(progressBar1, worldsToDelete.Count);
-            changeValue(progressBar1, 0);
-            changeVisibilaty(progressBar1, true);
+            changeMaximum(progressBar, worldsToDelete.Count);
+            changeValue(progressBar, 0);
+            changeVisibilaty(progressBar, true);
             foreach (string world in worldsToDelete)
             {
                 if(cancelDeletion == true)
@@ -265,21 +266,144 @@ namespace MultiDelete
                 Directory.Delete(world, true);
                 deletedWorlds += 1;
                 changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
-                changeValue(progressBar1, deletedWorlds);
+                changeValue(progressBar, deletedWorlds);
                 refreshUI();
             }
-            changeVisibilaty(progressBar1, false);
-            if (worldsToDelete.Count == 0)
+            string deleteRecordingsStr = File.ReadAllText(programsPath + @"\deleteRecordings.txt");
+            bool delRecordings = false;
+            if (deleteRecordingsStr == "true")
             {
-                changeText(infoLabel, "No Worlds got found!");
-            }
-            else if (worldsToDelete.Count == 1)
-            {
-                changeText(infoLabel, "Deleted 1 World!");
+                delRecordings = true;
             }
             else
             {
-                changeText(infoLabel, "Deleted " + worldsToDelete.Count.ToString() + " Worlds!");
+                delRecordings = false;
+            }
+            if(delRecordings)
+            {
+                searchRecordings();
+            } else
+            {
+                changeVisibilaty(progressBar, false);
+                if (worldsToDelete.Count == 0)
+                {
+                    changeText(infoLabel, "No Worlds got found!");
+                }
+                else if (worldsToDelete.Count == 1)
+                {
+                    changeText(infoLabel, "Deleted 1 World!");
+                }
+                else
+                {
+                    changeText(infoLabel, "Deleted " + worldsToDelete.Count.ToString() + " Worlds!");
+                }
+                changeText(okButton, "Done");
+                changeLocation(infoLabel, new Point(-8, 23));
+                changeVisibilaty(okButton, true);
+                changeVisibilaty(cancelButton, false);
+            }
+        }
+
+        private void searchRecordings()
+        {
+            recordingsToDelete = new List<string>();
+            //Gets Variable from TextFiles
+            string recordingsPath = File.ReadAllText(programsPath + @"\recordingsPath.txt");
+            //Resets Location and Font of Label
+            changeLocation(infoLabel, new Point(-8, 41));
+            changeFont(infoLabel, new Font("Roboto", 16));
+            if (recordingsPath == "")
+            {
+                //Checks if Recordings-Path is configured
+                changeFont(infoLabel, new Font("Roboto", 15));
+                changeText(infoLabel, "Please add your Recordings-Path in the Settingmenu!");
+                changeLocation(infoLabel, new Point(-8, 23));
+                changeText(okButton, "OK");
+                changeVisibilaty(okButton, true);
+                changeVisibilaty(cancelButton, false);
+                changeVisibilaty(progressBar, false);
+            }
+            else
+            {
+                //Searches all Recordings to delete
+                changeVisibilaty(cancelButton, true);
+                changeText(infoLabel, "Searching Recordings (0)");
+                recordingsToDelete = new List<string>();
+                if (!Directory.Exists(recordingsPath))
+                {
+                    changeText(infoLabel, "The Recordings-Path '" + recordingsPath + "' doesnt exist!");
+                    changeFont(infoLabel, new Font("Roboto", 13), true);
+                    changeLocation(infoLabel, new Point(-8, 23));
+                    changeText(okButton, "OK");
+                    changeVisibilaty(okButton, true);
+                    changeVisibilaty(cancelButton, false);
+                    changeVisibilaty(progressBar, false);
+
+                    //Make Font smaller if its to long to be displayed
+                    while (infoLabel.Width < TextRenderer.MeasureText(infoLabel.Text, infoLabel.Font).Width)
+                    {
+                        changeFont(infoLabel, new Font("Roboto", infoLabel.Font.Size - 0.5f), true);
+                    }
+
+                    return;
+                }
+                foreach (string recording in Directory.GetFiles(recordingsPath))
+                {
+                    if (cancelDeletion == true)
+                    {
+                        cancelDeletion = false;
+                        return;
+                    }
+                    recordingsToDelete.Add(recording);
+                    changeText(infoLabel, "Searching Recordings (" + recordingsToDelete.Count.ToString() + ")");
+                    refreshUI();
+                }
+                deleteRecordings();
+            }
+        }
+
+        private void deleteRecordings()
+        {
+            //deletes All found Recordings
+            int deletedRecordings = 0;
+            changeLocation(infoLabel, new Point(-8, 10));
+            changeText(infoLabel, "Deleting Recordings (0/" + recordingsToDelete.Count.ToString() + ")");
+            changeMaximum(progressBar, recordingsToDelete.Count);
+            changeValue(progressBar, 0);
+            changeVisibilaty(progressBar, true);
+            foreach (string recording in recordingsToDelete)
+            {
+                if (cancelDeletion == true)
+                {
+                    cancelDeletion = false;
+                    return;
+                }
+                File.Delete(recording);
+                deletedRecordings += 1;
+                changeText(infoLabel, "Deleting Recordings (" + deletedRecordings.ToString() + "/" + recordingsToDelete.Count.ToString() + ")");
+                changeValue(progressBar, deletedRecordings);
+                refreshUI();
+            }
+            changeVisibilaty(progressBar, false);
+            if(recordingsToDelete.Count == 1)
+            {
+                if(worldsToDelete.Count == 1)
+                {
+                    changeText(infoLabel, "Deleted 1 World and 1 Recording!");
+                } else
+                {
+                    changeText(infoLabel, "Deleted " + worldsToDelete.Count + " Worlds and 1 Recording!");
+                }
+            } else
+            {
+                if (worldsToDelete.Count == 1)
+                {
+                    changeText(infoLabel, "Deleted 1 World and" + recordingsToDelete.Count + " Recordings!");
+                }
+                else
+                {
+                    changeText(infoLabel, "Deleted " + worldsToDelete.Count + " Worlds and " + recordingsToDelete.Count + " Recordings!");
+                }
             }
             changeText(okButton, "Done");
             changeLocation(infoLabel, new Point(-8, 23));
@@ -340,7 +464,7 @@ namespace MultiDelete
 
         private void refreshUI()
         {
-            this.Invoke((Action)(() => this.Refresh()));
+            Invoke((Action)(() => Refresh()));
         }
     }
 }
