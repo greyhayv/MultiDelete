@@ -110,6 +110,7 @@ namespace MultiDelete
 
         private void searchWorlds()
         {
+            cancelDeletion = false;
             worldsToDelete = new List<string>();
             //Gets Variables from TextFiles
             string[] savesPaths = File.ReadAllLines(programsPath + @"\savesPaths.txt");
@@ -269,8 +270,28 @@ namespace MultiDelete
                 changeValue(progressBar, deletedWorlds);
                 refreshUI();
             }
+
             string deleteRecordingsStr = File.ReadAllText(programsPath + @"\deleteRecordings.txt");
             bool delRecordings = false;
+
+            string deleteCrashReportsStr = File.ReadAllText(programsPath + @"\deleteCrashReports.txt");
+            bool delCrashReports = false;
+
+            string deleteRawalleLogsStr = File.ReadAllText(programsPath + @"\deleteRawalleLogs.txt");
+            bool delRawalleLogs = false;
+
+            string deleteScreenshotsStr = File.ReadAllText(programsPath + @"\deleteScreenshots.txt");
+            bool delScreenshots = false;
+
+            if (deleteCrashReportsStr == "true")
+            {
+                delCrashReports = true;
+            }
+            else
+            {
+                delCrashReports = false;
+            }
+
             if (deleteRecordingsStr == "true")
             {
                 delRecordings = true;
@@ -279,29 +300,43 @@ namespace MultiDelete
             {
                 delRecordings = false;
             }
-            if(delRecordings)
+
+            if (deleteRawalleLogsStr == "true")
+            {
+                delRawalleLogs = true;
+            }
+            else
+            {
+                delRawalleLogs = false;
+            }
+
+            if (deleteScreenshotsStr == "true")
+            {
+                delScreenshots = true;
+            }
+            else
+            {
+                delScreenshots = false;
+            }
+
+            if (delRecordings)
             {
                 searchRecordings();
-            } else
-            {
-                changeVisibilaty(progressBar, false);
-                if (worldsToDelete.Count == 0)
-                {
-                    changeText(infoLabel, "No Worlds got found!");
-                }
-                else if (worldsToDelete.Count == 1)
-                {
-                    changeText(infoLabel, "Deleted 1 World!");
-                }
-                else
-                {
-                    changeText(infoLabel, "Deleted " + worldsToDelete.Count.ToString() + " Worlds!");
-                }
-                changeText(okButton, "Done");
-                changeLocation(infoLabel, new Point(-8, 23));
-                changeVisibilaty(okButton, true);
-                changeVisibilaty(cancelButton, false);
             }
+            if(delCrashReports)
+            {
+                deleteCrashReports();
+            }
+            if(delRawalleLogs)
+            {
+                deleteRawalleLogs();
+            }
+            if(delScreenshots)
+            {
+                deleteScreenshots();
+            }
+            
+            showResults();
         }
 
         private void searchRecordings()
@@ -385,25 +420,99 @@ namespace MultiDelete
                 refreshUI();
             }
             changeVisibilaty(progressBar, false);
-            if(recordingsToDelete.Count == 1)
+        }
+
+        private void deleteCrashReports()
+        {
+            string[] savesPaths = File.ReadAllLines(programsPath + @"\savesPaths.txt");
+            int deletedCrashReports = 0;
+            changeLocation(infoLabel, new Point(-8, 41));
+            changeText(infoLabel, "Deleting Crash-reports (0)");
+            foreach(string savesPath in savesPaths)
             {
-                if(worldsToDelete.Count == 1)
+                string minecraftPath = savesPath.Remove(savesPath.Length - 6);
+                string crashReportsPath = minecraftPath + @"\crash-reports";
+                if(Directory.Exists(crashReportsPath))
                 {
-                    changeText(infoLabel, "Deleted 1 World and 1 Recording!");
-                } else
-                {
-                    changeText(infoLabel, "Deleted " + worldsToDelete.Count + " Worlds and 1 Recording!");
+                    foreach (string crashReport in Directory.GetFiles(crashReportsPath))
+                    {
+                        File.Delete(crashReport);
+                        deletedCrashReports++;
+                        changeText(infoLabel, "Deleting Crash-reports (" + deletedCrashReports.ToString() + ")");
+                        refreshUI();
+                    }
                 }
-            } else
+                foreach(string file in Directory.GetFiles(minecraftPath))
+                {
+                    if(file.Substring(minecraftPath.Length + 1).StartsWith("hs_err_pid")) {
+                        File.Delete(file);
+                        deletedCrashReports++;
+                        changeText(infoLabel, "Deleting Crash-reports (" + deletedCrashReports.ToString() + ")");
+                        refreshUI();
+                    }
+                }
+            }
+        }
+
+        private void deleteRawalleLogs()
+        {
+            string[] savesPaths = File.ReadAllLines(programsPath + @"\savesPaths.txt");
+            int deletedRawalleLogs = 0;
+            changeLocation(infoLabel, new Point(-8, 41));
+            changeText(infoLabel, "Deleting Rawalle-logs (0)");
+            foreach (string savesPath in savesPaths)
             {
-                if (worldsToDelete.Count == 1)
+                string minecraftPath = savesPath.Remove(savesPath.Length - 6);
+                foreach (string file in Directory.GetFiles(minecraftPath))
                 {
-                    changeText(infoLabel, "Deleted 1 World and" + recordingsToDelete.Count + " Recordings!");
+                    if(file.Substring(minecraftPath.Length + 1).Equals("log.log"))
+                    {
+                        File.Delete(file);
+                        deletedRawalleLogs++;
+                        changeText(infoLabel, "Deleting Rawalle-logs (" + deletedRawalleLogs.ToString() + ")");
+                        refreshUI();
+                    }
                 }
-                else
+            }
+        }
+
+        private void deleteScreenshots()
+        {
+            string[] savesPaths = File.ReadAllLines(programsPath + @"\savesPaths.txt");
+            int deletedScreenshots = 0;
+            changeLocation(infoLabel, new Point(-8, 41));
+            changeText(infoLabel, "Deleting Screenshots (0)");
+            foreach (string savesPath in savesPaths)
+            {
+                string minecraftPath = savesPath.Remove(savesPath.Length - 6);
+                string screenshotsPath = minecraftPath + @"\screenshots";
+                if (Directory.Exists(screenshotsPath))
                 {
-                    changeText(infoLabel, "Deleted " + worldsToDelete.Count + " Worlds and " + recordingsToDelete.Count + " Recordings!");
+                    foreach (string screenshot in Directory.GetFiles(screenshotsPath))
+                    {
+                        File.Delete(screenshot);
+                        deletedScreenshots++;
+                        changeText(infoLabel, "Deleting Screenshots (" + deletedScreenshots.ToString() + ")");
+                        refreshUI();
+                    }
                 }
+            }
+        }
+
+        private void showResults()
+        {
+            changeVisibilaty(progressBar, false);
+            if (worldsToDelete.Count == 0)
+            {
+                changeText(infoLabel, "No Worlds got found!");
+            }
+            else if (worldsToDelete.Count == 1)
+            {
+                changeText(infoLabel, "Deleted 1 World!");
+            }
+            else
+            {
+                changeText(infoLabel, "Deleted " + worldsToDelete.Count.ToString() + " Worlds!");
             }
             changeText(okButton, "Done");
             changeLocation(infoLabel, new Point(-8, 23));

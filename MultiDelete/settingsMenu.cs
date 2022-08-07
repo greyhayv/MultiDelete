@@ -30,6 +30,9 @@ namespace MultiDelete
         Label endWithLabel = new Label();
         CheckBox deleteAllWorldsCheckBox = new CheckBox();
         CheckBox deleteRecordingsCheckBox = new CheckBox();
+        CheckBox deleteCrashReportsCheckBox = new CheckBox();
+        CheckBox deleteRawalleLogsCheckBox = new CheckBox();
+        CheckBox deleteScreenshotsCheckBox = new CheckBox();
         TextBox recordingsPathTextBox = new TextBox();
         Button checkForUpdatesButton = new Button();
         Button recordingsPathButton = new Button();
@@ -104,6 +107,30 @@ namespace MultiDelete
             deleteRecordingsCheckBox.UseVisualStyleBackColor = true;
             deleteRecordingsCheckBox.CheckedChanged += new EventHandler(this.deleteRecordingsCheckBox_CheckedChanged);
 
+            deleteCrashReportsCheckBox.AutoSize = false;
+            deleteCrashReportsCheckBox.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            deleteCrashReportsCheckBox.ForeColor = Color.FromArgb(194, 194, 194);
+            deleteCrashReportsCheckBox.Size = new Size(200, 23);
+            deleteCrashReportsCheckBox.TabStop = false;
+            deleteCrashReportsCheckBox.Text = "Delete Crash-Reports";
+            deleteCrashReportsCheckBox.UseVisualStyleBackColor = true;
+
+            deleteRawalleLogsCheckBox.AutoSize = false;
+            deleteRawalleLogsCheckBox.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            deleteRawalleLogsCheckBox.ForeColor = Color.FromArgb(194, 194, 194);
+            deleteRawalleLogsCheckBox.Size = new Size(200, 23);
+            deleteRawalleLogsCheckBox.TabStop = false;
+            deleteRawalleLogsCheckBox.Text = "Delete Rawalle logs";
+            deleteRawalleLogsCheckBox.UseVisualStyleBackColor = true;
+
+            deleteScreenshotsCheckBox.AutoSize = false;
+            deleteScreenshotsCheckBox.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            deleteScreenshotsCheckBox.ForeColor = Color.FromArgb(194, 194, 194);
+            deleteScreenshotsCheckBox.Size = new Size(200, 23);
+            deleteScreenshotsCheckBox.TabStop = false;
+            deleteScreenshotsCheckBox.Text = "Delete Screenshots";
+            deleteScreenshotsCheckBox.UseVisualStyleBackColor = true;
+
             recordingsPathTextBox.BackColor = ColorTranslator.FromHtml("#4C4C4C");
             recordingsPathTextBox.BorderStyle = BorderStyle.FixedSingle;
             recordingsPathTextBox.ForeColor = ColorTranslator.FromHtml("#C2C2C2");
@@ -146,6 +173,9 @@ namespace MultiDelete
             toolTip.SetToolTip(endWithLabel, "Select what the name of the world has to end with to be deleted");
             toolTip.SetToolTip(deleteRecordingsCheckBox, "Select if MultiDelete should delete your Recordings. WARNING: THIS DELETES ALL FILES IN THE SELECTED DIRECTORY");
             toolTip.SetToolTip(recordingsPathTextBox, "Select in which folder your Recordings are stored in");
+            toolTip.SetToolTip(deleteCrashReportsCheckBox, "Select if MultiDelete should delete your Crash-reports");
+            toolTip.SetToolTip(deleteRawalleLogsCheckBox, "Select if MultiDelete should delete your Rawalle logs");
+            toolTip.SetToolTip(deleteScreenshotsCheckBox, "Select if MultiDelete should delete your Screenshots");
             toolTip.SetToolTip(checkForUpdatesButton, "Check if a new Update is available");
 
             //Resets settingsMenu
@@ -159,6 +189,9 @@ namespace MultiDelete
             settingsPanel.Controls.Add(deleteAllWorldsCheckBox);
             settingsPanel.Controls.Add(deleteRecordingsCheckBox);
             settingsPanel.Controls.Add(recordingsPathPanel);
+            settingsPanel.Controls.Add(deleteCrashReportsCheckBox);
+            settingsPanel.Controls.Add(deleteRawalleLogsCheckBox);
+            settingsPanel.Controls.Add(deleteScreenshotsCheckBox);
             settingsPanel.Controls.Add(checkForUpdatesButton);
             savesPathPanels = new List<Panel>();
             selectSavesPathButtons = new List<Button>();
@@ -184,6 +217,7 @@ namespace MultiDelete
                     savesPathEntrys[i].Text = text[i];
                 }
             }
+
             if (!File.Exists(programsPath + @"\startWith.txt"))
             {
                 File.CreateText(programsPath + @"\startWith.txt").Dispose();
@@ -197,6 +231,7 @@ namespace MultiDelete
                     startWithEntrys[i].Text = text[i];
                 }
             }
+
             if (!File.Exists(programsPath + @"\include.txt"))
             {
                 File.CreateText(programsPath + @"\include.txt").Dispose();
@@ -208,6 +243,7 @@ namespace MultiDelete
                     includesEntrys[i].Text = text[i];
                 }
             }
+
             if (!File.Exists(programsPath + @"\endWith.txt"))
             {
                 File.CreateText(programsPath + @"\endWith.txt").Dispose();
@@ -219,6 +255,7 @@ namespace MultiDelete
                     endWithEntrys[i].Text = text[i];
                 }
             }
+
             if (!File.Exists(programsPath + @"\recordingsPath.txt"))
             {
                 File.CreateText(programsPath + @"\recordingsPath.txt").Dispose();
@@ -227,6 +264,7 @@ namespace MultiDelete
             {
                 recordingsPathTextBox.Text = File.ReadAllText(programsPath + @"\recordingsPath.txt");
             }
+
             if (!File.Exists(programsPath + @"\deleteAllWorlds.txt"))
             {
                 File.CreateText(programsPath + @"\deleteAllWorlds.txt").Dispose();
@@ -277,6 +315,7 @@ namespace MultiDelete
                     endWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
                 }
             }
+
             if (!File.Exists(programsPath + @"\deleteRecordings.txt"))
             {
                 File.CreateText(programsPath + @"\deleteRecordings.txt").Dispose();
@@ -295,6 +334,57 @@ namespace MultiDelete
                     deleteRecordingsCheckBox.Checked = false;
                     recordingsPathTextBox.Enabled = false;
                     recordingsPathButton.Enabled = false;
+                }
+            }
+
+            if (!File.Exists(programsPath + @"\deleteCrashReports.txt"))
+            {
+                File.CreateText(programsPath + @"\deleteCrashReports.txt").Dispose();
+            }
+            else
+            {
+                string text = File.ReadAllText(programsPath + @"\deleteCrashReports.txt");
+                if (text == "true")
+                {
+                    deleteCrashReportsCheckBox.Checked = true;
+                }
+                else
+                {
+                    deleteCrashReportsCheckBox.Checked = false;
+                }
+            }
+
+            if (!File.Exists(programsPath + @"\deleteScreenshots.txt"))
+            {
+                File.CreateText(programsPath + @"\deleteScreenshots.txt").Dispose();
+            }
+            else
+            {
+                string text = File.ReadAllText(programsPath + @"\deleteScreenshots.txt");
+                if (text == "true")
+                {
+                    deleteScreenshotsCheckBox.Checked = true;
+                }
+                else
+                {
+                    deleteScreenshotsCheckBox.Checked = false;
+                }
+            }
+
+            if (!File.Exists(programsPath + @"\deleteRawalleLogs.txt"))
+            {
+                File.CreateText(programsPath + @"\deleteRawalleLogs.txt").Dispose();
+            }
+            else
+            {
+                string text = File.ReadAllText(programsPath + @"\deleteRawalleLogs.txt");
+                if (text == "true")
+                {
+                    deleteRawalleLogsCheckBox.Checked = true;
+                }
+                else
+                {
+                    deleteRawalleLogsCheckBox.Checked = false;
                 }
             }
         }
@@ -317,6 +407,7 @@ namespace MultiDelete
                 }
             }
             File.WriteAllText(programsPath + @"\savesPaths.txt", text);
+
             text = "";
             for (int i = 0; i < startWithEntrys.Count; i++)
             {
@@ -326,6 +417,7 @@ namespace MultiDelete
                 }
             }
             File.WriteAllText(programsPath + @"\startWith.txt", text);
+
             text = "";
             for (int i = 0; i < includesEntrys.Count; i++)
             {
@@ -335,6 +427,7 @@ namespace MultiDelete
                 }
             }
             File.WriteAllText(programsPath + @"\include.txt", text);
+
             text = "";
             for (int i = 0; i < endWithEntrys.Count; i++)
             {
@@ -344,7 +437,9 @@ namespace MultiDelete
                 }
             }
             File.WriteAllText(programsPath + @"\endWith.txt", text);
+
             File.WriteAllText(programsPath + @"\recordingsPath.txt", recordingsPathTextBox.Text);
+
             if (deleteAllWorldsCheckBox.Checked == true)
             {
                 File.WriteAllText(programsPath + @"\deleteAllWorlds.txt", "true");
@@ -352,6 +447,7 @@ namespace MultiDelete
             {
                 File.WriteAllText(programsPath + @"\deleteAllWorlds.txt", "false");
             }
+
             if (deleteRecordingsCheckBox.Checked == true)
             {
                 File.WriteAllText(programsPath + @"\deleteRecordings.txt", "true");
@@ -359,6 +455,33 @@ namespace MultiDelete
             else
             {
                 File.WriteAllText(programsPath + @"\deleteRecordings.txt", "false");
+            }
+
+            if (deleteCrashReportsCheckBox.Checked == true)
+            {
+                File.WriteAllText(programsPath + @"\deleteCrashReports.txt", "true");
+            }
+            else
+            {
+                File.WriteAllText(programsPath + @"\deleteCrashReports.txt", "false");
+            }
+
+            if (deleteRawalleLogsCheckBox.Checked == true)
+            {
+                File.WriteAllText(programsPath + @"\deleteRawalleLogs.txt", "true");
+            }
+            else
+            {
+                File.WriteAllText(programsPath + @"\deleteRawalleLogs.txt", "false");
+            }
+
+            if (deleteScreenshotsCheckBox.Checked == true)
+            {
+                File.WriteAllText(programsPath + @"\deleteScreenshots.txt", "true");
+            }
+            else
+            {
+                File.WriteAllText(programsPath + @"\deleteScreenshots.txt", "false");
             }
         }
 
@@ -655,6 +778,15 @@ namespace MultiDelete
             settingsPanel.Controls.SetChildIndex(recordingsPathPanel, index);
             index++;
 
+            settingsPanel.Controls.SetChildIndex(deleteCrashReportsCheckBox, index);
+            index++;
+
+            settingsPanel.Controls.SetChildIndex(deleteRawalleLogsCheckBox, index);
+            index++;
+
+            settingsPanel.Controls.SetChildIndex(deleteScreenshotsCheckBox, index);
+            index++;
+
             settingsPanel.Controls.SetChildIndex(checkForUpdatesButton, index);
             index++;
 
@@ -749,6 +881,7 @@ namespace MultiDelete
                 recordingsPathButton.Enabled = false;
             }
         }
+
 
         private void selectSavesPathButton_Click(object sender, EventArgs e)
         {
