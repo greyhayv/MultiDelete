@@ -31,7 +31,7 @@ namespace MultiDelete
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private async void Form1_Load(object sender, EventArgs e)
         {
             //Create Programm Folder if it doesnt exist
             if (!Directory.Exists(programsPath))
@@ -39,7 +39,7 @@ namespace MultiDelete
                 Directory.CreateDirectory(programsPath);
             }
 
-            checkForUpdates(false);
+            await Task.Run(() => checkForUpdates(false));
         }
 
         public static void checkForUpdates(bool openDialogIfNoNewVersion)
