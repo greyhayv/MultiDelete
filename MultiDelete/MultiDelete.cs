@@ -20,6 +20,7 @@ namespace MultiDelete
         bool cancelDeletion = false;
         static bool updateAvailable = false;
         static string newestVersion = "";
+        long size = 0;
 
         public MultiDelete()
         {
@@ -105,6 +106,7 @@ namespace MultiDelete
 
         private void searchWorlds()
         {
+            size = 0;
             cancelDeletion = false;
             worldsToDelete = new List<string>();
             //Get Variables from TextFiles
@@ -283,6 +285,10 @@ namespace MultiDelete
                     cancelDeletion = false;
                     return;
                 }
+               
+                DirectoryInfo di = new DirectoryInfo(world);
+                calcDirSize(di);
+
                 Directory.Delete(world, true);
                 deletedWorlds += 1;
                 changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
@@ -432,6 +438,10 @@ namespace MultiDelete
                     cancelDeletion = false;
                     return;
                 }
+
+                FileInfo fi = new FileInfo(recording);
+                size += fi.Length;
+
                 File.Delete(recording);
                 deletedRecordings += 1;
                 changeText(infoLabel, "Deleting Recordings (" + deletedRecordings.ToString() + "/" + recordingsToDelete.Count.ToString() + ")");
@@ -490,6 +500,9 @@ namespace MultiDelete
                 {
                     foreach (string crashReport in Directory.GetFiles(crashReportsPath))
                     {
+                        FileInfo fi = new FileInfo(crashReport);
+                        size += fi.Length;
+
                         File.Delete(crashReport);
                         deletedCrashReports++;
                         changeText(infoLabel, "Deleting Crash-reports (" + deletedCrashReports.ToString() + ")");
@@ -499,6 +512,9 @@ namespace MultiDelete
                 foreach(string file in Directory.GetFiles(minecraftPath))
                 {
                     if(file.Substring(minecraftPath.Length + 1).StartsWith("hs_err_pid")) {
+                        FileInfo fi = new FileInfo(file);
+                        size += fi.Length;
+
                         File.Delete(file);
                         deletedCrashReports++;
                         changeText(infoLabel, "Deleting Crash-reports (" + deletedCrashReports.ToString() + ")");
@@ -556,6 +572,9 @@ namespace MultiDelete
                 {
                     if(file.Substring(minecraftPath.Length + 1).Equals("log.log"))
                     {
+                        FileInfo fi = new FileInfo(file);
+                        size += fi.Length;
+
                         File.Delete(file);
                         deletedRawalleLogs++;
                         changeText(infoLabel, "Deleting Rawalle-logs (" + deletedRawalleLogs.ToString() + ")");
@@ -614,6 +633,9 @@ namespace MultiDelete
                 {
                     foreach (string screenshot in Directory.GetFiles(screenshotsPath))
                     {
+                        FileInfo fi = new FileInfo(screenshot);
+                        size += fi.Length;
+
                         File.Delete(screenshot);
                         deletedScreenshots++;
                         changeText(infoLabel, "Deleting Screenshots (" + deletedScreenshots.ToString() + ")");
@@ -625,18 +647,37 @@ namespace MultiDelete
 
         private void showResults()
         {
-            changeVisibilaty(progressBar, false);
-            if (worldsToDelete.Count == 0)
+            //Convert file sizes
+            string fileSize = "";
+            if (size < 1024)
             {
-                changeText(infoLabel, "No Worlds got found!");
+                fileSize = size.ToString() + " Bytes";
             }
-            else if (worldsToDelete.Count == 1)
+            else if (size < 1048576)
             {
-                changeText(infoLabel, "Deleted 1 World!");
+                fileSize = (size / 1024).ToString() + "kB";
+            }
+            else if (size < 1073741824)
+            {
+                fileSize = ((size / 1024) / 1024).ToString() + "MB";
             }
             else
             {
-                changeText(infoLabel, "Deleted " + worldsToDelete.Count.ToString() + " Worlds!");
+                fileSize = (((size / 1024) / 1024) / 1024).ToString() + "GB";
+            }
+
+            changeVisibilaty(progressBar, false);
+            if (worldsToDelete.Count == 0)
+            {
+                changeText(infoLabel, "No Worlds got found! (" + fileSize + ")");
+            }
+            else if (worldsToDelete.Count == 1)
+            {
+                changeText(infoLabel, "Deleted 1 World! (" + fileSize + ")");
+            }
+            else
+            {
+                changeText(infoLabel, "Deleted " + worldsToDelete.Count.ToString() + " Worlds! (" + fileSize + ")");
             }
             changeText(okButton, "Done");
             changeLocation(infoLabel, new Point(-8, 23));
@@ -698,6 +739,20 @@ namespace MultiDelete
         private void refreshUI()
         {
             Invoke((Action)(() => Refresh()));
+        }
+
+        private void calcDirSize(DirectoryInfo di)
+        {
+            FileInfo[] fis = di.GetFiles();
+            foreach (FileInfo fi in fis)
+            {
+                size += fi.Length;
+            }
+            DirectoryInfo[] subDirectorys = di.GetDirectories();
+            foreach(DirectoryInfo di2 in subDirectorys)
+            {
+                calcDirSize(di2);
+            }
         }
     }
 }
