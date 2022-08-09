@@ -186,6 +186,7 @@ namespace MultiDelete
             toolTip.SetToolTip(deleteRawalleLogsCheckBox, "Select if MultiDelete should delete your Rawalle logs");
             toolTip.SetToolTip(deleteScreenshotsCheckBox, "Select if MultiDelete should delete your Screenshots");
             toolTip.SetToolTip(checkForUpdatesButton, "Check if a new Update is available");
+            toolTip.SetToolTip(addMultipleInstanceButton, "Add multiple Instances at once via selecting multiple folders");
 
             //Resets settingsMenu
             settingsPanel.Controls.Clear();
