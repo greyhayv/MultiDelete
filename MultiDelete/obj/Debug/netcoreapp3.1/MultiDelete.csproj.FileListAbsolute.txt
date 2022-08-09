@@ -35,3 +35,7 @@ C:\Development\MultiDelete\project\MultiDelete\obj\Debug\netcoreapp3.1\MultiDele
 C:\Development\MultiDelete\project\MultiDelete\obj\Debug\netcoreapp3.1\MultiDelete.pdb
 C:\Development\MultiDelete\project\MultiDelete\obj\Debug\netcoreapp3.1\MultiDelete.genruntimeconfig.cache
 C:\Development\MultiDelete\project\MultiDelete\obj\Debug\netcoreapp3.1\MultiDelete.updateScreen.resources
+C:\Development\MultiDelete\project\MultiDelete\bin\Debug\netcoreapp3.1\Microsoft.WindowsAPICodePack.dll
+C:\Development\MultiDelete\project\MultiDelete\bin\Debug\netcoreapp3.1\Microsoft.WindowsAPICodePack.Shell.dll
+C:\Development\MultiDelete\project\MultiDelete\bin\Debug\netcoreapp3.1\Microsoft.WindowsAPICodePack.ShellExtensions.dll
+C:\Development\MultiDelete\project\MultiDelete\obj\Debug\netcoreapp3.1\MultiDelete.csproj.CopyComplete

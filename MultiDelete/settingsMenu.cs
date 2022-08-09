@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading.Tasks;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace MultiDelete
 {
@@ -37,6 +38,7 @@ namespace MultiDelete
         Button checkForUpdatesButton = new Button();
         Button recordingsPathButton = new Button();
         Panel recordingsPathPanel = new Panel();
+        Button addMultipleInstanceButton = new Button();
 
         public settingsMenu()
         {
@@ -163,6 +165,16 @@ namespace MultiDelete
             checkForUpdatesButton.UseVisualStyleBackColor = false;
             checkForUpdatesButton.Click += new EventHandler(checkForUpdatesButton_Click);
 
+            addMultipleInstanceButton.BackColor = Color.FromArgb(76, 76, 76);
+            addMultipleInstanceButton.FlatStyle = FlatStyle.Popup;
+            addMultipleInstanceButton.Font = new Font("Roboto", 12.25F, FontStyle.Regular, GraphicsUnit.Point);
+            addMultipleInstanceButton.ForeColor = Color.FromArgb(194, 194, 194);
+            addMultipleInstanceButton.Size = new Size(200, 35);
+            addMultipleInstanceButton.TabStop = false;
+            addMultipleInstanceButton.Text = "Add multiple Instances";
+            addMultipleInstanceButton.UseVisualStyleBackColor = false;
+            addMultipleInstanceButton.Click += new EventHandler(addMultipleInstanceButton_Click);
+
             //Create ToolTips
             ToolTip toolTip = new ToolTip();
             toolTip.ShowAlways = true;
@@ -182,6 +194,7 @@ namespace MultiDelete
             settingsPanel.Controls.Clear();
             settingsPanel.Controls.Add(settingsHeading);
             settingsPanel.Controls.Add(instancePathLabel);
+            settingsPanel.Controls.Add(addMultipleInstanceButton);
             settingsPanel.Controls.Add(deleteAllWorldsThatLabel);
             settingsPanel.Controls.Add(startWithLabel);
             settingsPanel.Controls.Add(includeLabel);
@@ -739,6 +752,9 @@ namespace MultiDelete
                 index++;
             }
 
+            settingsPanel.Controls.SetChildIndex(addMultipleInstanceButton, index);
+            index++;
+
             settingsPanel.Controls.SetChildIndex(deleteAllWorldsCheckBox, index);
             index++;
 
@@ -896,6 +912,8 @@ namespace MultiDelete
             }
             using (var fbd = new FolderBrowserDialog())
             {
+                fbd.UseDescriptionForTitle = true;
+                fbd.Description = "Select Instance-path";
                 fbd.ShowDialog();
                 if(fbd.SelectedPath != "")
                 {
@@ -909,10 +927,31 @@ namespace MultiDelete
             settingsPanel.Focus();
             using (var fbd = new FolderBrowserDialog())
             {
+                fbd.UseDescriptionForTitle = true;
+                fbd.Description = "Select Recordings-path";
                 fbd.ShowDialog();
                 if (fbd.SelectedPath != "")
                 {
                     recordingsPathTextBox.Text = fbd.SelectedPath;
+                }
+            }
+        }
+
+        private void addMultipleInstanceButton_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("aa");
+            settingsPanel.Focus();
+
+            CommonOpenFileDialog cofd = new CommonOpenFileDialog();
+            cofd.Title = "Select multiple Instance-paths";
+            cofd.IsFolderPicker = true;
+            cofd.Multiselect = true;
+
+            if(cofd.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                foreach (string folder in cofd.FileNames)
+                {
+                    instancePathEntrys[instancePathEntrys.Count - 1].Text = folder;
                 }
             }
         }
