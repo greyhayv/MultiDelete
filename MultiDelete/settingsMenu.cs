@@ -13,17 +13,17 @@ namespace MultiDelete
     public partial class settingsMenu : Form
     {
         //Variables
-        List<TextBox> savesPathEntrys = new List<TextBox>();
-        List<Button> selectSavesPathButtons = new List<Button>();
+        List<TextBox> instancePathEntrys = new List<TextBox>();
+        List<Button> selectInstancePathButtons = new List<Button>();
         List<TextBox> startWithEntrys = new List<TextBox>();
         List<TextBox> includesEntrys = new List<TextBox>();
         List<TextBox> endWithEntrys = new List<TextBox>();
-        List<Panel> savesPathPanels = new List<Panel>();
+        List<Panel> instancePathPanel = new List<Panel>();
         string programsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete";
         string focusEntry = "";
 
         Label settingsHeading = new Label();
-        Label savesPathLabel = new Label();
+        Label instancePathLabel = new Label();
         Label deleteAllWorldsThatLabel = new Label();
         Label startWithLabel = new Label();
         Label includeLabel = new Label();
@@ -54,12 +54,12 @@ namespace MultiDelete
             settingsHeading.TabStop = false;
             settingsHeading.Text = "Settings";
 
-            savesPathLabel.AutoSize = false;
-            savesPathLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            savesPathLabel.ForeColor = Color.FromArgb(194, 194, 194);
-            savesPathLabel.Size = new Size(118, 23);
-            savesPathLabel.TabStop = false;
-            savesPathLabel.Text = "Saves-Paths:";
+            instancePathLabel.AutoSize = false;
+            instancePathLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
+            instancePathLabel.ForeColor = Color.FromArgb(194, 194, 194);
+            instancePathLabel.Size = new Size(150, 23);
+            instancePathLabel.TabStop = false;
+            instancePathLabel.Text = "Instance-Paths:";
 
             deleteAllWorldsThatLabel.AutoSize = true;
             deleteAllWorldsThatLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
@@ -166,7 +166,7 @@ namespace MultiDelete
             //Create ToolTips
             ToolTip toolTip = new ToolTip();
             toolTip.ShowAlways = true;
-            toolTip.SetToolTip(savesPathLabel, "Select in which saves folders worlds should get deleted in");
+            toolTip.SetToolTip(instancePathLabel, "Select in which Instances worlds should get deleted in");
             toolTip.SetToolTip(deleteAllWorldsCheckBox, "Select if all worlds should be deleted, no matter the name of it");
             toolTip.SetToolTip(startWithLabel, "Select what the name of the world has to start with to be deleted");
             toolTip.SetToolTip(includeLabel, "Select what the name of the world has to include with to be deleted");
@@ -181,7 +181,7 @@ namespace MultiDelete
             //Resets settingsMenu
             settingsPanel.Controls.Clear();
             settingsPanel.Controls.Add(settingsHeading);
-            settingsPanel.Controls.Add(savesPathLabel);
+            settingsPanel.Controls.Add(instancePathLabel);
             settingsPanel.Controls.Add(deleteAllWorldsThatLabel);
             settingsPanel.Controls.Add(startWithLabel);
             settingsPanel.Controls.Add(includeLabel);
@@ -193,10 +193,10 @@ namespace MultiDelete
             settingsPanel.Controls.Add(deleteRawalleLogsCheckBox);
             settingsPanel.Controls.Add(deleteScreenshotsCheckBox);
             settingsPanel.Controls.Add(checkForUpdatesButton);
-            savesPathPanels = new List<Panel>();
-            selectSavesPathButtons = new List<Button>();
-            savesPathEntrys = new List<TextBox>();
-            createNewTextBox("savesPath", false);
+            instancePathPanel = new List<Panel>();
+            selectInstancePathButtons = new List<Button>();
+            instancePathEntrys = new List<TextBox>();
+            createNewTextBox("instancePath", false);
             startWithEntrys = new List<TextBox>();
             createNewTextBox("startsWith", false);
             includesEntrys = new List<TextBox>();
@@ -206,15 +206,15 @@ namespace MultiDelete
             arrangeObjects();
 
             //Create Program Files if they dont already exist and set options
-            if (!File.Exists(programsPath + @"\savesPaths.txt"))
+            if (!File.Exists(programsPath + @"\instancePaths.txt"))
             {
-                File.CreateText(programsPath + @"\savesPaths.txt").Dispose();
+                File.CreateText(programsPath + @"\instancePaths.txt").Dispose();
             } else
             {
-                string[] text = File.ReadAllLines(programsPath + @"\savesPaths.txt");
+                string[] text = File.ReadAllLines(programsPath + @"\instancePaths.txt");
                 for(int i = 0; i < text.Length; i++)
                 {
-                    savesPathEntrys[i].Text = text[i];
+                    instancePathEntrys[i].Text = text[i];
                 }
             }
 
@@ -399,14 +399,14 @@ namespace MultiDelete
         {
             //Saves settings to Files
             string text = "";
-            for(int i = 0; i < savesPathEntrys.Count; i++)
+            for(int i = 0; i < instancePathEntrys.Count; i++)
             {
-                if (savesPathEntrys[i].Text != "")
+                if (instancePathEntrys[i].Text != "")
                 {
-                    text =  text + savesPathEntrys[i].Text + Environment.NewLine;
+                    text =  text + instancePathEntrys[i].Text + Environment.NewLine;
                 }
             }
-            File.WriteAllText(programsPath + @"\savesPaths.txt", text);
+            File.WriteAllText(programsPath + @"\instancePaths.txt", text);
 
             text = "";
             for (int i = 0; i < startWithEntrys.Count; i++)
@@ -488,25 +488,25 @@ namespace MultiDelete
         private void textChanged(object sender, EventArgs e)
         {
             //Deletes TextBoxes if they are empty
-            for (int i = 0; i < savesPathEntrys.Count; i++)
+            for (int i = 0; i < instancePathEntrys.Count; i++)
             {
-                if (savesPathEntrys[i].Text == "")
+                if (instancePathEntrys[i].Text == "")
                 {
-                    if (i < savesPathEntrys.Count - 2)
+                    if (i < instancePathEntrys.Count - 2)
                     {
-                        deleteTextBox(i, "savesPath");
+                        deleteTextBox(i, "instancePath");
                         return;
                     }
-                    else if (i == savesPathEntrys.Count - 2 && savesPathEntrys.Count > 1)
+                    else if (i == instancePathEntrys.Count - 2 && instancePathEntrys.Count > 1)
                     {
-                        deleteTextBox(savesPathEntrys.Count - 1, "savesPath");
+                        deleteTextBox(instancePathEntrys.Count - 1, "instancePath");
                     }
                 }
             }
             //Creates a new TextBox if last TextBox has Text
-            if(savesPathEntrys[savesPathEntrys.Count - 1].Text != "")
+            if(instancePathEntrys[instancePathEntrys.Count - 1].Text != "")
             {
-                createNewTextBox("savesPath");
+                createNewTextBox("instancePath");
             }
 
             //Deletes TextBoxes if they are empty
@@ -587,31 +587,31 @@ namespace MultiDelete
             textBox.TabStop = false;
             textBox.TextChanged += new EventHandler(textChanged);
             //Adds TextBox to List
-            if(type == "savesPath")
+            if(type == "instancePath")
             {
-                savesPathEntrys.Add(textBox);
+                instancePathEntrys.Add(textBox);
 
-                //Creates and configures new Button to select saves Path
-                Button selectSavesPathButton = new Button();
-                selectSavesPathButton.Size = new Size(22, 22);
-                selectSavesPathButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
-                selectSavesPathButton.FlatStyle = FlatStyle.Popup;
-                selectSavesPathButton.TabStop = false;
-                selectSavesPathButton.UseVisualStyleBackColor = false;
-                selectSavesPathButton.Image = Properties.Resources.foldericon;
-                selectSavesPathButton.Padding = new Padding(0, 0, 1, 0);
-                selectSavesPathButton.Click += new EventHandler(selectSavesPathButton_Click);
-                selectSavesPathButtons.Add(selectSavesPathButton);
+                //Creates and configures new Button to select instance Path
+                Button selectInstancePathButton = new Button();
+                selectInstancePathButton.Size = new Size(22, 22);
+                selectInstancePathButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
+                selectInstancePathButton.FlatStyle = FlatStyle.Popup;
+                selectInstancePathButton.TabStop = false;
+                selectInstancePathButton.UseVisualStyleBackColor = false;
+                selectInstancePathButton.Image = Properties.Resources.foldericon;
+                selectInstancePathButton.Padding = new Padding(0, 0, 1, 0);
+                selectInstancePathButton.Click += new EventHandler(selectInstancePathButton_click);
+                selectInstancePathButtons.Add(selectInstancePathButton);
 
                 //Creates and configures Panel with TextBox and Button
-                Panel savePathPanel = new Panel();
-                savePathPanel.Size = new Size(232, 22);
-                savePathPanel.Controls.Add(textBox);
+                Panel instancePathPanel = new Panel();
+                instancePathPanel.Size = new Size(232, 22);
+                instancePathPanel.Controls.Add(textBox);
                 textBox.Location = new Point(0, 0);
-                savePathPanel.Controls.Add(selectSavesPathButton);
-                selectSavesPathButton.Location = new Point(205, 0);
-                savesPathPanels.Add(savePathPanel);
-                settingsPanel.Controls.Add(savePathPanel);
+                instancePathPanel.Controls.Add(selectInstancePathButton);
+                selectInstancePathButton.Location = new Point(205, 0);
+                this.instancePathPanel.Add(instancePathPanel);
+                settingsPanel.Controls.Add(instancePathPanel);
             }
             if(type == "startsWith")
             {
@@ -642,31 +642,31 @@ namespace MultiDelete
             textBox.TabStop = false;
             textBox.TextChanged += new EventHandler(textChanged);
             //Adds TextBox to List
-            if (type == "savesPath")
+            if (type == "instancePath")
             {
-                savesPathEntrys.Add(textBox);
+                instancePathEntrys.Add(textBox);
 
-                //Creates and configures new Button to select saves Path
-                Button selectSavesPathButton = new Button();
-                selectSavesPathButton.Size = new Size(22, 22);
-                selectSavesPathButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
-                selectSavesPathButton.FlatStyle = FlatStyle.Popup;
-                selectSavesPathButton.TabStop = false;
-                selectSavesPathButton.UseVisualStyleBackColor = false;
-                selectSavesPathButton.Image = Properties.Resources.foldericon;
-                selectSavesPathButton.Padding = new Padding(0, 0, 1, 0);
-                selectSavesPathButton.Click += new EventHandler(selectSavesPathButton_Click);
-                selectSavesPathButtons.Add(selectSavesPathButton);
+                //Creates and configures new Button to select instance Path
+                Button selectInstancePathButton = new Button();
+                selectInstancePathButton.Size = new Size(22, 22);
+                selectInstancePathButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
+                selectInstancePathButton.FlatStyle = FlatStyle.Popup;
+                selectInstancePathButton.TabStop = false;
+                selectInstancePathButton.UseVisualStyleBackColor = false;
+                selectInstancePathButton.Image = Properties.Resources.foldericon;
+                selectInstancePathButton.Padding = new Padding(0, 0, 1, 0);
+                selectInstancePathButton.Click += new EventHandler(selectInstancePathButton_click);
+                selectInstancePathButtons.Add(selectInstancePathButton);
 
                 //Creates and configures Panel with TextBox and Button
-                Panel savePathPanel = new Panel();
-                savePathPanel.Size = new Size(232, 22);
-                savePathPanel.Controls.Add(textBox);
+                Panel instancePathPanel = new Panel();
+                instancePathPanel.Size = new Size(232, 22);
+                instancePathPanel.Controls.Add(textBox);
                 textBox.Location = new Point(0, 0);
-                savePathPanel.Controls.Add(selectSavesPathButton);
-                selectSavesPathButton.Location = new Point(205, 0);
-                savesPathPanels.Add(savePathPanel);
-                settingsPanel.Controls.Add(savePathPanel);
+                instancePathPanel.Controls.Add(selectInstancePathButton);
+                selectInstancePathButton.Location = new Point(205, 0);
+                this.instancePathPanel.Add(instancePathPanel);
+                settingsPanel.Controls.Add(instancePathPanel);
             }
             if (type == "startsWith")
             {
@@ -693,14 +693,14 @@ namespace MultiDelete
         private void deleteTextBox(int i, string type)
         {
             //Deletes TextBox and removes it from List
-            if(type == "savesPath")
+            if(type == "instancePath")
             {
-                settingsPanel.Controls.Remove(savesPathPanels[i]);
-                savesPathEntrys.RemoveAt(i);
+                settingsPanel.Controls.Remove(instancePathPanel[i]);
+                instancePathEntrys.RemoveAt(i);
 
-                selectSavesPathButtons.RemoveAt(i);
-                savesPathPanels.RemoveAt(i);
-                focusEntry = "savesPath";
+                selectInstancePathButtons.RemoveAt(i);
+                instancePathPanel.RemoveAt(i);
+                focusEntry = "instancePath";
             }
             if (type == "startsWith")
             {
@@ -730,12 +730,12 @@ namespace MultiDelete
             settingsPanel.Controls.SetChildIndex(settingsHeading, 0);
             index++;
 
-            settingsPanel.Controls.SetChildIndex(savesPathLabel, index);
+            settingsPanel.Controls.SetChildIndex(instancePathLabel, index);
             index++;
 
-            foreach (Panel savesPathPanel in savesPathPanels)
+            foreach (Panel panel in instancePathPanel)
             {
-                settingsPanel.Controls.SetChildIndex(savesPathPanel, index);
+                settingsPanel.Controls.SetChildIndex(panel, index);
                 index++;
             }
 
@@ -800,10 +800,10 @@ namespace MultiDelete
             }
 
             //Focuses last TextBox if TextBox was deleted
-            if (focusEntry == "savesPath")
+            if (focusEntry == "instancePath")
             {
-                this.ActiveControl = savesPathEntrys[savesPathEntrys.Count - 1];
-                savesPathEntrys[savesPathEntrys.Count - 1].Focus();
+                this.ActiveControl = instancePathEntrys[instancePathEntrys.Count - 1];
+                instancePathEntrys[instancePathEntrys.Count - 1].Focus();
                 focusEntry = "";
             } else if(focusEntry == "startsWith")
             {
@@ -883,13 +883,13 @@ namespace MultiDelete
         }
 
 
-        private void selectSavesPathButton_Click(object sender, EventArgs e)
+        private void selectInstancePathButton_click(object sender, EventArgs e)
         {
             settingsPanel.Focus();
             int index = 0;
-            for(int i = 0; i < selectSavesPathButtons.Count; i++)
+            for(int i = 0; i < selectInstancePathButtons.Count; i++)
             {
-                if (selectSavesPathButtons[i].Equals(sender))
+                if (selectInstancePathButtons[i].Equals(sender))
                 {
                     index = i;
                 }
@@ -899,7 +899,7 @@ namespace MultiDelete
                 fbd.ShowDialog();
                 if(fbd.SelectedPath != "")
                 {
-                    savesPathEntrys[index].Text = fbd.SelectedPath;
+                    instancePathEntrys[index].Text = fbd.SelectedPath;
                 }
             }
         }

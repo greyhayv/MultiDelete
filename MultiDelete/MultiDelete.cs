@@ -112,19 +112,43 @@ namespace MultiDelete
         {
             cancelDeletion = false;
             worldsToDelete = new List<string>();
-            //Gets Variables from TextFiles
-            string[] savesPaths = File.ReadAllLines(programsPath + @"\savesPaths.txt");
+            //Get Variables from TextFiles
+            string[] instancePaths = File.ReadAllLines(programsPath + @"\instancePaths.txt");
             string[] startWith = File.ReadAllLines(programsPath + @"\startWith.txt");
             string[] include = File.ReadAllLines(programsPath + @"\include.txt");
             string[] endWith = File.ReadAllLines(programsPath + @"\endWith.txt");
             string deleteAllWorlds = File.ReadAllText(programsPath + @"\deleteAllWorlds.txt");
+
+            //Get savespaths from instancePath
+            List<string> savesPaths = new List<string>();
+            foreach(string instancePath in instancePaths)
+            {
+                if (instancePath.EndsWith(@"\saves"))
+                {
+                    savesPaths.Add(instancePath);
+                } else if (instancePath.EndsWith(@"\saves\")) {
+                    savesPaths.Add(instancePath.Remove(instancePath.Length - 1));
+                } else if (instancePath.EndsWith(@"\.minecraft")) {
+                    savesPaths.Add(instancePath + @"\saves");
+                } else if (instancePath.EndsWith(@"\.minecraft\"))
+                {
+                    savesPaths.Add(instancePath + "saves");
+                } else if (instancePath.EndsWith(@"\"))
+                {
+                    savesPaths.Add(instancePath + @".minecraft\saves");
+                } else
+                {
+                    savesPaths.Add(instancePath + @"\.minecraft\saves");
+                }
+            }
+
             //Resets Location and Font of Label
             changeLocation(infoLabel, new Point(-8, 41));
             changeFont(infoLabel, new Font("Roboto", 16));
-            if (savesPaths.Length == 0)
+            if(instancePaths.Length == 0)
             {
-                //Checks if Saves-Paths are configured
-                changeText(infoLabel, "Please add a Saves-Path in the Settingmenu!");
+                //Checks if Instance-Paths are configured
+                changeText(infoLabel, "Please add an Instance-Path in the Settingmenu!");
                 changeLocation(infoLabel, new Point(-8, 23));
                 changeText(okButton, "OK");
                 changeVisibilaty(okButton, true);
@@ -142,13 +166,13 @@ namespace MultiDelete
                 }
                 else
                 {
-                    //Checks if same Savespath is added twice
+                    //Checks if same Instancepath is added twice
                     bool areSamePaths = false;
-                    for (int i = 0; i < savesPaths.Length; i++)
+                    for (int i = 0; i < instancePaths.Length; i++)
                     {
-                        for (int i2 = 0; i2 < savesPaths.Length; i2++)
+                        for (int i2 = 0; i2 < instancePaths.Length; i2++)
                         {
-                            if (savesPaths[i] == savesPaths[i2] && i != i2)
+                            if (instancePaths[i] == instancePaths[i2] && i != i2)
                             {
                                 areSamePaths = true;
                             }
@@ -156,7 +180,7 @@ namespace MultiDelete
                     }
                     if (areSamePaths == true)
                     {
-                        changeText(infoLabel, "You cant select the same Saves-Path twice!");
+                        changeText(infoLabel, "You cant select the same Instance-Path twice!");
                         changeFont(infoLabel, new Font("Roboto", 13));
                         changeLocation(infoLabel, new Point(-8, 23));
                         changeText(okButton, "OK");
@@ -168,9 +192,9 @@ namespace MultiDelete
                         changeVisibilaty(cancelButton, true);
                         changeText(infoLabel, "Searching Worlds (0)");
                         worldsToDelete = new List<string>();
-                        foreach (string path in savesPaths)
+                        foreach(string path in savesPaths)
                         {
-                            if(!Directory.Exists(path))
+                            if (!Directory.Exists(path))
                             {
                                 changeText(infoLabel, "The Saves-Path '" + path + "' doesnt exist!");
                                 changeFont(infoLabel, new Font("Roboto", 13), true);
@@ -187,7 +211,7 @@ namespace MultiDelete
 
                                 return;
                             }
-                            foreach (string world in Directory.GetDirectories(path))
+                            foreach(string world in Directory.GetDirectories(path))
                             {
                                 if (cancelDeletion == true)
                                 {
@@ -424,12 +448,47 @@ namespace MultiDelete
 
         private void deleteCrashReports()
         {
-            string[] savesPaths = File.ReadAllLines(programsPath + @"\savesPaths.txt");
+            string[] instancePaths = File.ReadAllLines(programsPath + @"\instancePaths.txt");
             int deletedCrashReports = 0;
             changeLocation(infoLabel, new Point(-8, 41));
             changeText(infoLabel, "Deleting Crash-reports (0)");
-            foreach(string savesPath in savesPaths)
+
+            //Get savespaths from instancePath
+            List<string> savesPaths = new List<string>();
+            foreach (string instancePath in instancePaths)
             {
+                if (instancePath.EndsWith(@"\saves"))
+                {
+                    savesPaths.Add(instancePath);
+                }
+                else if (instancePath.EndsWith(@"\saves\"))
+                {
+                    savesPaths.Add(instancePath.Remove(instancePath.Length - 1));
+                }
+                else if (instancePath.EndsWith(@"\.minecraft"))
+                {
+                    savesPaths.Add(instancePath + @"\saves");
+                }
+                else if (instancePath.EndsWith(@"\.minecraft\"))
+                {
+                    savesPaths.Add(instancePath + "saves");
+                }
+                else if (instancePath.EndsWith(@"\"))
+                {
+                    savesPaths.Add(instancePath + @".minecraft\saves");
+                }
+                else
+                {
+                    savesPaths.Add(instancePath + @"\.minecraft\saves");
+                }
+            }
+
+            foreach (string savesPath in savesPaths)
+            {
+                if(savesPath.EndsWith(@"\"))
+                {
+                    savesPath.Remove(savesPath.Length - 1);
+                }
                 string minecraftPath = savesPath.Remove(savesPath.Length - 6);
                 string crashReportsPath = minecraftPath + @"\crash-reports";
                 if(Directory.Exists(crashReportsPath))
@@ -456,12 +515,47 @@ namespace MultiDelete
 
         private void deleteRawalleLogs()
         {
-            string[] savesPaths = File.ReadAllLines(programsPath + @"\savesPaths.txt");
+            string[] instancePaths = File.ReadAllLines(programsPath + @"\instancePaths.txt");
             int deletedRawalleLogs = 0;
             changeLocation(infoLabel, new Point(-8, 41));
             changeText(infoLabel, "Deleting Rawalle-logs (0)");
+
+            //Get savespaths from instancePath
+            List<string> savesPaths = new List<string>();
+            foreach (string instancePath in instancePaths)
+            {
+                if (instancePath.EndsWith(@"\saves"))
+                {
+                    savesPaths.Add(instancePath);
+                }
+                else if (instancePath.EndsWith(@"\saves\"))
+                {
+                    savesPaths.Add(instancePath.Remove(instancePath.Length - 1));
+                }
+                else if (instancePath.EndsWith(@"\.minecraft"))
+                {
+                    savesPaths.Add(instancePath + @"\saves");
+                }
+                else if (instancePath.EndsWith(@"\.minecraft\"))
+                {
+                    savesPaths.Add(instancePath + "saves");
+                }
+                else if (instancePath.EndsWith(@"\"))
+                {
+                    savesPaths.Add(instancePath + @".minecraft\saves");
+                }
+                else
+                {
+                    savesPaths.Add(instancePath + @"\.minecraft\saves");
+                }
+            }
+
             foreach (string savesPath in savesPaths)
             {
+                if (savesPath.EndsWith(@"\"))
+                {
+                    savesPath.Remove(savesPath.Length - 1);
+                }
                 string minecraftPath = savesPath.Remove(savesPath.Length - 6);
                 foreach (string file in Directory.GetFiles(minecraftPath))
                 {
@@ -478,12 +572,47 @@ namespace MultiDelete
 
         private void deleteScreenshots()
         {
-            string[] savesPaths = File.ReadAllLines(programsPath + @"\savesPaths.txt");
+            string[] instancePaths = File.ReadAllLines(programsPath + @"\instancePaths.txt");
             int deletedScreenshots = 0;
             changeLocation(infoLabel, new Point(-8, 41));
             changeText(infoLabel, "Deleting Screenshots (0)");
+
+            //Get savespaths from instancePath
+            List<string> savesPaths = new List<string>();
+            foreach (string instancePath in instancePaths)
+            {
+                if (instancePath.EndsWith(@"\saves"))
+                {
+                    savesPaths.Add(instancePath);
+                }
+                else if (instancePath.EndsWith(@"\saves\"))
+                {
+                    savesPaths.Add(instancePath.Remove(instancePath.Length - 1));
+                }
+                else if (instancePath.EndsWith(@"\.minecraft"))
+                {
+                    savesPaths.Add(instancePath + @"\saves");
+                }
+                else if (instancePath.EndsWith(@"\.minecraft\"))
+                {
+                    savesPaths.Add(instancePath + "saves");
+                }
+                else if (instancePath.EndsWith(@"\"))
+                {
+                    savesPaths.Add(instancePath + @".minecraft\saves");
+                }
+                else
+                {
+                    savesPaths.Add(instancePath + @"\.minecraft\saves");
+                }
+            }
+
             foreach (string savesPath in savesPaths)
             {
+                if (savesPath.EndsWith(@"\"))
+                {
+                    savesPath.Remove(savesPath.Length - 1);
+                }
                 string minecraftPath = savesPath.Remove(savesPath.Length - 6);
                 string screenshotsPath = minecraftPath + @"\screenshots";
                 if (Directory.Exists(screenshotsPath))
