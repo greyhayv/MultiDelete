@@ -16,6 +16,7 @@ namespace MultiDelete
         //Variables
         List<TextBox> instancePathEntrys = new List<TextBox>();
         List<Button> selectInstancePathButtons = new List<Button>();
+        List<Button> deleteInstancePathButtons = new List<Button>();
         List<TextBox> startWithEntrys = new List<TextBox>();
         List<TextBox> includesEntrys = new List<TextBox>();
         List<TextBox> endWithEntrys = new List<TextBox>();
@@ -149,7 +150,7 @@ namespace MultiDelete
             recordingsPathButton.Padding = new Padding(0, 0, 1, 0);
             recordingsPathButton.Click += new EventHandler(recordingsPathButton_Click);
 
-            recordingsPathPanel.Size = new Size(232, 22);
+            recordingsPathPanel.Size = new Size(250, 22);
             recordingsPathPanel.Controls.Add(recordingsPathTextBox);
             recordingsPathTextBox.Location = new Point(0, 0);
             recordingsPathPanel.Controls.Add(recordingsPathButton);
@@ -208,6 +209,7 @@ namespace MultiDelete
             settingsPanel.Controls.Add(checkForUpdatesButton);
             instancePathPanel = new List<Panel>();
             selectInstancePathButtons = new List<Button>();
+            deleteInstancePathButtons = new List<Button>();
             instancePathEntrys = new List<TextBox>();
             createNewTextBox("instancePath", false);
             startWithEntrys = new List<TextBox>();
@@ -519,7 +521,7 @@ namespace MultiDelete
             //Creates a new TextBox if last TextBox has Text
             if(instancePathEntrys[instancePathEntrys.Count - 1].Text != "")
             {
-                createNewTextBox("instancePath");
+                createNewTextBox("instancePath", true);
             }
 
             //Deletes TextBoxes if they are empty
@@ -541,7 +543,7 @@ namespace MultiDelete
             //Creates a new TextBox if last TextBox has Text
             if (startWithEntrys[startWithEntrys.Count - 1].Text != "")
             {
-                createNewTextBox("startsWith");
+                createNewTextBox("startsWith", true);
             }
 
             //Deletes TextBoxes if they are empty
@@ -563,7 +565,7 @@ namespace MultiDelete
             //Creates a new TextBox if last TextBox has Text
             if (includesEntrys[includesEntrys.Count - 1].Text != "")
             {
-                createNewTextBox("includes");
+                createNewTextBox("includes", true);
             }
 
             //Deletes TextBoxes if they are empty
@@ -585,63 +587,8 @@ namespace MultiDelete
             //Creates a new TextBox if last TextBox has Text
             if (endWithEntrys[endWithEntrys.Count - 1].Text != "")
             {
-                createNewTextBox("endWith");
+                createNewTextBox("endWith", true);
             }
-        }
-
-        private void createNewTextBox(string type)
-        {
-            //Create and configure new TextBox
-            TextBox textBox = new TextBox();
-            textBox.BackColor = ColorTranslator.FromHtml("#4C4C4C");
-            textBox.BorderStyle = BorderStyle.FixedSingle;
-            textBox.ForeColor = ColorTranslator.FromHtml("#C2C2C2");
-            textBox.Size = new Size(200, 22);
-            textBox.TabStop = false;
-            textBox.TextChanged += new EventHandler(textChanged);
-            //Adds TextBox to List
-            if(type == "instancePath")
-            {
-                instancePathEntrys.Add(textBox);
-
-                //Creates and configures new Button to select instance Path
-                Button selectInstancePathButton = new Button();
-                selectInstancePathButton.Size = new Size(22, 22);
-                selectInstancePathButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
-                selectInstancePathButton.FlatStyle = FlatStyle.Popup;
-                selectInstancePathButton.TabStop = false;
-                selectInstancePathButton.UseVisualStyleBackColor = false;
-                selectInstancePathButton.Image = Properties.Resources.foldericon;
-                selectInstancePathButton.Padding = new Padding(0, 0, 1, 0);
-                selectInstancePathButton.Click += new EventHandler(selectInstancePathButton_click);
-                selectInstancePathButtons.Add(selectInstancePathButton);
-
-                //Creates and configures Panel with TextBox and Button
-                Panel instancePathPanel = new Panel();
-                instancePathPanel.Size = new Size(232, 22);
-                instancePathPanel.Controls.Add(textBox);
-                textBox.Location = new Point(0, 0);
-                instancePathPanel.Controls.Add(selectInstancePathButton);
-                selectInstancePathButton.Location = new Point(205, 0);
-                this.instancePathPanel.Add(instancePathPanel);
-                settingsPanel.Controls.Add(instancePathPanel);
-            }
-            if(type == "startsWith")
-            {
-                startWithEntrys.Add(textBox);
-                settingsPanel.Controls.Add(textBox);
-            }
-            if (type == "includes")
-            {
-                includesEntrys.Add(textBox);
-                settingsPanel.Controls.Add(textBox);
-            }
-            if (type == "endWith")
-            {
-                endWithEntrys.Add(textBox);
-                settingsPanel.Controls.Add(textBox);
-            }
-            arrangeObjects();
         }
 
         private void createNewTextBox(string type, bool shouldArrangeObjects)
@@ -671,13 +618,27 @@ namespace MultiDelete
                 selectInstancePathButton.Click += new EventHandler(selectInstancePathButton_click);
                 selectInstancePathButtons.Add(selectInstancePathButton);
 
+                //Creates and configures new Button to delete instance Path
+                Button deleteInstancePathButton = new Button();
+                deleteInstancePathButton.Size = new Size(22, 22);
+                deleteInstancePathButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
+                deleteInstancePathButton.FlatStyle = FlatStyle.Popup;
+                deleteInstancePathButton.TabStop = false;
+                deleteInstancePathButton.UseVisualStyleBackColor = false;
+                deleteInstancePathButton.Image = Properties.Resources.x;
+                deleteInstancePathButton.Padding = new Padding(0, 0, 1, 1);
+                deleteInstancePathButton.Click += new EventHandler(deleteInstancePathButton_click);
+                deleteInstancePathButtons.Add(deleteInstancePathButton);
+
                 //Creates and configures Panel with TextBox and Button
                 Panel instancePathPanel = new Panel();
-                instancePathPanel.Size = new Size(232, 22);
+                instancePathPanel.Size = new Size(275, 22);
                 instancePathPanel.Controls.Add(textBox);
                 textBox.Location = new Point(0, 0);
                 instancePathPanel.Controls.Add(selectInstancePathButton);
                 selectInstancePathButton.Location = new Point(205, 0);
+                deleteInstancePathButton.Location = new Point(230, 0);
+                instancePathPanel.Controls.Add(deleteInstancePathButton);
                 this.instancePathPanel.Add(instancePathPanel);
                 settingsPanel.Controls.Add(instancePathPanel);
             }
@@ -712,6 +673,7 @@ namespace MultiDelete
                 instancePathEntrys.RemoveAt(i);
 
                 selectInstancePathButtons.RemoveAt(i);
+                deleteInstancePathButtons.RemoveAt(i);
                 instancePathPanel.RemoveAt(i);
                 focusEntry = "instancePath";
             }
@@ -746,7 +708,18 @@ namespace MultiDelete
             settingsPanel.Controls.SetChildIndex(instancePathLabel, index);
             index++;
 
-            foreach (Panel panel in instancePathPanel)
+            for(int i = 0; i < deleteInstancePathButtons.Count; i++)
+            {
+                if(i < deleteInstancePathButtons.Count - 1)
+                {
+                    deleteInstancePathButtons[i].Visible = true;
+                } else
+                {
+                    deleteInstancePathButtons[i].Visible = false;
+                }
+            }
+
+            foreach(Panel panel in instancePathPanel)
             {
                 settingsPanel.Controls.SetChildIndex(panel, index);
                 index++;
@@ -953,6 +926,20 @@ namespace MultiDelete
                     instancePathEntrys[instancePathEntrys.Count - 1].Text = folder;
                 }
             }
+        }
+
+        private void deleteInstancePathButton_click(object sender, EventArgs e)
+        {
+            settingsPanel.Focus();
+            int index = 0;
+            for (int i = 0; i < deleteInstancePathButtons.Count; i++)
+            {
+                if (deleteInstancePathButtons[i].Equals(sender))
+                {
+                    index = i;
+                }
+            }
+            deleteTextBox(index, "instancePath");
         }
     }
 }
