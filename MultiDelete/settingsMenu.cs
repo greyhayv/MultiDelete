@@ -221,6 +221,15 @@ namespace MultiDelete
             if (!File.Exists(programsPath + @"\instancePaths.txt"))
             {
                 File.CreateText(programsPath + @"\instancePaths.txt").Dispose();
+                if(File.Exists(programsPath + @"\savesPaths.txt"))
+                {
+                    File.WriteAllText(programsPath + @"\instancePaths.txt", File.ReadAllText(programsPath + @"\savesPaths.txt"));
+                    string[] text = File.ReadAllLines(programsPath + @"\savesPaths.txt");
+                    for (int i = 0; i < text.Length; i++)
+                    {
+                        instancePathEntrys[i].Text = text[i];
+                    }
+                }
             } else
             {
                 string[] text = File.ReadAllLines(programsPath + @"\instancePaths.txt");
