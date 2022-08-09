@@ -939,7 +939,6 @@ namespace MultiDelete
 
         private void addMultipleInstanceButton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("aa");
             settingsPanel.Focus();
 
             CommonOpenFileDialog cofd = new CommonOpenFileDialog();
