@@ -10,7 +10,7 @@ namespace MultiDelete
 {
     public partial class MultiDelete : Form
     {
-        static string version = "v2.0";
+        static string version = "v1.2";
 
         static settingsMenu settingsMenu = new settingsMenu();
         static updateScreen updateScreen = new updateScreen();

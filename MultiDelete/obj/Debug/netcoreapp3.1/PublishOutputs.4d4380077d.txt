@@ -3,3 +3,6 @@ C:\Development\MultiDelete\project\MultiDelete\bin\Debug\netcoreapp3.1\publish\M
 C:\Development\MultiDelete\project\MultiDelete\bin\Debug\netcoreapp3.1\publish\MultiDelete.deps.json
 C:\Development\MultiDelete\project\MultiDelete\bin\Debug\netcoreapp3.1\publish\MultiDelete.runtimeconfig.json
 C:\Development\MultiDelete\project\MultiDelete\bin\Debug\netcoreapp3.1\publish\MultiDelete.pdb
+C:\Development\MultiDelete\project\MultiDelete\bin\Debug\netcoreapp3.1\publish\Microsoft.WindowsAPICodePack.dll
+C:\Development\MultiDelete\project\MultiDelete\bin\Debug\netcoreapp3.1\publish\Microsoft.WindowsAPICodePack.Shell.dll
+C:\Development\MultiDelete\project\MultiDelete\bin\Debug\netcoreapp3.1\publish\Microsoft.WindowsAPICodePack.ShellExtensions.dll
