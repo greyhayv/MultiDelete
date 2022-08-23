@@ -21,13 +21,14 @@ namespace MultiDelete
         static bool updateAvailable = false;
         static string newestVersion = "";
         long size = 0;
+        bool closeAfterDeletion = false;
 
         public MultiDelete()
         {
             InitializeComponent();
         }
 
-        private async void Form1_Load(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
             //Create Programm Folder if it doesnt exist
             if (!Directory.Exists(programsPath))
@@ -35,7 +36,27 @@ namespace MultiDelete
                 Directory.CreateDirectory(programsPath);
             }
 
-            await Task.Run(() => checkForUpdates(false));
+            Task.Run(() => checkForUpdates(false));
+
+            //Check launch arguments
+            string[] launchArgs = Environment.GetCommandLineArgs();
+            if(launchArgs.Length > 1)
+            {
+                foreach (string argument in launchArgs)
+                {
+                    if(argument == "-delWorlds")
+                    {
+                        deleteWorldsButton.Visible = false;
+                        settingsButton.Visible = false;
+                        focusButton.Focus();
+                        infoLabel.Visible = true;
+                        Task.Run(() => searchWorlds());
+                    } else if(argument == "-closeAfterDeletion")
+                    {
+                        closeAfterDeletion = true;
+                    }
+                }
+            }
         }
 
         public static void checkForUpdates(bool openDialogIfNoNewVersion)
@@ -683,6 +704,11 @@ namespace MultiDelete
             changeLocation(infoLabel, new Point(-8, 23));
             changeVisibilaty(okButton, true);
             changeVisibilaty(cancelButton, false);
+
+            if(closeAfterDeletion)
+            {
+                Application.Exit();
+            }
         }
 
         private void changeText(Label label, String text)
