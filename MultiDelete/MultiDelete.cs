@@ -48,7 +48,6 @@ namespace MultiDelete
                     {
                         deleteWorldsButton.Visible = false;
                         settingsButton.Visible = false;
-                        focusButton.Focus();
                         infoLabel.Visible = true;
                         Task.Run(() => searchWorlds());
                     } else if(argument == "-closeAfterDeletion")
