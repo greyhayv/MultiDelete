@@ -655,15 +655,15 @@ namespace MultiDelete
             }
             else if (size < 1048576)
             {
-                fileSize = (size / 1024).ToString() + "kB";
+                fileSize = Math.Round(Decimal.Divide(size, 1024), 2) + "kB";
             }
             else if (size < 1073741824)
             {
-                fileSize = ((size / 1024) / 1024).ToString() + "MB";
+                fileSize = Math.Round(Decimal.Divide(Decimal.Divide(size , 1024) , 1024), 2) + "MB";
             }
             else
             {
-                fileSize = (((size / 1024) / 1024) / 1024).ToString() + "GB";
+                fileSize = Math.Round(Decimal.Divide(Decimal.Divide(Decimal.Divide(size, 1024), 1024), 1024), 2) + "GB";
             }
 
             changeVisibilaty(progressBar, false);
