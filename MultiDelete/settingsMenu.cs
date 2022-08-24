@@ -1,4 +1,6 @@
-﻿using System;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
@@ -18,6 +20,7 @@ namespace MultiDelete
         List<TextBox> endWithEntrys = new List<TextBox>();
         List<Panel> instancePathPanel = new List<Panel>();
         string programsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete";
+        string optionsFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete\options.json";
         string focusEntry = "";
 
         Label settingsHeading = new Label();
@@ -217,82 +220,34 @@ namespace MultiDelete
             createNewTextBox("endWith", false);
             arrangeObjects();
 
-            //Create Program Files if they dont already exist and set options
-            if (!File.Exists(programsPath + @"\instancePaths.txt"))
+            //Load options
+            if(File.Exists(optionsFile))
             {
-                File.CreateText(programsPath + @"\instancePaths.txt").Dispose();
-                if(File.Exists(programsPath + @"\savesPaths.txt"))
-                {
-                    File.WriteAllText(programsPath + @"\instancePaths.txt", File.ReadAllText(programsPath + @"\savesPaths.txt"));
-                    string[] text = File.ReadAllLines(programsPath + @"\savesPaths.txt");
-                    for (int i = 0; i < text.Length; i++)
-                    {
-                        instancePathEntrys[i].Text = text[i];
-                    }
-                }
-            } else
-            {
-                string[] text = File.ReadAllLines(programsPath + @"\instancePaths.txt");
-                for(int i = 0; i < text.Length; i++)
-                {
-                    instancePathEntrys[i].Text = text[i];
-                }
-            }
+                Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
 
-            if (!File.Exists(programsPath + @"\startWith.txt"))
-            {
-                File.CreateText(programsPath + @"\startWith.txt").Dispose();
-                startWithEntrys[0].Text = "Random Speedrun";
-                startWithEntrys[1].Text = "Set Speedrun";
-            } else
-            {
-                string[] text = File.ReadAllLines(programsPath + @"\startWith.txt");
-                for (int i = 0; i < text.Length; i++)
+                for (int i = 0; i < options.InstancePaths.Length; i++)
                 {
-                    startWithEntrys[i].Text = text[i];
+                    instancePathEntrys[i].Text = options.InstancePaths[i];
                 }
-            }
 
-            if (!File.Exists(programsPath + @"\include.txt"))
-            {
-                File.CreateText(programsPath + @"\include.txt").Dispose();
-            } else
-            {
-                string[] text = File.ReadAllLines(programsPath + @"\include.txt");
-                for (int i = 0; i < text.Length; i++)
+                for (int i = 0; i < options.StartWith.Length; i++)
                 {
-                    includesEntrys[i].Text = text[i];
+                    startWithEntrys[i].Text = options.StartWith[i];
                 }
-            }
 
-            if (!File.Exists(programsPath + @"\endWith.txt"))
-            {
-                File.CreateText(programsPath + @"\endWith.txt").Dispose();
-            } else
-            {
-                string[] text = File.ReadAllLines(programsPath + @"\endWith.txt");
-                for (int i = 0; i < text.Length; i++)
+                for (int i = 0; i < options.Include.Length; i++)
                 {
-                    endWithEntrys[i].Text = text[i];
+                    includesEntrys[i].Text = options.Include[i];
                 }
-            }
 
-            if (!File.Exists(programsPath + @"\recordingsPath.txt"))
-            {
-                File.CreateText(programsPath + @"\recordingsPath.txt").Dispose();
-            }
-            else
-            {
-                recordingsPathTextBox.Text = File.ReadAllText(programsPath + @"\recordingsPath.txt");
-            }
+                for (int i = 0; i < options.EndWith.Length; i++)
+                {
+                    endWithEntrys[i].Text = options.EndWith[i];
+                }
 
-            if (!File.Exists(programsPath + @"\deleteAllWorlds.txt"))
-            {
-                File.CreateText(programsPath + @"\deleteAllWorlds.txt").Dispose();
-            } else
-            {
-                string text = File.ReadAllText(programsPath + @"\deleteAllWorlds.txt");
-                if(text == "true")
+                recordingsPathTextBox.Text = options.RecordingsPath;
+
+                if (options.DeleteAllWorlds)
                 {
                     deleteAllWorldsCheckBox.Checked = true;
                     foreach (TextBox textBox in startWithEntrys)
@@ -314,7 +269,8 @@ namespace MultiDelete
                     includeLabel.ForeColor = Color.FromArgb(94, 94, 94);
                     endWithLabel.ForeColor = Color.FromArgb(94, 94, 94);
 
-                } else
+                }
+                else
                 {
                     deleteAllWorldsCheckBox.Checked = false;
                     foreach (TextBox textBox in startWithEntrys)
@@ -335,16 +291,8 @@ namespace MultiDelete
                     includeLabel.ForeColor = Color.FromArgb(194, 194, 194);
                     endWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
                 }
-            }
 
-            if (!File.Exists(programsPath + @"\deleteRecordings.txt"))
-            {
-                File.CreateText(programsPath + @"\deleteRecordings.txt").Dispose();
-            }
-            else
-            {
-                string text = File.ReadAllText(programsPath + @"\deleteRecordings.txt");
-                if (text == "true")
+                if(options.DeleteRecordings)
                 {
                     deleteRecordingsCheckBox.Checked = true;
                     recordingsPathTextBox.Enabled = true;
@@ -356,57 +304,15 @@ namespace MultiDelete
                     recordingsPathTextBox.Enabled = false;
                     recordingsPathButton.Enabled = false;
                 }
-            }
 
-            if (!File.Exists(programsPath + @"\deleteCrashReports.txt"))
-            {
-                File.CreateText(programsPath + @"\deleteCrashReports.txt").Dispose();
-            }
-            else
-            {
-                string text = File.ReadAllText(programsPath + @"\deleteCrashReports.txt");
-                if (text == "true")
-                {
-                    deleteCrashReportsCheckBox.Checked = true;
-                }
-                else
-                {
-                    deleteCrashReportsCheckBox.Checked = false;
-                }
-            }
+                deleteCrashReportsCheckBox.Checked = options.DeleteCrashReports;
+                deleteScreenshotsCheckBox.Checked = options.DeleteScreenshots;
 
-            if (!File.Exists(programsPath + @"\deleteScreenshots.txt"))
+                deleteRawalleLogsCheckBox.Checked = options.DeleteRawalleLogs;
+            } else
             {
-                File.CreateText(programsPath + @"\deleteScreenshots.txt").Dispose();
-            }
-            else
-            {
-                string text = File.ReadAllText(programsPath + @"\deleteScreenshots.txt");
-                if (text == "true")
-                {
-                    deleteScreenshotsCheckBox.Checked = true;
-                }
-                else
-                {
-                    deleteScreenshotsCheckBox.Checked = false;
-                }
-            }
-
-            if (!File.Exists(programsPath + @"\deleteRawalleLogs.txt"))
-            {
-                File.CreateText(programsPath + @"\deleteRawalleLogs.txt").Dispose();
-            }
-            else
-            {
-                string text = File.ReadAllText(programsPath + @"\deleteRawalleLogs.txt");
-                if (text == "true")
-                {
-                    deleteRawalleLogsCheckBox.Checked = true;
-                }
-                else
-                {
-                    deleteRawalleLogsCheckBox.Checked = false;
-                }
+                startWithEntrys[0].Text = "Random Speedrun";
+                startWithEntrys[1].Text = "Set Speedrun";
             }
         }
 
@@ -418,92 +324,48 @@ namespace MultiDelete
 
         private void settingsMenu_FormClosed(object sender, EventArgs e)
         {
-            //Saves settings to Files
-            string text = "";
-            for(int i = 0; i < instancePathEntrys.Count; i++)
+            List<string> instancePaths = new List<string>();
+            foreach(TextBox instancePathEntry in instancePathEntrys)
             {
-                if (instancePathEntrys[i].Text != "")
-                {
-                    text =  text + instancePathEntrys[i].Text + Environment.NewLine;
-                }
-            }
-            File.WriteAllText(programsPath + @"\instancePaths.txt", text);
-
-            text = "";
-            for (int i = 0; i < startWithEntrys.Count; i++)
-            {
-                if (startWithEntrys[i].Text != "")
-                {
-                    text = text + startWithEntrys[i].Text + Environment.NewLine;
-                }
-            }
-            File.WriteAllText(programsPath + @"\startWith.txt", text);
-
-            text = "";
-            for (int i = 0; i < includesEntrys.Count; i++)
-            {
-                if (includesEntrys[i].Text != "")
-                {
-                    text = text + includesEntrys[i].Text + Environment.NewLine;
-                }
-            }
-            File.WriteAllText(programsPath + @"\include.txt", text);
-
-            text = "";
-            for (int i = 0; i < endWithEntrys.Count; i++)
-            {
-                if (endWithEntrys[i].Text != "")
-                {
-                    text = text + endWithEntrys[i].Text + Environment.NewLine;
-                }
-            }
-            File.WriteAllText(programsPath + @"\endWith.txt", text);
-
-            File.WriteAllText(programsPath + @"\recordingsPath.txt", recordingsPathTextBox.Text);
-
-            if (deleteAllWorldsCheckBox.Checked == true)
-            {
-                File.WriteAllText(programsPath + @"\deleteAllWorlds.txt", "true");
-            } else
-            {
-                File.WriteAllText(programsPath + @"\deleteAllWorlds.txt", "false");
+                instancePaths.Add(instancePathEntry.Text);
             }
 
-            if (deleteRecordingsCheckBox.Checked == true)
+            List<string> startWithList = new List<string>();
+            foreach (TextBox startWithEntry in startWithEntrys)
             {
-                File.WriteAllText(programsPath + @"\deleteRecordings.txt", "true");
-            }
-            else
-            {
-                File.WriteAllText(programsPath + @"\deleteRecordings.txt", "false");
+                startWithList.Add(startWithEntry.Text);
             }
 
-            if (deleteCrashReportsCheckBox.Checked == true)
+            List<string> includeList = new List<string>();
+            foreach (TextBox includeEntry in includesEntrys)
             {
-                File.WriteAllText(programsPath + @"\deleteCrashReports.txt", "true");
-            }
-            else
-            {
-                File.WriteAllText(programsPath + @"\deleteCrashReports.txt", "false");
+                includeList.Add(includeEntry.Text);
             }
 
-            if (deleteRawalleLogsCheckBox.Checked == true)
+            List<string> endWithList = new List<string>();
+            foreach (TextBox endWithEntry in endWithEntrys)
             {
-                File.WriteAllText(programsPath + @"\deleteRawalleLogs.txt", "true");
-            }
-            else
-            {
-                File.WriteAllText(programsPath + @"\deleteRawalleLogs.txt", "false");
+                endWithList.Add(endWithEntry.Text);
             }
 
-            if (deleteScreenshotsCheckBox.Checked == true)
+            //Saves settings to options file
+            Options options = new Options
             {
-                File.WriteAllText(programsPath + @"\deleteScreenshots.txt", "true");
-            }
-            else
-            {
-                File.WriteAllText(programsPath + @"\deleteScreenshots.txt", "false");
-            }
+                InstancePaths = instancePaths.ToArray(),
+                DeleteAllWorlds = deleteAllWorldsCheckBox.Checked,
+                StartWith = startWithList.ToArray(),
+                Include = includeList.ToArray(),
+                EndWith = endWithList.ToArray(),
+                DeleteRecordings = deleteRecordingsCheckBox.Checked,
+                RecordingsPath = recordingsPathTextBox.Text,
+                DeleteCrashReports = deleteCrashReportsCheckBox.Checked,
+                DeleteRawalleLogs = deleteRawalleLogsCheckBox.Checked,
+                DeleteScreenshots = deleteScreenshotsCheckBox.Checked
+            };
+
+            JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true };
+            string jsonString = JsonSerializer.Serialize(options, jsonSerializerOptions);
+            File.WriteAllText(optionsFile, jsonString);
         }
 
         private void textChanged(object sender, EventArgs e)
@@ -947,5 +809,19 @@ namespace MultiDelete
             }
             deleteTextBox(index, "instancePath");
         }
+    }
+
+    public class Options
+    {
+        public string[] InstancePaths { get; set; }
+        public bool DeleteAllWorlds { get; set; }
+        public string[] StartWith { get; set; }
+        public string[] Include { get; set; }
+        public string[] EndWith { get; set; }
+        public bool DeleteRecordings { get; set; }
+        public string RecordingsPath { get; set; }
+        public bool DeleteCrashReports { get; set; }
+        public bool DeleteRawalleLogs { get; set; }
+        public bool DeleteScreenshots { get; set; }
     }
 }
