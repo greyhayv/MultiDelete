@@ -48,6 +48,7 @@ namespace MultiDelete
         private void settingsMenu_Load(object sender, EventArgs e)
         {
             //Configures Objects
+            settingsHeading = new Label();
             settingsHeading.TextAlign = ContentAlignment.MiddleCenter;
             settingsHeading.AutoSize = false;
             settingsHeading.Font = new Font("Roboto", 20.25F, FontStyle.Bold, GraphicsUnit.Point);
@@ -56,6 +57,7 @@ namespace MultiDelete
             settingsHeading.TabStop = false;
             settingsHeading.Text = "Settings";
 
+            instancePathLabel = new Label();
             instancePathLabel.AutoSize = false;
             instancePathLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
             instancePathLabel.ForeColor = Color.FromArgb(194, 194, 194);
@@ -63,6 +65,7 @@ namespace MultiDelete
             instancePathLabel.TabStop = false;
             instancePathLabel.Text = "Instance-Paths:";
 
+            deleteAllWorldsThatLabel = new Label();
             deleteAllWorldsThatLabel.AutoSize = true;
             deleteAllWorldsThatLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
             deleteAllWorldsThatLabel.ForeColor = Color.FromArgb(194, 194, 194);
@@ -70,6 +73,7 @@ namespace MultiDelete
             deleteAllWorldsThatLabel.TabStop = false;
             deleteAllWorldsThatLabel.Text = "Delete all Worlds that";
 
+            startWithLabel = new Label();
             startWithLabel.AutoSize = false;
             startWithLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
             startWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
@@ -77,6 +81,7 @@ namespace MultiDelete
             startWithLabel.TabStop = false;
             startWithLabel.Text = "start with:";
 
+            includeLabel = new Label();
             includeLabel.AutoSize = false;
             includeLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
             includeLabel.ForeColor = Color.FromArgb(194, 194, 194);
@@ -84,6 +89,7 @@ namespace MultiDelete
             includeLabel.TabStop = false;
             includeLabel.Text = "include:";
 
+            endWithLabel = new Label();
             endWithLabel.AutoSize = false;
             endWithLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
             endWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
@@ -91,6 +97,7 @@ namespace MultiDelete
             endWithLabel.TabStop = false;
             endWithLabel.Text = "end with:";
 
+            deleteAllWorldsCheckBox = new CheckBox();
             deleteAllWorldsCheckBox.AutoSize = false;
             deleteAllWorldsCheckBox.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
             deleteAllWorldsCheckBox.ForeColor = Color.FromArgb(194, 194, 194);
@@ -100,6 +107,7 @@ namespace MultiDelete
             deleteAllWorldsCheckBox.UseVisualStyleBackColor = true;
             deleteAllWorldsCheckBox.CheckedChanged += new EventHandler(this.deleteAllWorldsCheckBox_CheckedChanged);
 
+            deleteRecordingsCheckBox = new CheckBox();
             deleteRecordingsCheckBox.AutoSize = false;
             deleteRecordingsCheckBox.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
             deleteRecordingsCheckBox.ForeColor = Color.FromArgb(194, 194, 194);
@@ -109,6 +117,7 @@ namespace MultiDelete
             deleteRecordingsCheckBox.UseVisualStyleBackColor = true;
             deleteRecordingsCheckBox.CheckedChanged += new EventHandler(this.deleteRecordingsCheckBox_CheckedChanged);
 
+            deleteCrashReportsCheckBox = new CheckBox();
             deleteCrashReportsCheckBox.AutoSize = false;
             deleteCrashReportsCheckBox.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
             deleteCrashReportsCheckBox.ForeColor = Color.FromArgb(194, 194, 194);
@@ -117,6 +126,7 @@ namespace MultiDelete
             deleteCrashReportsCheckBox.Text = "Delete Crash-Reports";
             deleteCrashReportsCheckBox.UseVisualStyleBackColor = true;
 
+            deleteRawalleLogsCheckBox = new CheckBox();
             deleteRawalleLogsCheckBox.AutoSize = false;
             deleteRawalleLogsCheckBox.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
             deleteRawalleLogsCheckBox.ForeColor = Color.FromArgb(194, 194, 194);
@@ -125,6 +135,7 @@ namespace MultiDelete
             deleteRawalleLogsCheckBox.Text = "Delete Rawalle logs";
             deleteRawalleLogsCheckBox.UseVisualStyleBackColor = true;
 
+            deleteScreenshotsCheckBox = new CheckBox();
             deleteScreenshotsCheckBox.AutoSize = false;
             deleteScreenshotsCheckBox.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
             deleteScreenshotsCheckBox.ForeColor = Color.FromArgb(194, 194, 194);
@@ -133,6 +144,7 @@ namespace MultiDelete
             deleteScreenshotsCheckBox.Text = "Delete Screenshots";
             deleteScreenshotsCheckBox.UseVisualStyleBackColor = true;
 
+            recordingsPathTextBox = new TextBox();
             recordingsPathTextBox.BackColor = ColorTranslator.FromHtml("#4C4C4C");
             recordingsPathTextBox.BorderStyle = BorderStyle.FixedSingle;
             recordingsPathTextBox.ForeColor = ColorTranslator.FromHtml("#C2C2C2");
@@ -140,6 +152,7 @@ namespace MultiDelete
             recordingsPathTextBox.TabStop = false;
             recordingsPathTextBox.PlaceholderText = "Recordings Path";
 
+            recordingsPathButton = new Button();
             recordingsPathButton.Size = new Size(22, 22);
             recordingsPathButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
             recordingsPathButton.FlatStyle = FlatStyle.Popup;
@@ -149,12 +162,14 @@ namespace MultiDelete
             recordingsPathButton.Padding = new Padding(0, 0, 1, 0);
             recordingsPathButton.Click += new EventHandler(recordingsPathButton_Click);
 
+            recordingsPathPanel = new Panel();
             recordingsPathPanel.Size = new Size(250, 22);
             recordingsPathPanel.Controls.Add(recordingsPathTextBox);
             recordingsPathTextBox.Location = new Point(0, 0);
             recordingsPathPanel.Controls.Add(recordingsPathButton);
             recordingsPathButton.Location = new Point(205, 0);
 
+            checkForUpdatesButton = new Button();
             checkForUpdatesButton.BackColor = Color.FromArgb(76, 76, 76);
             checkForUpdatesButton.FlatStyle = FlatStyle.Popup;
             checkForUpdatesButton.Font = new Font("Roboto", 12.25F, FontStyle.Regular, GraphicsUnit.Point);
@@ -165,6 +180,7 @@ namespace MultiDelete
             checkForUpdatesButton.UseVisualStyleBackColor = false;
             checkForUpdatesButton.Click += new EventHandler(checkForUpdatesButton_Click);
 
+            addMultipleInstanceButton = new Button();
             addMultipleInstanceButton.BackColor = Color.FromArgb(76, 76, 76);
             addMultipleInstanceButton.FlatStyle = FlatStyle.Popup;
             addMultipleInstanceButton.Font = new Font("Roboto", 12.25F, FontStyle.Regular, GraphicsUnit.Point);
