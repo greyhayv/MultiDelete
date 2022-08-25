@@ -198,7 +198,7 @@ namespace MultiDelete
             toolTip.SetToolTip(startWithLabel, "Select what the name of the world has to start with to be deleted");
             toolTip.SetToolTip(includeLabel, "Select what the name of the world has to include with to be deleted");
             toolTip.SetToolTip(endWithLabel, "Select what the name of the world has to end with to be deleted");
-            toolTip.SetToolTip(deleteRecordingsCheckBox, "Select if MultiDelete should delete your Recordings. WARNING: THIS DELETES ALL FILES IN THE SELECTED DIRECTORY");
+            toolTip.SetToolTip(deleteRecordingsCheckBox, "Select if MultiDelete should delete your Recordings");
             toolTip.SetToolTip(recordingsPathTextBox, "Select in which folder your Recordings are stored in");
             toolTip.SetToolTip(deleteCrashReportsCheckBox, "Select if MultiDelete should delete your Crash-reports");
             toolTip.SetToolTip(deleteRawalleLogsCheckBox, "Select if MultiDelete should delete your Rawalle logs");

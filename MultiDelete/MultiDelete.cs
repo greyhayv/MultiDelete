@@ -234,12 +234,12 @@ namespace MultiDelete
                             }
                             foreach(string world in Directory.GetDirectories(path))
                             {
-                                if (cancelDeletion == true)
+                                if(cancelDeletion == true)
                                 {
                                     cancelDeletion = false;
                                     return;
                                 }
-                                if (deleteAllWorlds)
+                                if(deleteAllWorlds)
                                 {
                                     worldsToDelete.Add(world);
                                     changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
@@ -248,11 +248,11 @@ namespace MultiDelete
                                 else
                                 {
                                     string worldName = world.Substring(path.Length + 1);
-                                    if (startWith.Length > 0)
+                                    if(startWith.Length > 0)
                                     {
-                                        foreach (string str in startWith)
+                                        foreach(string str in startWith)
                                         {
-                                            if (worldName.StartsWith(str))
+                                            if(worldName.StartsWith(str))
                                             {
                                                 worldsToDelete.Add(world);
                                                 changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
@@ -320,6 +320,7 @@ namespace MultiDelete
                 refreshUI();
             }
 
+            //Get options
             Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
             bool delRecordings = options.DeleteRecordings;
             bool delCrashReports = options.DeleteCrashReports;
