@@ -4,7 +4,7 @@ A GUI-Based, easy to use and install Tool to delete Minecraft Worlds, Recordings
 ## Features
 -You can pick what instances to delete from.  
 -You can pick what the world name has to start with, include or end with. (So you dont accidentally delete Practice Maps)  
--You can delete Recordings, Rawalle-logs, Crash-reports and Screenshots  
+-It can delete Recordings, Rawalle-logs, Crash-reports and Screenshots  
 -Cancel Button
 
 ![Deleting Worlds](https://user-images.githubusercontent.com/107059342/177053350-293e1eaa-a499-49c4-a5c5-41f73faddfa3.png)
