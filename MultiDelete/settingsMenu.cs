@@ -19,7 +19,6 @@ namespace MultiDelete
         List<TextBox> includesEntrys = new List<TextBox>();
         List<TextBox> endWithEntrys = new List<TextBox>();
         List<Panel> instancePathPanel = new List<Panel>();
-        string programsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete";
         string optionsFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete\options.json";
         string focusEntry = "";
 
@@ -343,25 +342,37 @@ namespace MultiDelete
             List<string> instancePaths = new List<string>();
             foreach(TextBox instancePathEntry in instancePathEntrys)
             {
-                instancePaths.Add(instancePathEntry.Text);
+                if(!string.IsNullOrEmpty(instancePathEntry.Text))
+                {
+                    instancePaths.Add(instancePathEntry.Text);
+                }
             }
 
             List<string> startWithList = new List<string>();
             foreach (TextBox startWithEntry in startWithEntrys)
             {
-                startWithList.Add(startWithEntry.Text);
+                if(!string.IsNullOrWhiteSpace(startWithEntry.Text))
+                {
+                    startWithList.Add(startWithEntry.Text);
+                }
             }
 
             List<string> includeList = new List<string>();
             foreach (TextBox includeEntry in includesEntrys)
             {
-                includeList.Add(includeEntry.Text);
+                if(!string.IsNullOrWhiteSpace(includeEntry.Text))
+                {
+                    includeList.Add(includeEntry.Text);
+                }
             }
 
             List<string> endWithList = new List<string>();
             foreach (TextBox endWithEntry in endWithEntrys)
             {
-                endWithList.Add(endWithEntry.Text);
+                if(!string.IsNullOrWhiteSpace(endWithEntry.Text))
+                {
+                    endWithList.Add(endWithEntry.Text);
+                }
             }
 
             //Saves settings to options file

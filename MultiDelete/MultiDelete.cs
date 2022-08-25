@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Net;
 using System.IO;
 using System.Collections.Generic;
@@ -15,6 +17,7 @@ namespace MultiDelete
         static settingsMenu settingsMenu = new settingsMenu();
         static updateScreen updateScreen = new updateScreen();
         static string programsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete";
+        string optionsFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete\options.json";
         List<string> worldsToDelete = new List<string>();
         List<string> recordingsToDelete = new List<string>();
         bool cancelDeletion = false;
@@ -129,12 +132,13 @@ namespace MultiDelete
             size = 0;
             cancelDeletion = false;
             worldsToDelete = new List<string>();
-            //Get Variables from TextFiles
-            string[] instancePaths = File.ReadAllLines(programsPath + @"\instancePaths.txt");
-            string[] startWith = File.ReadAllLines(programsPath + @"\startWith.txt");
-            string[] include = File.ReadAllLines(programsPath + @"\include.txt");
-            string[] endWith = File.ReadAllLines(programsPath + @"\endWith.txt");
-            string deleteAllWorlds = File.ReadAllText(programsPath + @"\deleteAllWorlds.txt");
+            //Get Variables
+            Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            string[] instancePaths = options.InstancePaths;
+            string[] startWith = options.StartWith;
+            string[] include = options.Include;
+            string[] endWith = options.EndWith;
+            bool deleteAllWorlds = options.DeleteAllWorlds;
 
             //Get savespaths from instancePath
             List<string> savesPaths = new List<string>();
@@ -235,7 +239,7 @@ namespace MultiDelete
                                     cancelDeletion = false;
                                     return;
                                 }
-                                if (deleteAllWorlds == "true")
+                                if (deleteAllWorlds)
                                 {
                                     worldsToDelete.Add(world);
                                     changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
@@ -316,53 +320,11 @@ namespace MultiDelete
                 refreshUI();
             }
 
-            string deleteRecordingsStr = File.ReadAllText(programsPath + @"\deleteRecordings.txt");
-            bool delRecordings = false;
-
-            string deleteCrashReportsStr = File.ReadAllText(programsPath + @"\deleteCrashReports.txt");
-            bool delCrashReports = false;
-
-            string deleteRawalleLogsStr = File.ReadAllText(programsPath + @"\deleteRawalleLogs.txt");
-            bool delRawalleLogs = false;
-
-            string deleteScreenshotsStr = File.ReadAllText(programsPath + @"\deleteScreenshots.txt");
-            bool delScreenshots = false;
-
-            if (deleteCrashReportsStr == "true")
-            {
-                delCrashReports = true;
-            }
-            else
-            {
-                delCrashReports = false;
-            }
-
-            if (deleteRecordingsStr == "true")
-            {
-                delRecordings = true;
-            }
-            else
-            {
-                delRecordings = false;
-            }
-
-            if (deleteRawalleLogsStr == "true")
-            {
-                delRawalleLogs = true;
-            }
-            else
-            {
-                delRawalleLogs = false;
-            }
-
-            if (deleteScreenshotsStr == "true")
-            {
-                delScreenshots = true;
-            }
-            else
-            {
-                delScreenshots = false;
-            }
+            Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            bool delRecordings = options.DeleteRecordings;
+            bool delCrashReports = options.DeleteCrashReports;
+            bool delRawalleLogs = options.DeleteRawalleLogs;
+            bool delScreenshots = options.DeleteScreenshots;
 
             if (delRecordings)
             {
@@ -387,8 +349,9 @@ namespace MultiDelete
         private void searchRecordings()
         {
             recordingsToDelete = new List<string>();
-            //Gets Variable from TextFiles
-            string recordingsPath = File.ReadAllText(programsPath + @"\recordingsPath.txt");
+            //Gets Variable
+            Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            string recordingsPath = options.RecordingsPath;
             //Resets Location and Font of Label
             changeLocation(infoLabel, new Point(-8, 41));
             changeFont(infoLabel, new Font("Roboto", 16));
@@ -429,14 +392,17 @@ namespace MultiDelete
                 }
                 foreach (string recording in Directory.GetFiles(recordingsPath))
                 {
-                    if (cancelDeletion == true)
+                    if(recording.EndsWith(".mp4"))
                     {
-                        cancelDeletion = false;
-                        return;
+                        if (cancelDeletion == true)
+                        {
+                            cancelDeletion = false;
+                            return;
+                        }
+                        recordingsToDelete.Add(recording);
+                        changeText(infoLabel, "Searching Recordings (" + recordingsToDelete.Count.ToString() + ")");
+                        refreshUI();
                     }
-                    recordingsToDelete.Add(recording);
-                    changeText(infoLabel, "Searching Recordings (" + recordingsToDelete.Count.ToString() + ")");
-                    refreshUI();
                 }
                 deleteRecordings();
             }
@@ -473,7 +439,8 @@ namespace MultiDelete
 
         private void deleteCrashReports()
         {
-            string[] instancePaths = File.ReadAllLines(programsPath + @"\instancePaths.txt");
+            Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            string[] instancePaths = options.InstancePaths;
             int deletedCrashReports = 0;
             changeLocation(infoLabel, new Point(-8, 41));
             changeText(infoLabel, "Deleting Crash-reports (0)");
@@ -546,7 +513,8 @@ namespace MultiDelete
 
         private void deleteRawalleLogs()
         {
-            string[] instancePaths = File.ReadAllLines(programsPath + @"\instancePaths.txt");
+            Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            string[] instancePaths = options.InstancePaths;
             int deletedRawalleLogs = 0;
             changeLocation(infoLabel, new Point(-8, 41));
             changeText(infoLabel, "Deleting Rawalle-logs (0)");
@@ -606,7 +574,8 @@ namespace MultiDelete
 
         private void deleteScreenshots()
         {
-            string[] instancePaths = File.ReadAllLines(programsPath + @"\instancePaths.txt");
+            Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            string[] instancePaths = options.InstancePaths;
             int deletedScreenshots = 0;
             changeLocation(infoLabel, new Point(-8, 41));
             changeText(infoLabel, "Deleting Screenshots (0)");
