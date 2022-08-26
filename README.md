@@ -12,7 +12,11 @@ A GUI-Based, easy to use and install Tool to delete Minecraft Worlds, Recordings
 ## Settings
 MultiDelete lets you configure which Instances to delete Worlds in and exactly which Worlds to delete! You can also select if it should delete your Recordings, Rawalle-logs, Screenshots and/or Crash-reports!
 
-![Settings](https://user-images.githubusercontent.com/107059342/183628097-ce0decab-5263-40cb-b984-8bdd1014a62f.png)
+![Settings](https://user-images.githubusercontent.com/107059342/186909501-2d2779c3-fa9f-4b47-8477-3ac930a0a6ba.png)
+
+## Launch Arguments
+`-delWorlds` This starts world deletion on startup  
+`-closeAfterDeletion` This makes the program close after all worlds have been deleted
 
 ## Installation
 Click on the latest release, download the installer, execute it and go through the steps.
