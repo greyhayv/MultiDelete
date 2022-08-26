@@ -148,6 +148,7 @@ namespace MultiDelete
                     EndWith = new string[0],
                     DeleteRecordings = false,
                     RecordingsPath = "",
+                    UpdateScreen = "",
                     DeleteCrashReports = false,
                     DeleteRawalleLogs = false,
                     DeleteScreenshots = false
@@ -230,7 +231,13 @@ namespace MultiDelete
                     {
                         //Searches all Worlds To delete
                         changeVisibilaty(cancelButton, true);
-                        changeText(infoLabel, "Searching Worlds (0)");
+                        if(options.UpdateScreen == "never")
+                        {
+                            changeText(infoLabel, "Searching Worlds");
+                        } else
+                        {
+                            changeText(infoLabel, "Searching Worlds (0)");
+                        }
                         worldsToDelete = new List<string>();
                         foreach(string path in savesPaths)
                         {
@@ -243,7 +250,7 @@ namespace MultiDelete
                                 changeVisibilaty(okButton, true);
                                 changeVisibilaty(cancelButton, false);
 
-                                //Make Font smaller if its to long to be displayed
+                                //Make Font smaller if it text to long to be displayed
                                 while(infoLabel.Width < TextRenderer.MeasureText(infoLabel.Text, infoLabel.Font).Width)
                                 {
                                     changeFont(infoLabel, new Font("Roboto", infoLabel.Font.Size - 0.5f), true);
@@ -261,8 +268,23 @@ namespace MultiDelete
                                 if(deleteAllWorlds)
                                 {
                                     worldsToDelete.Add(world);
-                                    changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
-                                    refreshUI();
+                                    if(options.UpdateScreen == "every world")
+                                    {
+                                        changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                        refreshUI();
+                                    } else if(options.UpdateScreen == "every 10. world" && worldsToDelete.Count % 10 == 0)
+                                    {
+                                        changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                        refreshUI();
+                                    } else if(options.UpdateScreen == "every 100. world" && worldsToDelete.Count % 100 == 0)
+                                    {
+                                        changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                        refreshUI();
+                                    } else if(options.UpdateScreen == "every 1000. world" && worldsToDelete.Count % 1000 == 0)
+                                    {
+                                        changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                        refreshUI();
+                                    }
                                 }
                                 else
                                 {
@@ -274,8 +296,26 @@ namespace MultiDelete
                                             if(worldName.StartsWith(str))
                                             {
                                                 worldsToDelete.Add(world);
-                                                changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
-                                                refreshUI();
+                                                if (options.UpdateScreen == "every world")
+                                                {
+                                                    changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                    refreshUI();
+                                                }
+                                                else if (options.UpdateScreen == "every 10. world" && worldsToDelete.Count % 10 == 0)
+                                                {
+                                                    changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                    refreshUI();
+                                                }
+                                                else if (options.UpdateScreen == "every 100. world" && worldsToDelete.Count % 100 == 0)
+                                                {
+                                                    changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                    refreshUI();
+                                                }
+                                                else if (options.UpdateScreen == "every 1000. world" && worldsToDelete.Count % 1000 == 0)
+                                                {
+                                                    changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                    refreshUI();
+                                                }
                                             }
                                         }
                                     }
@@ -286,8 +326,26 @@ namespace MultiDelete
                                             if (worldName.Contains(str))
                                             {
                                                 worldsToDelete.Add(world);
-                                                changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
-                                                refreshUI();
+                                                if (options.UpdateScreen == "every world")
+                                                {
+                                                    changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                    refreshUI();
+                                                }
+                                                else if (options.UpdateScreen == "every 10. world" && worldsToDelete.Count % 10 == 0)
+                                                {
+                                                    changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                    refreshUI();
+                                                }
+                                                else if (options.UpdateScreen == "every 100. world" && worldsToDelete.Count % 100 == 0)
+                                                {
+                                                    changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                    refreshUI();
+                                                }
+                                                else if (options.UpdateScreen == "every 1000. world" && worldsToDelete.Count % 1000 == 0)
+                                                {
+                                                    changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                    refreshUI();
+                                                }
                                             }
                                         }
                                     }
@@ -298,8 +356,26 @@ namespace MultiDelete
                                             if (worldName.EndsWith(str))
                                             {
                                                 worldsToDelete.Add(world);
-                                                changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
-                                                refreshUI();
+                                                if (options.UpdateScreen == "every world")
+                                                {
+                                                    changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                    refreshUI();
+                                                }
+                                                else if (options.UpdateScreen == "every 10. world" && worldsToDelete.Count % 10 == 0)
+                                                {
+                                                    changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                    refreshUI();
+                                                }
+                                                else if (options.UpdateScreen == "every 100. world" && worldsToDelete.Count % 100 == 0)
+                                                {
+                                                    changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                    refreshUI();
+                                                }
+                                                else if (options.UpdateScreen == "every 1000. world" && worldsToDelete.Count % 1000 == 0)
+                                                {
+                                                    changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
+                                                    refreshUI();
+                                                }
                                             }
                                         }
                                     }
@@ -314,31 +390,6 @@ namespace MultiDelete
 
         private void deleteWorlds()
         {
-            //deletes All found Worlds
-            int deletedWorlds = 0;
-            changeLocation(infoLabel, new Point(-8, 10));
-            changeText(infoLabel, "Deleting Worlds (0/" + worldsToDelete.Count.ToString() + ")");
-            changeMaximum(progressBar, worldsToDelete.Count);
-            changeValue(progressBar, 0);
-            changeVisibilaty(progressBar, true);
-            foreach (string world in worldsToDelete)
-            {
-                if(cancelDeletion == true)
-                {
-                    cancelDeletion = false;
-                    return;
-                }
-               
-                DirectoryInfo di = new DirectoryInfo(world);
-                calcDirSize(di);
-
-                Directory.Delete(world, true);
-                deletedWorlds += 1;
-                changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
-                changeValue(progressBar, deletedWorlds);
-                refreshUI();
-            }
-
             //Get options
             Options options = new Options();
             if (File.Exists(optionsFile))
@@ -356,11 +407,64 @@ namespace MultiDelete
                     EndWith = new string[0],
                     DeleteRecordings = false,
                     RecordingsPath = "",
+                    UpdateScreen = "",
                     DeleteCrashReports = false,
                     DeleteRawalleLogs = false,
                     DeleteScreenshots = false
                 };
             }
+            //deletes All found Worlds
+            int deletedWorlds = 0;
+            if(options.UpdateScreen == "never")
+            {
+                changeText(infoLabel, "Deleting Worlds");
+            } else
+            {
+                changeLocation(infoLabel, new Point(-8, 10));
+                changeText(infoLabel, "Deleting Worlds (0/" + worldsToDelete.Count.ToString() + ")");
+                changeMaximum(progressBar, worldsToDelete.Count);
+                changeValue(progressBar, 0);
+                changeVisibilaty(progressBar, true);
+            }
+            foreach (string world in worldsToDelete)
+            {
+                if(cancelDeletion == true)
+                {
+                    cancelDeletion = false;
+                    return;
+                }
+               
+                DirectoryInfo di = new DirectoryInfo(world);
+                calcDirSize(di);
+
+                Directory.Delete(world, true);
+                deletedWorlds += 1;
+                if (options.UpdateScreen == "every world")
+                {
+                    changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                    changeValue(progressBar, deletedWorlds);
+                    refreshUI();
+                }
+                else if (options.UpdateScreen == "every 10. world" && deletedWorlds % 10 == 0)
+                {
+                    changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                    changeValue(progressBar, deletedWorlds);
+                    refreshUI();
+                }
+                else if (options.UpdateScreen == "every 100. world" && deletedWorlds % 100 == 0)
+                {
+                    changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                    changeValue(progressBar, deletedWorlds);
+                    refreshUI();
+                }
+                else if (options.UpdateScreen == "every 1000. world" && deletedWorlds % 1000 == 0)
+                {
+                    changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                    changeValue(progressBar, deletedWorlds);
+                    refreshUI();
+                }
+            }
+
             bool delRecordings = options.DeleteRecordings;
             bool delCrashReports = options.DeleteCrashReports;
             bool delRawalleLogs = options.DeleteRawalleLogs;
@@ -405,6 +509,7 @@ namespace MultiDelete
                     Include = new string[0],
                     EndWith = new string[0],
                     DeleteRecordings = false,
+                    UpdateScreen = "",
                     RecordingsPath = "",
                     DeleteCrashReports = false,
                     DeleteRawalleLogs = false,
@@ -516,6 +621,7 @@ namespace MultiDelete
                     EndWith = new string[0],
                     DeleteRecordings = false,
                     RecordingsPath = "",
+                    UpdateScreen = "",
                     DeleteCrashReports = false,
                     DeleteRawalleLogs = false,
                     DeleteScreenshots = false
@@ -611,6 +717,7 @@ namespace MultiDelete
                     EndWith = new string[0],
                     DeleteRecordings = false,
                     RecordingsPath = "",
+                    UpdateScreen = "",
                     DeleteCrashReports = false,
                     DeleteRawalleLogs = false,
                     DeleteScreenshots = false
@@ -693,6 +800,7 @@ namespace MultiDelete
                     EndWith = new string[0],
                     DeleteRecordings = false,
                     RecordingsPath = "",
+                    UpdateScreen = "",
                     DeleteCrashReports = false,
                     DeleteRawalleLogs = false,
                     DeleteScreenshots = false

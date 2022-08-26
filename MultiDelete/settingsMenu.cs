@@ -23,6 +23,7 @@ namespace MultiDelete
         string focusEntry = "";
 
         Label settingsHeading = new Label();
+        ComboBox updateScreenComboBox = new ComboBox();
         Label instancePathLabel = new Label();
         Label deleteAllWorldsThatLabel = new Label();
         Label startWithLabel = new Label();
@@ -37,7 +38,9 @@ namespace MultiDelete
         Button checkForUpdatesButton = new Button();
         Button recordingsPathButton = new Button();
         Panel recordingsPathPanel = new Panel();
+        Panel updateScreenPanel = new Panel();
         Button addMultipleInstanceButton = new Button();
+        Label updateScreenLabel = new Label();
 
         public settingsMenu()
         {
@@ -143,6 +146,38 @@ namespace MultiDelete
             deleteScreenshotsCheckBox.Text = "Delete Screenshots";
             deleteScreenshotsCheckBox.UseVisualStyleBackColor = true;
 
+            updateScreenLabel = new Label();
+            updateScreenLabel.AutoSize = true;
+            updateScreenLabel.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            updateScreenLabel.ForeColor = Color.FromArgb(194, 194, 194);
+            updateScreenLabel.TabStop = false;
+            updateScreenLabel.Text = "Update screen";
+
+            updateScreenComboBox = new ComboBox();
+            updateScreenComboBox.BackColor = Color.FromArgb(76, 76, 76);
+            updateScreenComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            updateScreenComboBox.FlatStyle = FlatStyle.Popup;
+            updateScreenComboBox.ForeColor = Color.FromArgb(194, 194, 194);
+            updateScreenComboBox.FormattingEnabled = true;
+            updateScreenComboBox.Items.AddRange(new object[] {
+            "every world",
+            "every 10. world",
+            "every 100. world",
+            "every 1000. world",
+            "never"});
+            updateScreenComboBox.Location = new Point(320, 12);
+            updateScreenComboBox.Size = new Size(121, 21);
+            updateScreenComboBox.TabStop = false;
+            updateScreenComboBox.SelectedIndex = 0;
+            updateScreenComboBox.SelectedIndexChanged += new EventHandler(updateScreenComboBox_SelectedIndexChanged);
+
+            updateScreenPanel = new Panel();
+            updateScreenPanel.Size = new Size(400, 23);
+            updateScreenPanel.Controls.Add(updateScreenLabel);
+            updateScreenLabel.Location = new Point(0, 0);
+            updateScreenPanel.Controls.Add(updateScreenComboBox);
+            updateScreenComboBox.Location = new Point(110, 0);
+
             recordingsPathTextBox = new TextBox();
             recordingsPathTextBox.BackColor = ColorTranslator.FromHtml("#4C4C4C");
             recordingsPathTextBox.BorderStyle = BorderStyle.FixedSingle;
@@ -205,6 +240,8 @@ namespace MultiDelete
             toolTip.SetToolTip(deleteScreenshotsCheckBox, "Select if MultiDelete should delete your Screenshots");
             toolTip.SetToolTip(checkForUpdatesButton, "Check if a new Update is available");
             toolTip.SetToolTip(addMultipleInstanceButton, "Add multiple Instances at once via selecting multiple folders");
+            toolTip.SetToolTip(updateScreenLabel, "Select how often the screen should update during world deletion (Less updates = way faster world deletion)");
+            toolTip.SetToolTip(updateScreenComboBox, "Select how often the screen should update during world deletion (Less updates = way faster world deletion)");
 
             //Resets settingsMenu
             settingsPanel.Controls.Clear();
@@ -217,6 +254,7 @@ namespace MultiDelete
             settingsPanel.Controls.Add(endWithLabel);
             settingsPanel.Controls.Add(deleteAllWorldsCheckBox);
             settingsPanel.Controls.Add(deleteRecordingsCheckBox);
+            settingsPanel.Controls.Add(updateScreenPanel);
             settingsPanel.Controls.Add(recordingsPathPanel);
             settingsPanel.Controls.Add(deleteCrashReportsCheckBox);
             settingsPanel.Controls.Add(deleteRawalleLogsCheckBox);
@@ -307,6 +345,8 @@ namespace MultiDelete
                     endWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
                 }
 
+                updateScreenComboBox.SelectedItem = options.UpdateScreen;
+
                 if(options.DeleteRecordings)
                 {
                     deleteRecordingsCheckBox.Checked = true;
@@ -383,6 +423,7 @@ namespace MultiDelete
                 StartWith = startWithList.ToArray(),
                 Include = includeList.ToArray(),
                 EndWith = endWithList.ToArray(),
+                UpdateScreen = updateScreenComboBox.Text,
                 DeleteRecordings = deleteRecordingsCheckBox.Checked,
                 RecordingsPath = recordingsPathTextBox.Text,
                 DeleteCrashReports = deleteCrashReportsCheckBox.Checked,
@@ -656,6 +697,9 @@ namespace MultiDelete
                 index++;
             }
 
+            settingsPanel.Controls.SetChildIndex(updateScreenPanel, index);
+            index++;
+
             settingsPanel.Controls.SetChildIndex(deleteRecordingsCheckBox, index);
             index++;
 
@@ -836,6 +880,11 @@ namespace MultiDelete
             }
             deleteTextBox(index, "instancePath");
         }
+
+        private void updateScreenComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            settingsPanel.Focus();
+        }
     }
 
     public class Options
@@ -845,6 +894,7 @@ namespace MultiDelete
         public string[] StartWith { get; set; }
         public string[] Include { get; set; }
         public string[] EndWith { get; set; }
+        public string UpdateScreen { get; set; }
         public bool DeleteRecordings { get; set; }
         public string RecordingsPath { get; set; }
         public bool DeleteCrashReports { get; set; }
