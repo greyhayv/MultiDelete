@@ -133,7 +133,26 @@ namespace MultiDelete
             cancelDeletion = false;
             worldsToDelete = new List<string>();
             //Get Variables
-            Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            Options options = new Options();
+            if(File.Exists(optionsFile))
+            {
+                options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            } else
+            {
+                options = new Options
+                {
+                    InstancePaths = new string[0],
+                    DeleteAllWorlds = false,
+                    StartWith = new string[0],
+                    Include = new string[0],
+                    EndWith = new string[0],
+                    DeleteRecordings = false,
+                    RecordingsPath = "",
+                    DeleteCrashReports = false,
+                    DeleteRawalleLogs = false,
+                    DeleteScreenshots = false
+                };
+            }
             string[] instancePaths = options.InstancePaths;
             string[] startWith = options.StartWith;
             string[] include = options.Include;
@@ -321,7 +340,27 @@ namespace MultiDelete
             }
 
             //Get options
-            Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            Options options = new Options();
+            if (File.Exists(optionsFile))
+            {
+                options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            }
+            else
+            {
+                options = new Options
+                {
+                    InstancePaths = new string[0],
+                    DeleteAllWorlds = false,
+                    StartWith = new string[0],
+                    Include = new string[0],
+                    EndWith = new string[0],
+                    DeleteRecordings = false,
+                    RecordingsPath = "",
+                    DeleteCrashReports = false,
+                    DeleteRawalleLogs = false,
+                    DeleteScreenshots = false
+                };
+            }
             bool delRecordings = options.DeleteRecordings;
             bool delCrashReports = options.DeleteCrashReports;
             bool delRawalleLogs = options.DeleteRawalleLogs;
@@ -351,7 +390,27 @@ namespace MultiDelete
         {
             recordingsToDelete = new List<string>();
             //Gets Variable
-            Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            Options options = new Options();
+            if (File.Exists(optionsFile))
+            {
+                options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            }
+            else
+            {
+                options = new Options
+                {
+                    InstancePaths = new string[0],
+                    DeleteAllWorlds = false,
+                    StartWith = new string[0],
+                    Include = new string[0],
+                    EndWith = new string[0],
+                    DeleteRecordings = false,
+                    RecordingsPath = "",
+                    DeleteCrashReports = false,
+                    DeleteRawalleLogs = false,
+                    DeleteScreenshots = false
+                };
+            }
             string recordingsPath = options.RecordingsPath;
             //Resets Location and Font of Label
             changeLocation(infoLabel, new Point(-8, 41));
@@ -440,7 +499,28 @@ namespace MultiDelete
 
         private void deleteCrashReports()
         {
-            Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            //Get variables
+            Options options = new Options();
+            if (File.Exists(optionsFile))
+            {
+                options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            }
+            else
+            {
+                options = new Options
+                {
+                    InstancePaths = new string[0],
+                    DeleteAllWorlds = false,
+                    StartWith = new string[0],
+                    Include = new string[0],
+                    EndWith = new string[0],
+                    DeleteRecordings = false,
+                    RecordingsPath = "",
+                    DeleteCrashReports = false,
+                    DeleteRawalleLogs = false,
+                    DeleteScreenshots = false
+                };
+            }
             string[] instancePaths = options.InstancePaths;
             int deletedCrashReports = 0;
             changeLocation(infoLabel, new Point(-8, 41));
@@ -514,7 +594,28 @@ namespace MultiDelete
 
         private void deleteRawalleLogs()
         {
-            Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            //Get Variables
+            Options options = new Options();
+            if (File.Exists(optionsFile))
+            {
+                options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            }
+            else
+            {
+                options = new Options
+                {
+                    InstancePaths = new string[0],
+                    DeleteAllWorlds = false,
+                    StartWith = new string[0],
+                    Include = new string[0],
+                    EndWith = new string[0],
+                    DeleteRecordings = false,
+                    RecordingsPath = "",
+                    DeleteCrashReports = false,
+                    DeleteRawalleLogs = false,
+                    DeleteScreenshots = false
+                };
+            }
             string[] instancePaths = options.InstancePaths;
             int deletedRawalleLogs = 0;
             changeLocation(infoLabel, new Point(-8, 41));
@@ -575,7 +676,28 @@ namespace MultiDelete
 
         private void deleteScreenshots()
         {
-            Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            //Get variables
+            Options options = new Options();
+            if (File.Exists(optionsFile))
+            {
+                options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            }
+            else
+            {
+                options = new Options
+                {
+                    InstancePaths = new string[0],
+                    DeleteAllWorlds = false,
+                    StartWith = new string[0],
+                    Include = new string[0],
+                    EndWith = new string[0],
+                    DeleteRecordings = false,
+                    RecordingsPath = "",
+                    DeleteCrashReports = false,
+                    DeleteRawalleLogs = false,
+                    DeleteScreenshots = false
+                };
+            }
             string[] instancePaths = options.InstancePaths;
             int deletedScreenshots = 0;
             changeLocation(infoLabel, new Point(-8, 41));
