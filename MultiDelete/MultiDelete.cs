@@ -25,6 +25,7 @@ namespace MultiDelete
         static string newestVersion = "";
         long size = 0;
         bool closeAfterDeletion = false;
+        List<string> checkedPaths = new List<string>();
 
         public MultiDelete()
         {
@@ -129,6 +130,8 @@ namespace MultiDelete
 
         private void searchWorlds()
         {
+            //Reset Variables
+            checkedPaths = new List<string>();
             size = 0;
             cancelDeletion = false;
             worldsToDelete = new List<string>();
@@ -207,80 +210,72 @@ namespace MultiDelete
                 }
                 else
                 {
-                    //Checks if same Instancepath is added twice
-                    bool areSamePaths = false;
-                    for (int i = 0; i < instancePaths.Length; i++)
+                    //Searches all Worlds To delete
+                    changeVisibilaty(cancelButton, true);
+                    if (options.UpdateScreen == "never")
                     {
-                        for (int i2 = 0; i2 < instancePaths.Length; i2++)
-                        {
-                            if (instancePaths[i] == instancePaths[i2] && i != i2)
-                            {
-                                areSamePaths = true;
-                            }
-                        }
-                    }
-                    if (areSamePaths == true)
-                    {
-                        changeText(infoLabel, "You cant select the same Instance-Path twice!");
-                        changeFont(infoLabel, new Font("Roboto", 13));
-                        changeLocation(infoLabel, new Point(-8, 23));
-                        changeText(okButton, "OK");
-                        changeVisibilaty(okButton, true);
+                        changeText(infoLabel, "Searching Worlds");
                     }
                     else
                     {
-                        //Searches all Worlds To delete
-                        changeVisibilaty(cancelButton, true);
-                        if(options.UpdateScreen == "never")
+                        changeText(infoLabel, "Searching Worlds (0)");
+                    }
+                    worldsToDelete = new List<string>();
+                    foreach (string path in savesPaths)
+                    {
+                        if (!Directory.Exists(path))
                         {
-                            changeText(infoLabel, "Searching Worlds");
-                        } else
-                        {
-                            changeText(infoLabel, "Searching Worlds (0)");
-                        }
-                        worldsToDelete = new List<string>();
-                        foreach(string path in savesPaths)
-                        {
-                            if (!Directory.Exists(path))
+                            changeText(infoLabel, "The Saves-Path '" + path + "' doesnt exist!");
+                            changeFont(infoLabel, new Font("Roboto", 13), true);
+                            changeLocation(infoLabel, new Point(-8, 23));
+                            changeText(okButton, "OK");
+                            changeVisibilaty(okButton, true);
+                            changeVisibilaty(cancelButton, false);
+
+                            //Make Font smaller if it text to long to be displayed
+                            while (infoLabel.Width < TextRenderer.MeasureText(infoLabel.Text, infoLabel.Font).Width)
                             {
-                                changeText(infoLabel, "The Saves-Path '" + path + "' doesnt exist!");
-                                changeFont(infoLabel, new Font("Roboto", 13), true);
-                                changeLocation(infoLabel, new Point(-8, 23));
-                                changeText(okButton, "OK");
-                                changeVisibilaty(okButton, true);
-                                changeVisibilaty(cancelButton, false);
-
-                                //Make Font smaller if it text to long to be displayed
-                                while(infoLabel.Width < TextRenderer.MeasureText(infoLabel.Text, infoLabel.Font).Width)
-                                {
-                                    changeFont(infoLabel, new Font("Roboto", infoLabel.Font.Size - 0.5f), true);
-                                }
-
-                                return;
+                                changeFont(infoLabel, new Font("Roboto", infoLabel.Font.Size - 0.5f), true);
                             }
-                            foreach(string world in Directory.GetDirectories(path))
+
+                            return;
+                        }
+                        bool hasPathAlreadyBeenChecked = false;
+                        foreach(string checkedPath in checkedPaths)
+                        {
+                            if(path == checkedPath)
                             {
-                                if(cancelDeletion == true)
+                                hasPathAlreadyBeenChecked = true;
+                            }
+                        }
+                        if(!hasPathAlreadyBeenChecked)
+                        {
+                            foreach (string world in Directory.GetDirectories(path))
+                            {
+                                if (cancelDeletion == true)
                                 {
                                     cancelDeletion = false;
                                     return;
                                 }
-                                if(deleteAllWorlds)
+                                if (deleteAllWorlds)
                                 {
                                     worldsToDelete.Add(world);
-                                    if(options.UpdateScreen == "every world")
+                                    if (options.UpdateScreen == "every world")
                                     {
                                         changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
                                         refreshUI();
-                                    } else if(options.UpdateScreen == "every 10. world" && worldsToDelete.Count % 10 == 0)
+                                    }
+                                    else if (options.UpdateScreen == "every 10. world" && worldsToDelete.Count % 10 == 0)
                                     {
                                         changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
                                         refreshUI();
-                                    } else if(options.UpdateScreen == "every 100. world" && worldsToDelete.Count % 100 == 0)
+                                    }
+                                    else if (options.UpdateScreen == "every 100. world" && worldsToDelete.Count % 100 == 0)
                                     {
                                         changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
                                         refreshUI();
-                                    } else if(options.UpdateScreen == "every 1000. world" && worldsToDelete.Count % 1000 == 0)
+                                    }
+                                    else if (options.UpdateScreen == "every 1000. world" && worldsToDelete.Count % 1000 == 0)
                                     {
                                         changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
                                         refreshUI();
@@ -289,11 +284,11 @@ namespace MultiDelete
                                 else
                                 {
                                     string worldName = world.Substring(path.Length + 1);
-                                    if(startWith.Length > 0)
+                                    if (startWith.Length > 0)
                                     {
-                                        foreach(string str in startWith)
+                                        foreach (string str in startWith)
                                         {
-                                            if(worldName.StartsWith(str))
+                                            if (worldName.StartsWith(str))
                                             {
                                                 worldsToDelete.Add(world);
                                                 if (options.UpdateScreen == "every world")
@@ -382,8 +377,9 @@ namespace MultiDelete
                                 }
                             }
                         }
-                        deleteWorlds();
+                        checkedPaths.Add(path);
                     }
+                    deleteWorlds();
                 }
             }
         }
