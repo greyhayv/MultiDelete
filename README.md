@@ -20,3 +20,6 @@ MultiDelete lets you configure which Instances to delete Worlds in and exactly w
 
 ## Installation
 Click on the latest release, download the installer, execute it and go through the steps.
+
+## Contact
+If you have any Issues, questions, suggestions or have found any bugs feel free to dm me on discord: greyhayv#4237
