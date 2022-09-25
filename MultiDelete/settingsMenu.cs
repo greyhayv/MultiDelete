@@ -261,8 +261,8 @@ namespace MultiDelete
             toolTip.SetToolTip(addMultipleInstanceButton, "Add multiple Instances at once via selecting multiple folders");
             toolTip.SetToolTip(updateScreenLabel, "Select how often the screen should update during world deletion (Less updates = way faster world deletion)");
             toolTip.SetToolTip(updateScreenComboBox, "Select how often the screen should update during world deletion (Less updates = way faster world deletion)");
-            toolTip.SetToolTip(threadsToUseLabel, "Configure how many threads MultiDelte should use to delete worlds");
-            toolTip.SetToolTip(threadsTrackBar, "Configure how many threads MultiDelte should use to delete worlds");
+            toolTip.SetToolTip(threadsToUseLabel, "Configure how many threads MultiDelte should use to delete worlds. More Threads = faster world deletion");
+            toolTip.SetToolTip(threadsTrackBar, "Configure how many threads MultiDelte should use to delete worlds. More Threads = faster world deletion");
 
             //Resets settingsMenu
             settingsPanel.Controls.Clear();
