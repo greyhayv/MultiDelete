@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using System.Threading;
 
 namespace MultiDelete
 {
@@ -22,6 +23,7 @@ namespace MultiDelete
         string optionsFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete\options.json";
         string focusEntry = "";
 
+        //Settings menu elements
         Label settingsHeading = new Label();
         ComboBox updateScreenComboBox = new ComboBox();
         Label instancePathLabel = new Label();
@@ -41,6 +43,8 @@ namespace MultiDelete
         Panel updateScreenPanel = new Panel();
         Button addMultipleInstanceButton = new Button();
         Label updateScreenLabel = new Label();
+        Label threadsToUseLabel = new Label();
+        TrackBar threadsTrackBar = new TrackBar();
 
         public settingsMenu()
         {
@@ -225,6 +229,21 @@ namespace MultiDelete
             addMultipleInstanceButton.UseVisualStyleBackColor = false;
             addMultipleInstanceButton.Click += new EventHandler(addMultipleInstanceButton_Click);
 
+            threadsToUseLabel = new Label();
+            threadsToUseLabel.AutoSize = true;
+            threadsToUseLabel.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            threadsToUseLabel.ForeColor = Color.FromArgb(194, 194, 194);
+            threadsToUseLabel.TabStop = false;
+            threadsToUseLabel.Text = "Threads to use: 1";
+
+            threadsTrackBar.Maximum = Environment.ProcessorCount;
+            threadsTrackBar.Minimum = 1;
+            threadsTrackBar.Size = new Size(200, 45);
+            threadsTrackBar.TabIndex = 0;
+            threadsTrackBar.TabStop = false;
+            threadsTrackBar.Value = 1;
+            threadsTrackBar.ValueChanged += new EventHandler(threadsTrackBar_ValueChanged);
+
             //Create ToolTips
             ToolTip toolTip = new ToolTip();
             toolTip.ShowAlways = true;
@@ -242,6 +261,8 @@ namespace MultiDelete
             toolTip.SetToolTip(addMultipleInstanceButton, "Add multiple Instances at once via selecting multiple folders");
             toolTip.SetToolTip(updateScreenLabel, "Select how often the screen should update during world deletion (Less updates = way faster world deletion)");
             toolTip.SetToolTip(updateScreenComboBox, "Select how often the screen should update during world deletion (Less updates = way faster world deletion)");
+            toolTip.SetToolTip(threadsToUseLabel, "Configure how many threads MultiDelte should use to delete worlds");
+            toolTip.SetToolTip(threadsTrackBar, "Configure how many threads MultiDelte should use to delete worlds");
 
             //Resets settingsMenu
             settingsPanel.Controls.Clear();
@@ -259,6 +280,8 @@ namespace MultiDelete
             settingsPanel.Controls.Add(deleteCrashReportsCheckBox);
             settingsPanel.Controls.Add(deleteRawalleLogsCheckBox);
             settingsPanel.Controls.Add(deleteScreenshotsCheckBox);
+            settingsPanel.Controls.Add(threadsToUseLabel);
+            settingsPanel.Controls.Add(threadsTrackBar);
             settingsPanel.Controls.Add(checkForUpdatesButton);
             instancePathPanel = new List<Panel>();
             selectInstancePathButtons = new List<Button>();
@@ -321,7 +344,6 @@ namespace MultiDelete
                     startWithLabel.ForeColor = Color.FromArgb(94, 94, 94);
                     includeLabel.ForeColor = Color.FromArgb(94, 94, 94);
                     endWithLabel.ForeColor = Color.FromArgb(94, 94, 94);
-
                 }
                 else
                 {
@@ -362,8 +384,17 @@ namespace MultiDelete
 
                 deleteCrashReportsCheckBox.Checked = options.DeleteCrashReports;
                 deleteScreenshotsCheckBox.Checked = options.DeleteScreenshots;
-
                 deleteRawalleLogsCheckBox.Checked = options.DeleteRawalleLogs;
+
+                if(options.ThreadCount < threadsTrackBar.Minimum)
+                {
+                    options.ThreadCount = threadsTrackBar.Minimum;
+                } else if(options.ThreadCount > threadsTrackBar.Maximum)
+                {
+                    options.ThreadCount = threadsTrackBar.Maximum;
+                }  
+                threadsTrackBar.Value = options.ThreadCount;
+                threadsToUseLabel.Text = "Threads to use: " + options.ThreadCount;
             } else
             {
                 startWithEntrys[0].Text = "Random Speedrun";
@@ -428,7 +459,8 @@ namespace MultiDelete
                 RecordingsPath = recordingsPathTextBox.Text,
                 DeleteCrashReports = deleteCrashReportsCheckBox.Checked,
                 DeleteRawalleLogs = deleteRawalleLogsCheckBox.Checked,
-                DeleteScreenshots = deleteScreenshotsCheckBox.Checked
+                DeleteScreenshots = deleteScreenshotsCheckBox.Checked,
+                ThreadCount = threadsTrackBar.Value
             };
 
             JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true };
@@ -715,6 +747,12 @@ namespace MultiDelete
             settingsPanel.Controls.SetChildIndex(deleteScreenshotsCheckBox, index);
             index++;
 
+            settingsPanel.Controls.SetChildIndex(threadsToUseLabel, index);
+            index++;
+
+            settingsPanel.Controls.SetChildIndex(threadsTrackBar, index);
+            index++;
+
             settingsPanel.Controls.SetChildIndex(checkForUpdatesButton, index);
             index++;
 
@@ -885,6 +923,12 @@ namespace MultiDelete
         {
             settingsPanel.Focus();
         }
+
+        private void threadsTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            TrackBar trackBar = (TrackBar) sender;
+            threadsToUseLabel.Text = "Threads to use: " + trackBar.Value;
+        }
     }
 
     public class Options
@@ -900,5 +944,6 @@ namespace MultiDelete
         public bool DeleteCrashReports { get; set; }
         public bool DeleteRawalleLogs { get; set; }
         public bool DeleteScreenshots { get; set; }
+        public int ThreadCount { get; set; }
     }
 }

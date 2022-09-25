@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.Design.AxImporter;
+using System.Threading;
 
 namespace MultiDelete
 {
@@ -26,6 +28,7 @@ namespace MultiDelete
         long size = 0;
         bool closeAfterDeletion = false;
         List<string> checkedPaths = new List<string>();
+        int deletedWorlds = 0;
 
         public MultiDelete()
         {
@@ -406,15 +409,18 @@ namespace MultiDelete
                     UpdateScreen = "",
                     DeleteCrashReports = false,
                     DeleteRawalleLogs = false,
-                    DeleteScreenshots = false
+                    DeleteScreenshots = false,
+                    ThreadCount = 1
                 };
             }
-            //deletes All found Worlds
-            int deletedWorlds = 0;
-            if(options.UpdateScreen == "never")
+
+            deletedWorlds = 0;
+
+            if (options.UpdateScreen == "never")
             {
                 changeText(infoLabel, "Deleting Worlds");
-            } else
+            }
+            else
             {
                 changeLocation(infoLabel, new Point(-8, 10));
                 changeText(infoLabel, "Deleting Worlds (0/" + worldsToDelete.Count.ToString() + ")");
@@ -422,19 +428,134 @@ namespace MultiDelete
                 changeValue(progressBar, 0);
                 changeVisibilaty(progressBar, true);
             }
-            foreach (string world in worldsToDelete)
+
+            List<Thread> threads = new List<Thread>();
+
+            //Divide worlds under threads
+            for(int i = 0; i < options.ThreadCount; i++)
             {
-                if(cancelDeletion == true)
+                int i2 = i;
+                Thread thread = new Thread(() => delWorlds(i2 * (worldsToDelete.Count / options.ThreadCount), (i2 + 1) * (worldsToDelete.Count / options.ThreadCount)));
+                threads.Add(thread);
+                thread.Start();
+            }
+
+            foreach(Thread thread in threads)
+            {
+                thread.Join();
+            }
+
+            //Delte leftover worlds
+            foreach(string world in worldsToDelete)
+            {
+                if(Directory.Exists(world))
+                {
+                    if (cancelDeletion == true)
+                    {
+                        cancelDeletion = false;
+                        return;
+                    }
+
+                    DirectoryInfo di = new DirectoryInfo(world);
+                    calcDirSize(di);
+
+                    Directory.Delete(world, true);
+                    deletedWorlds += 1;
+                    changeMaximum(progressBar, worldsToDelete.Count);
+                    if (options.UpdateScreen == "every world")
+                    {
+                        changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                        changeValue(progressBar, deletedWorlds);
+                        refreshUI();
+                    }
+                    else if (options.UpdateScreen == "every 10. world" && deletedWorlds % 10 == 0)
+                    {
+                        changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                        changeValue(progressBar, deletedWorlds);
+                        refreshUI();
+                    }
+                    else if (options.UpdateScreen == "every 100. world" && deletedWorlds % 100 == 0)
+                    {
+                        changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                        changeValue(progressBar, deletedWorlds);
+                        refreshUI();
+                    }
+                    else if (options.UpdateScreen == "every 1000. world" && deletedWorlds % 1000 == 0)
+                    {
+                        changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                        changeValue(progressBar, deletedWorlds);
+                        refreshUI();
+                    }
+                }
+            } 
+
+            bool delRecordings = options.DeleteRecordings;
+            bool delCrashReports = options.DeleteCrashReports;
+            bool delRawalleLogs = options.DeleteRawalleLogs;
+            bool delScreenshots = options.DeleteScreenshots;
+
+            if (delRecordings)
+            {
+                searchRecordings();
+            }
+            if(delCrashReports)
+            {
+                deleteCrashReports();
+            }
+            if(delRawalleLogs)
+            {
+                deleteRawalleLogs();
+            }
+            if(delScreenshots)
+            {
+                deleteScreenshots();
+            }
+            
+            showResults();
+        }
+
+        private void delWorlds(int startIndex, int endIndex)
+        {
+            //Get options
+            Options options = new Options();
+            if (File.Exists(optionsFile))
+            {
+                options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            }
+            else
+            {
+                options = new Options
+                {
+                    InstancePaths = new string[0],
+                    DeleteAllWorlds = false,
+                    StartWith = new string[0],
+                    Include = new string[0],
+                    EndWith = new string[0],
+                    DeleteRecordings = false,
+                    RecordingsPath = "",
+                    UpdateScreen = "",
+                    DeleteCrashReports = false,
+                    DeleteRawalleLogs = false,
+                    DeleteScreenshots = false,
+                    ThreadCount = 1
+                };
+            }
+
+            //deletes All found Worlds
+            for (int i = startIndex; i < endIndex; i++)
+            {
+                if (cancelDeletion == true)
                 {
                     cancelDeletion = false;
                     return;
                 }
-               
-                DirectoryInfo di = new DirectoryInfo(world);
+
+                DirectoryInfo di = new DirectoryInfo(worldsToDelete[i]);
                 calcDirSize(di);
 
-                Directory.Delete(world, true);
+                Directory.Delete(worldsToDelete[i], true);
                 deletedWorlds += 1;
+                changeMaximum(progressBar, worldsToDelete.Count);
                 if (options.UpdateScreen == "every world")
                 {
                     changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
@@ -460,30 +581,6 @@ namespace MultiDelete
                     refreshUI();
                 }
             }
-
-            bool delRecordings = options.DeleteRecordings;
-            bool delCrashReports = options.DeleteCrashReports;
-            bool delRawalleLogs = options.DeleteRawalleLogs;
-            bool delScreenshots = options.DeleteScreenshots;
-
-            if (delRecordings)
-            {
-                searchRecordings();
-            }
-            if(delCrashReports)
-            {
-                deleteCrashReports();
-            }
-            if(delRawalleLogs)
-            {
-                deleteRawalleLogs();
-            }
-            if(delScreenshots)
-            {
-                deleteScreenshots();
-            }
-            
-            showResults();
         }
 
         private void searchRecordings()
@@ -949,7 +1046,7 @@ namespace MultiDelete
 
         private void changeMaximum(ProgressBar progressBar, int max)
         {
-            progressBar.BeginInvoke((Action)(() => progressBar.Maximum = max));
+            progressBar.Invoke((Action)(() => progressBar.Maximum = max));
         }
 
         private void changeValue(ProgressBar progressBar, int value)
