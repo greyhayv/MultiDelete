@@ -450,41 +450,47 @@ namespace MultiDelete
             {
                 if(Directory.Exists(world))
                 {
-                    if (cancelDeletion == true)
+                    try
                     {
-                        cancelDeletion = false;
-                        return;
-                    }
+                        if (cancelDeletion == true)
+                        {
+                            cancelDeletion = false;
+                            return;
+                        }
 
-                    DirectoryInfo di = new DirectoryInfo(world);
-                    calcDirSize(di);
+                        DirectoryInfo di = new DirectoryInfo(world);
+                        calcDirSize(di);
 
-                    Directory.Delete(world, true);
-                    deletedWorlds += 1;
-                    changeMaximum(progressBar, worldsToDelete.Count);
-                    if (options.UpdateScreen == "every world")
+                        Directory.Delete(world, true);
+                        deletedWorlds += 1;
+                        changeMaximum(progressBar, worldsToDelete.Count);
+                        if (options.UpdateScreen == "every world")
+                        {
+                            changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                            changeValue(progressBar, deletedWorlds);
+                            refreshUI();
+                        }
+                        else if (options.UpdateScreen == "every 10. world" && deletedWorlds % 10 == 0)
+                        {
+                            changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                            changeValue(progressBar, deletedWorlds);
+                            refreshUI();
+                        }
+                        else if (options.UpdateScreen == "every 100. world" && deletedWorlds % 100 == 0)
+                        {
+                            changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                            changeValue(progressBar, deletedWorlds);
+                            refreshUI();
+                        }
+                        else if (options.UpdateScreen == "every 1000. world" && deletedWorlds % 1000 == 0)
+                        {
+                            changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                            changeValue(progressBar, deletedWorlds);
+                            refreshUI();
+                        }
+                    } catch
                     {
-                        changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
-                        changeValue(progressBar, deletedWorlds);
-                        refreshUI();
-                    }
-                    else if (options.UpdateScreen == "every 10. world" && deletedWorlds % 10 == 0)
-                    {
-                        changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
-                        changeValue(progressBar, deletedWorlds);
-                        refreshUI();
-                    }
-                    else if (options.UpdateScreen == "every 100. world" && deletedWorlds % 100 == 0)
-                    {
-                        changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
-                        changeValue(progressBar, deletedWorlds);
-                        refreshUI();
-                    }
-                    else if (options.UpdateScreen == "every 1000. world" && deletedWorlds % 1000 == 0)
-                    {
-                        changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
-                        changeValue(progressBar, deletedWorlds);
-                        refreshUI();
+                        continue;
                     }
                 }
             } 
@@ -544,41 +550,47 @@ namespace MultiDelete
             //deletes All found Worlds
             for (int i = startIndex; i < endIndex; i++)
             {
-                if (cancelDeletion == true)
+                try
                 {
-                    cancelDeletion = false;
-                    return;
-                }
+                    if (cancelDeletion == true)
+                    {
+                        cancelDeletion = false;
+                        return;
+                    }
 
-                DirectoryInfo di = new DirectoryInfo(worldsToDelete[i]);
-                calcDirSize(di);
+                    DirectoryInfo di = new DirectoryInfo(worldsToDelete[i]);
+                    calcDirSize(di);
 
-                Directory.Delete(worldsToDelete[i], true);
-                deletedWorlds += 1;
-                changeMaximum(progressBar, worldsToDelete.Count);
-                if (options.UpdateScreen == "every world")
+                    Directory.Delete(worldsToDelete[i], true);
+                    deletedWorlds += 1;
+                    changeMaximum(progressBar, worldsToDelete.Count);
+                    if (options.UpdateScreen == "every world")
+                    {
+                        changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                        changeValue(progressBar, deletedWorlds);
+                        refreshUI();
+                    }
+                    else if (options.UpdateScreen == "every 10. world" && deletedWorlds % 10 == 0)
+                    {
+                        changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                        changeValue(progressBar, deletedWorlds);
+                        refreshUI();
+                    }
+                    else if (options.UpdateScreen == "every 100. world" && deletedWorlds % 100 == 0)
+                    {
+                        changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                        changeValue(progressBar, deletedWorlds);
+                        refreshUI();
+                    }
+                    else if (options.UpdateScreen == "every 1000. world" && deletedWorlds % 1000 == 0)
+                    {
+                        changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
+                        changeValue(progressBar, deletedWorlds);
+                        refreshUI();
+                    }
+                } catch
                 {
-                    changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
-                    changeValue(progressBar, deletedWorlds);
-                    refreshUI();
-                }
-                else if (options.UpdateScreen == "every 10. world" && deletedWorlds % 10 == 0)
-                {
-                    changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
-                    changeValue(progressBar, deletedWorlds);
-                    refreshUI();
-                }
-                else if (options.UpdateScreen == "every 100. world" && deletedWorlds % 100 == 0)
-                {
-                    changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
-                    changeValue(progressBar, deletedWorlds);
-                    refreshUI();
-                }
-                else if (options.UpdateScreen == "every 1000. world" && deletedWorlds % 1000 == 0)
-                {
-                    changeText(infoLabel, "Deleting Worlds (" + deletedWorlds.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
-                    changeValue(progressBar, deletedWorlds);
-                    refreshUI();
+                    continue;
                 }
             }
         }
