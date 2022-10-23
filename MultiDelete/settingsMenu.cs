@@ -250,7 +250,7 @@ namespace MultiDelete
             toolTip.SetToolTip(instancePathLabel, "Select in which Instances worlds should get deleted in");
             toolTip.SetToolTip(deleteAllWorldsCheckBox, "Select if all worlds should be deleted, no matter the name of it");
             toolTip.SetToolTip(startWithLabel, "Select what the name of the world has to start with to be deleted");
-            toolTip.SetToolTip(includeLabel, "Select what the name of the world has to include with to be deleted");
+            toolTip.SetToolTip(includeLabel, "Select what the name of the world has to include to be deleted");
             toolTip.SetToolTip(endWithLabel, "Select what the name of the world has to end with to be deleted");
             toolTip.SetToolTip(deleteRecordingsCheckBox, "Select if MultiDelete should delete your Recordings");
             toolTip.SetToolTip(recordingsPathTextBox, "Select in which folder your Recordings are stored in");
@@ -569,9 +569,11 @@ namespace MultiDelete
             textBox.Size = new Size(200, 22);
             textBox.TabStop = false;
             textBox.TextChanged += new EventHandler(textChanged);
+            ToolTip toolTip = new ToolTip();
             //Adds TextBox to List
             if (type == "instancePath")
             {
+                toolTip.SetToolTip(textBox, "Select in which Instances worlds should get deleted in");
                 instancePathEntrys.Add(textBox);
 
                 //Creates and configures new Button to select instance Path
@@ -584,6 +586,7 @@ namespace MultiDelete
                 selectInstancePathButton.Image = Properties.Resources.foldericon;
                 selectInstancePathButton.Padding = new Padding(0, 0, 1, 0);
                 selectInstancePathButton.Click += new EventHandler(selectInstancePathButton_click);
+                toolTip.SetToolTip(selectInstancePathButton, "Browse for Instance-path");
                 selectInstancePathButtons.Add(selectInstancePathButton);
 
                 //Creates and configures new Button to delete instance Path
@@ -596,6 +599,7 @@ namespace MultiDelete
                 deleteInstancePathButton.Image = Properties.Resources.x;
                 deleteInstancePathButton.Padding = new Padding(0, 0, 1, 1);
                 deleteInstancePathButton.Click += new EventHandler(deleteInstancePathButton_click);
+                toolTip.SetToolTip(deleteInstancePathButton, "Remove Instance-Path");
                 deleteInstancePathButtons.Add(deleteInstancePathButton);
 
                 //Creates and configures Panel with TextBox and Button
@@ -612,16 +616,19 @@ namespace MultiDelete
             }
             if (type == "startsWith")
             {
+                toolTip.SetToolTip(textBox, "Select what the name of the world has to start with to be deleted");
                 startWithEntrys.Add(textBox);
                 settingsPanel.Controls.Add(textBox);
             }
             if (type == "includes")
             {
+                toolTip.SetToolTip(textBox, "Select what the name of the world has to include to be deleted");
                 includesEntrys.Add(textBox);
                 settingsPanel.Controls.Add(textBox);
             }
             if (type == "endWith")
             {
+                toolTip.SetToolTip(textBox, "Select what the name of the world has to end with to be deleted");
                 endWithEntrys.Add(textBox);
                 settingsPanel.Controls.Add(textBox);
             }
