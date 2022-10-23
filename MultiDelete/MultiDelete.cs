@@ -34,6 +34,7 @@ namespace MultiDelete
         int deletedWorlds = 0;
         public CountdownEvent wdCountdownEvent = new CountdownEvent(0);
         public int[] threadDeletedWorlds = new int[0];
+        private bool checkUpdates = true;
 
         public MultiDelete()
         {
@@ -47,8 +48,6 @@ namespace MultiDelete
             {
                 Directory.CreateDirectory(programsPath);
             }
-
-            Task.Run(() => checkForUpdates(false));
 
             //Check launch arguments
             string[] launchArgs = Environment.GetCommandLineArgs();
@@ -65,8 +64,16 @@ namespace MultiDelete
                     } else if(argument == "-closeAfterDeletion")
                     {
                         closeAfterDeletion = true;
+                    } else if(argument == "-dontCheckUpdates")
+                    {
+                        checkUpdates = false;
                     }
                 }
+            }
+
+            if(checkUpdates)
+            {
+                Task.Run(() => checkForUpdates(false));
             }
         }
 
