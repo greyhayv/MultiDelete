@@ -681,7 +681,7 @@ namespace MultiDelete
                 }
                 foreach (string recording in Directory.GetFiles(recordingsPath))
                 {
-                    if(recording.EndsWith(".mp4"))
+                    if(recording.EndsWith(".mp4") || recording.EndsWith(".webm") || recording.EndsWith(".mkv") || recording.EndsWith(".flv") || recording.EndsWith(".vob") || recording.EndsWith(".ogv") || recording.EndsWith(".ogg") || recording.EndsWith(".drc") || recording.EndsWith(".gif") || recording.EndsWith(".gifv") || recording.EndsWith(".mng") || recording.EndsWith(".avi") || recording.EndsWith(".MTS") || recording.EndsWith(".M2TS") || recording.EndsWith("TS") || recording.EndsWith(".mov") || recording.EndsWith(".qt") || recording.EndsWith(".wmv") || recording.EndsWith(".yuv") || recording.EndsWith(".rm") || recording.EndsWith(".rmvb") || recording.EndsWith(".viv") || recording.EndsWith(".asf") || recording.EndsWith(".amv") || recording.EndsWith(".m4p") || recording.EndsWith(".m4v") || recording.EndsWith(".mpg") || recording.EndsWith(".mp2") || recording.EndsWith(".mpeg") || recording.EndsWith(".mpe") || recording.EndsWith(".mpv") || recording.EndsWith(".mpg") || recording.EndsWith(".m2v") || recording.EndsWith(".m4v") || recording.EndsWith(".svi") || recording.EndsWith(".3gp") || recording.EndsWith(".3g2") || recording.EndsWith(".mxf") || recording.EndsWith(".roq") || recording.EndsWith(".nsv") || recording.EndsWith(".flv") || recording.EndsWith(".f4v") || recording.EndsWith(".f4p") || recording.EndsWith(".f4a") || recording.EndsWith(".f4b"))
                     {
                         if (cancelDeletion == true)
                         {
