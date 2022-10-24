@@ -7,6 +7,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Threading;
+using System.Diagnostics;
+using System.Data;
 
 namespace MultiDelete
 {
@@ -25,6 +27,9 @@ namespace MultiDelete
 
         //Settings menu elements
         Label settingsHeading = new Label();
+        Button exportButton = new Button();
+        Button importButton = new Button();
+        Panel headingPanel = new Panel();
         ComboBox updateScreenComboBox = new ComboBox();
         Label instancePathLabel = new Label();
         Label deleteAllWorldsThatLabel = new Label();
@@ -59,12 +64,40 @@ namespace MultiDelete
             //Configures Objects
             settingsHeading = new Label();
             settingsHeading.TextAlign = ContentAlignment.MiddleCenter;
-            settingsHeading.AutoSize = false;
+            settingsHeading.AutoSize = true;
             settingsHeading.Font = new Font("Roboto", 20.25F, FontStyle.Bold, GraphicsUnit.Point);
             settingsHeading.ForeColor = Color.FromArgb(194, 194, 194);
-            settingsHeading.Size = new Size(478, 33);
             settingsHeading.TabStop = false;
             settingsHeading.Text = "Settings";
+
+            exportButton = new Button();
+            exportButton.Size = new Size(22, 22);
+            exportButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
+            exportButton.FlatStyle = FlatStyle.Popup;
+            exportButton.TabStop = false;
+            exportButton.UseVisualStyleBackColor = false;
+            exportButton.Image = Properties.Resources.exportIcon;
+            exportButton.Padding = new Padding(0, 0, 1, 1);
+            exportButton.Click += new EventHandler(exportButton_click);
+
+            importButton = new Button();
+            importButton.Size = new Size(22, 22);
+            importButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
+            importButton.FlatStyle = FlatStyle.Popup;
+            importButton.TabStop = false;
+            importButton.UseVisualStyleBackColor = false;
+            importButton.Image = Properties.Resources.importIcon;
+            importButton.Padding = new Padding(0, 0, 1, 1);
+            importButton.Click += new EventHandler(importButton_click);
+
+            headingPanel = new Panel();
+            headingPanel.Size = new Size(478, 35);
+            headingPanel.Controls.Add(settingsHeading);
+            settingsHeading.Location = new Point(182, 0);
+            headingPanel.Controls.Add(exportButton);
+            exportButton.Location = new Point(431, 0);
+            headingPanel.Controls.Add(importButton);
+            importButton.Location = new Point(456, 0);
 
             instancePathLabel = new Label();
             instancePathLabel.AutoSize = false;
@@ -272,6 +305,8 @@ namespace MultiDelete
             //Create ToolTips
             ToolTip toolTip = new ToolTip();
             toolTip.ShowAlways = true;
+            toolTip.SetToolTip(exportButton, "Export settings");
+            toolTip.SetToolTip(importButton, "Import settings");
             toolTip.SetToolTip(instancePathLabel, "Select in which Instances worlds should get deleted in");
             toolTip.SetToolTip(deleteAllWorldsCheckBox, "Select if all worlds should be deleted, no matter the name of it");
             toolTip.SetToolTip(startWithLabel, "Select what the name of the world has to start with to be deleted");
@@ -293,7 +328,7 @@ namespace MultiDelete
 
             //Resets settingsMenu
             settingsPanel.Controls.Clear();
-            settingsPanel.Controls.Add(settingsHeading);
+            settingsPanel.Controls.Add(headingPanel);
             settingsPanel.Controls.Add(instancePathLabel);
             settingsPanel.Controls.Add(addMultipleInstanceButton);
             settingsPanel.Controls.Add(deleteAllWorldsThatLabel);
@@ -323,110 +358,148 @@ namespace MultiDelete
             createNewTextBox("endWith", false);
             arrangeObjects();
 
-            //Load options
-            if(File.Exists(optionsFile))
+            loadSettings();
+        }
+
+        private void loadSettings()
+        {
+            if (File.Exists(optionsFile))
             {
-                Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
-
-                for (int i = 0; i < options.InstancePaths.Length; i++)
+                try
                 {
-                    instancePathEntrys[i].Text = options.InstancePaths[i];
-                }
+                    Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
 
-                for (int i = 0; i < options.StartWith.Length; i++)
-                {
-                    startWithEntrys[i].Text = options.StartWith[i];
-                }
-
-                for (int i = 0; i < options.Include.Length; i++)
-                {
-                    includesEntrys[i].Text = options.Include[i];
-                }
-
-                for (int i = 0; i < options.EndWith.Length; i++)
-                {
-                    endWithEntrys[i].Text = options.EndWith[i];
-                }
-
-                recordingsPathTextBox.Text = options.RecordingsPath;
-
-                if (options.DeleteAllWorlds)
-                {
-                    deleteAllWorldsCheckBox.Checked = true;
-                    foreach (TextBox textBox in startWithEntrys)
+                    for (int i = 0; i < options.InstancePaths.Length; i++)
                     {
-                        textBox.Enabled = false;
-                    }
-                    foreach (TextBox textBox in includesEntrys)
-                    {
-                        textBox.Enabled = false;
-                    }
-                    foreach (TextBox textBox in endWithEntrys)
-                    {
-                        textBox.Enabled = false;
+                        instancePathEntrys[i].Text = options.InstancePaths[i];
                     }
 
-                    //Grays out labels if DeleteAllWorlds checkBox is checked
-                    deleteAllWorldsThatLabel.ForeColor = Color.FromArgb(94, 94, 94);
-                    startWithLabel.ForeColor = Color.FromArgb(94, 94, 94);
-                    includeLabel.ForeColor = Color.FromArgb(94, 94, 94);
-                    endWithLabel.ForeColor = Color.FromArgb(94, 94, 94);
-                }
-                else
-                {
-                    deleteAllWorldsCheckBox.Checked = false;
-                    foreach (TextBox textBox in startWithEntrys)
+                    for (int i = 0; i < options.StartWith.Length; i++)
                     {
-                        textBox.Enabled = true;
-                    }
-                    foreach (TextBox textBox in includesEntrys)
-                    {
-                        textBox.Enabled = true;
-                    }
-                    foreach (TextBox textBox in endWithEntrys)
-                    {
-                        textBox.Enabled = true;
+                        startWithEntrys[i].Text = options.StartWith[i];
                     }
 
-                    deleteAllWorldsThatLabel.ForeColor = Color.FromArgb(194, 194, 194);
-                    startWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
-                    includeLabel.ForeColor = Color.FromArgb(194, 194, 194);
-                    endWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                    for (int i = 0; i < options.Include.Length; i++)
+                    {
+                        includesEntrys[i].Text = options.Include[i];
+                    }
+
+                    for (int i = 0; i < options.EndWith.Length; i++)
+                    {
+                        endWithEntrys[i].Text = options.EndWith[i];
+                    }
+
+                    recordingsPathTextBox.Text = options.RecordingsPath;
+
+                    if (options.DeleteAllWorlds)
+                    {
+                        deleteAllWorldsCheckBox.Checked = true;
+                        foreach (TextBox textBox in startWithEntrys)
+                        {
+                            textBox.Enabled = false;
+                        }
+                        foreach (TextBox textBox in includesEntrys)
+                        {
+                            textBox.Enabled = false;
+                        }
+                        foreach (TextBox textBox in endWithEntrys)
+                        {
+                            textBox.Enabled = false;
+                        }
+
+                        //Grays out labels if DeleteAllWorlds checkBox is checked
+                        deleteAllWorldsThatLabel.ForeColor = Color.FromArgb(94, 94, 94);
+                        startWithLabel.ForeColor = Color.FromArgb(94, 94, 94);
+                        includeLabel.ForeColor = Color.FromArgb(94, 94, 94);
+                        endWithLabel.ForeColor = Color.FromArgb(94, 94, 94);
+                    }
+                    else
+                    {
+                        deleteAllWorldsCheckBox.Checked = false;
+                        foreach (TextBox textBox in startWithEntrys)
+                        {
+                            textBox.Enabled = true;
+                        }
+                        foreach (TextBox textBox in includesEntrys)
+                        {
+                            textBox.Enabled = true;
+                        }
+                        foreach (TextBox textBox in endWithEntrys)
+                        {
+                            textBox.Enabled = true;
+                        }
+
+                        deleteAllWorldsThatLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                        startWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                        includeLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                        endWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                    }
+
+                    updateScreenComboBox.SelectedItem = options.UpdateScreen;
+
+                    if (options.DeleteRecordings)
+                    {
+                        deleteRecordingsCheckBox.Checked = true;
+                        recordingsPathTextBox.Enabled = true;
+                        recordingsPathButton.Enabled = true;
+                    }
+                    else
+                    {
+                        deleteRecordingsCheckBox.Checked = false;
+                        recordingsPathTextBox.Enabled = false;
+                        recordingsPathButton.Enabled = false;
+                    }
+
+                    deleteCrashReportsCheckBox.Checked = options.DeleteCrashReports;
+                    deleteScreenshotsCheckBox.Checked = options.DeleteScreenshots;
+
+                    if (options.ThreadCount < threadsTrackBar.Minimum)
+                    {
+                        options.ThreadCount = threadsTrackBar.Minimum;
+                    }
+                    else if (options.ThreadCount > threadsTrackBar.Maximum)
+                    {
+                        options.ThreadCount = threadsTrackBar.Maximum;
+                    }
+                    threadsTrackBar.Value = options.ThreadCount;
+                    threadsToUseLabel.Text = "Threads to use: " + options.ThreadCount;
+                    keepLastWorldsNUD.Value = options.KeepLastWorlds;
                 }
-
-                updateScreenComboBox.SelectedItem = options.UpdateScreen;
-
-                if(options.DeleteRecordings)
+                catch
                 {
-                    deleteRecordingsCheckBox.Checked = true;
-                    recordingsPathTextBox.Enabled = true;
-                    recordingsPathButton.Enabled = true;
+                    DialogResult dr = MessageBox.Show("There was an error importing the settings! Load default settings?", "MultiDelete", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                    if(dr == DialogResult.Yes)
+                    {
+                        loadDefaultSettings();
+                    }
                 }
-                else
-                {
-                    deleteRecordingsCheckBox.Checked = false;
-                    recordingsPathTextBox.Enabled = false;
-                    recordingsPathButton.Enabled = false;
-                }
-
-                deleteCrashReportsCheckBox.Checked = options.DeleteCrashReports;
-                deleteScreenshotsCheckBox.Checked = options.DeleteScreenshots;
-
-                if(options.ThreadCount < threadsTrackBar.Minimum)
-                {
-                    options.ThreadCount = threadsTrackBar.Minimum;
-                } else if(options.ThreadCount > threadsTrackBar.Maximum)
-                {
-                    options.ThreadCount = threadsTrackBar.Maximum;
-                }  
-                threadsTrackBar.Value = options.ThreadCount;
-                threadsToUseLabel.Text = "Threads to use: " + options.ThreadCount;
-                keepLastWorldsNUD.Value = options.KeepLastWorlds;
-            } else
-            {
-                startWithEntrys[0].Text = "Random Speedrun";
-                startWithEntrys[1].Text = "Set Speedrun";
             }
+            else
+            {
+                loadDefaultSettings();
+            }
+        }
+
+        private void loadDefaultSettings()
+        {
+            Options options = new Options
+            {
+                DeleteAllWorlds = false,
+                DeleteCrashReports = false,
+                DeleteRecordings = false,
+                DeleteScreenshots = false,
+                EndWith = new string[0],
+                Include = new string[0],
+                InstancePaths = new string[0],
+                KeepLastWorlds = 10,
+                RecordingsPath = "",
+                StartWith = new string[] { "Random Speedrun", "Set Speedrun" },
+                ThreadCount = 1,
+                UpdateScreen = "every world"
+            };
+
+            saveOptions(options);
+            loadSettings();
         }
 
         private void checkForUpdatesButton_Click(object sender, EventArgs e)
@@ -473,7 +546,6 @@ namespace MultiDelete
                 }
             }
 
-            //Saves settings to options file
             Options options = new Options
             {
                 InstancePaths = instancePaths.ToArray(),
@@ -490,9 +562,71 @@ namespace MultiDelete
                 KeepLastWorlds = Decimal.ToInt32(keepLastWorldsNUD.Value)
             };
 
+            saveOptions(options);
+        }
+
+        private void saveOptions(Options options)
+        {
             JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(options, jsonSerializerOptions);
             File.WriteAllText(optionsFile, jsonString);
+        }
+
+        private void saveOptions()
+        {
+            List<string> instancePaths = new List<string>();
+            foreach (TextBox instancePathEntry in instancePathEntrys)
+            {
+                if (!string.IsNullOrEmpty(instancePathEntry.Text))
+                {
+                    instancePaths.Add(instancePathEntry.Text);
+                }
+            }
+
+            List<string> startWithList = new List<string>();
+            foreach (TextBox startWithEntry in startWithEntrys)
+            {
+                if (!string.IsNullOrWhiteSpace(startWithEntry.Text))
+                {
+                    startWithList.Add(startWithEntry.Text);
+                }
+            }
+
+            List<string> includeList = new List<string>();
+            foreach (TextBox includeEntry in includesEntrys)
+            {
+                if (!string.IsNullOrWhiteSpace(includeEntry.Text))
+                {
+                    includeList.Add(includeEntry.Text);
+                }
+            }
+
+            List<string> endWithList = new List<string>();
+            foreach (TextBox endWithEntry in endWithEntrys)
+            {
+                if (!string.IsNullOrWhiteSpace(endWithEntry.Text))
+                {
+                    endWithList.Add(endWithEntry.Text);
+                }
+            }
+
+            Options options = new Options
+            {
+                InstancePaths = instancePaths.ToArray(),
+                DeleteAllWorlds = deleteAllWorldsCheckBox.Checked,
+                StartWith = startWithList.ToArray(),
+                Include = includeList.ToArray(),
+                EndWith = endWithList.ToArray(),
+                UpdateScreen = updateScreenComboBox.Text,
+                DeleteRecordings = deleteRecordingsCheckBox.Checked,
+                RecordingsPath = recordingsPathTextBox.Text,
+                DeleteCrashReports = deleteCrashReportsCheckBox.Checked,
+                DeleteScreenshots = deleteScreenshotsCheckBox.Checked,
+                ThreadCount = threadsTrackBar.Value,
+                KeepLastWorlds = Decimal.ToInt32(keepLastWorldsNUD.Value)
+            };
+
+            saveOptions(options);
         }
 
         private void textChanged(object sender, EventArgs e)
@@ -704,7 +838,7 @@ namespace MultiDelete
         {
             int index = 0;
             //Arranges objects on Panel
-            settingsPanel.Controls.SetChildIndex(settingsHeading, 0);
+            settingsPanel.Controls.SetChildIndex(headingPanel, index);
             index++;
 
             settingsPanel.Controls.SetChildIndex(instancePathLabel, index);
@@ -790,13 +924,17 @@ namespace MultiDelete
             settingsPanel.Controls.SetChildIndex(checkForUpdatesButton, index);
             index++;
 
-            //Changes size of settingsHeading if Vertical scroolbar appears so the horizontal scroolbar doesnt appear
+            //Change size of headingPanel and position of import and export button depending on if scrollbar has appeared
             if(settingsPanel.ClientSize.Width < 484)
             {
-                settingsHeading.Size = new Size(461, 33);
+                headingPanel.Size = new Size(461, 35);
+                exportButton.Location = new Point(414, 0);
+                importButton.Location = new Point(439, 0);
             } else
             {
-                settingsHeading.Size = new Size(478, 33);
+                headingPanel.Size = new Size(478, 35);
+                exportButton.Location = new Point(431, 0);
+                importButton.Location = new Point(456, 0);
             }
 
             //Focuses last TextBox if TextBox was deleted
@@ -909,7 +1047,7 @@ namespace MultiDelete
         private void recordingsPathButton_Click(object sender, EventArgs e)
         {
             settingsPanel.Focus();
-            using (var fbd = new FolderBrowserDialog())
+            using(var fbd = new FolderBrowserDialog())
             {
                 fbd.UseDescriptionForTitle = true;
                 fbd.Description = "Select Recordings-path";
@@ -962,6 +1100,46 @@ namespace MultiDelete
         {
             TrackBar trackBar = (TrackBar) sender;
             threadsToUseLabel.Text = "Threads to use: " + trackBar.Value;
+        }
+        private void exportButton_click(object sender, EventArgs e)
+        {
+            settingsPanel.Focus();
+            exportSettings();
+        }
+
+        private void importButton_click(object sender, EventArgs e)
+        {
+            settingsPanel.Focus();
+            importSettings();
+        }
+
+        private void exportSettings()
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Title = "Export settings";
+            sfd.Filter = "JSON File (*.json)|*.json";
+            if(sfd.ShowDialog() == DialogResult.OK)
+            {
+                saveOptions();
+                File.Create(sfd.FileName).Close();
+                File.WriteAllText(sfd.FileName, File.ReadAllText(optionsFile));
+            }
+        }
+
+        private void importSettings()
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Import settings";
+            if(ofd.ShowDialog() == DialogResult.OK)
+            {
+                if (!ofd.FileName.EndsWith(".json"))
+                {
+                    MessageBox.Show("You need to select a valid settings File!", "MultiDelete", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                File.WriteAllText(optionsFile, File.ReadAllText(ofd.FileName));
+                loadSettings();
+            }
         }
     }
 

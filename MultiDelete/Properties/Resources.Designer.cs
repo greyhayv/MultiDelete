@@ -63,6 +63,16 @@ namespace MultiDelete.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap exportIcon {
+            get {
+                object obj = ResourceManager.GetObject("exportIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap folder {
             get {
                 object obj = ResourceManager.GetObject("folder", resourceCulture);
@@ -76,6 +86,16 @@ namespace MultiDelete.Properties {
         internal static System.Drawing.Bitmap foldericon {
             get {
                 object obj = ResourceManager.GetObject("foldericon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap importIcon {
+            get {
+                object obj = ResourceManager.GetObject("importIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
