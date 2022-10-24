@@ -1,2 +1,3 @@
 .vs/
-MultiDelete/bin/
+MultiDelete/bin/*
+MultiDelete/obj/*
