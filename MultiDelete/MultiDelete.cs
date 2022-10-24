@@ -12,6 +12,7 @@ using System.Threading;
 using System.Security.Cryptography.X509Certificates;
 using System.Drawing.Text;
 using System.Diagnostics;
+using System.Linq;
 
 namespace MultiDelete
 {
@@ -265,6 +266,7 @@ namespace MultiDelete
                         }
                         if(!hasPathAlreadyBeenChecked)
                         {
+                            List<string> instanceWorlds = new List<string>();
                             foreach (string world in Directory.GetDirectories(path))
                             {
                                 if (cancelDeletion == true)
@@ -275,6 +277,8 @@ namespace MultiDelete
                                 if (deleteAllWorlds)
                                 {
                                     worldsToDelete.Add(world);
+                                    instanceWorlds.Add(world);
+
                                     if (options.UpdateScreen == "every world")
                                     {
                                         changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
@@ -306,6 +310,7 @@ namespace MultiDelete
                                             if (worldName.StartsWith(str))
                                             {
                                                 worldsToDelete.Add(world);
+                                                instanceWorlds.Add(world);
                                                 if (options.UpdateScreen == "every world")
                                                 {
                                                     changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
@@ -336,6 +341,7 @@ namespace MultiDelete
                                             if (worldName.Contains(str))
                                             {
                                                 worldsToDelete.Add(world);
+                                                instanceWorlds.Add(world);
                                                 if (options.UpdateScreen == "every world")
                                                 {
                                                     changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
@@ -366,6 +372,7 @@ namespace MultiDelete
                                             if (worldName.EndsWith(str))
                                             {
                                                 worldsToDelete.Add(world);
+                                                instanceWorlds.Add(world);
                                                 if (options.UpdateScreen == "every world")
                                                 {
                                                     changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
@@ -390,6 +397,23 @@ namespace MultiDelete
                                         }
                                     }
                                 }
+                            }
+
+                            //Remove last x worlds form list
+                            List<DirectoryInfo> worldDIs = new List<DirectoryInfo>();
+                            foreach(string instanceWorld in instanceWorlds)
+                            {
+                                worldDIs.Add(new DirectoryInfo(instanceWorld));
+                            }
+                            instanceWorlds = worldDIs.OrderByDescending(f => f.LastWriteTime).Select(f => f.FullName).ToList();
+
+                            for(int i = 0; i < options.KeepLastWorlds; i++)
+                            {
+                                if(instanceWorlds.Count <= i)
+                                {
+                                    continue;
+                                }
+                                worldsToDelete.Remove(instanceWorlds[i]);
                             }
                         }
                         checkedPaths.Add(path);

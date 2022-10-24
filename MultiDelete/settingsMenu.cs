@@ -45,6 +45,10 @@ namespace MultiDelete
         Label updateScreenLabel = new Label();
         Label threadsToUseLabel = new Label();
         TrackBar threadsTrackBar = new TrackBar();
+        Label keepLastWorldsLabel = new Label();
+        Label keepLastWorldsLabel2 = new Label();
+        NumericUpDown keepLastWorldsNUD = new NumericUpDown();
+        Panel keepLastWorldsPanel = new Panel();
 
         public settingsMenu()
         {
@@ -244,6 +248,37 @@ namespace MultiDelete
             threadsTrackBar.Value = 1;
             threadsTrackBar.ValueChanged += new EventHandler(threadsTrackBar_ValueChanged);
 
+            keepLastWorldsLabel = new Label();
+            keepLastWorldsLabel.AutoSize = true;
+            keepLastWorldsLabel.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            keepLastWorldsLabel.ForeColor = Color.FromArgb(194, 194, 194);
+            keepLastWorldsLabel.TabStop = false;
+            keepLastWorldsLabel.Text = "Keep last";
+
+            keepLastWorldsNUD = new NumericUpDown();
+            keepLastWorldsNUD.BackColor = ColorTranslator.FromHtml("#4C4C4C");
+            keepLastWorldsNUD.BorderStyle = BorderStyle.FixedSingle;
+            keepLastWorldsNUD.ForeColor = ColorTranslator.FromHtml("#C2C2C2");
+            keepLastWorldsNUD.Size = new Size(35, 22);
+            keepLastWorldsNUD.TabStop = false;
+            keepLastWorldsNUD.Value = 10;
+
+            keepLastWorldsLabel2 = new Label();
+            keepLastWorldsLabel2.AutoSize = true;
+            keepLastWorldsLabel2.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            keepLastWorldsLabel2.ForeColor = Color.FromArgb(194, 194, 194);
+            keepLastWorldsLabel2.TabStop = false;
+            keepLastWorldsLabel2.Text = "worlds.";
+
+            keepLastWorldsPanel = new Panel();
+            keepLastWorldsPanel.Size = new Size(400, 23);
+            keepLastWorldsPanel.Controls.Add(keepLastWorldsLabel);
+            keepLastWorldsLabel.Location = new Point(0, 0);
+            keepLastWorldsPanel.Controls.Add(keepLastWorldsNUD);
+            keepLastWorldsNUD.Location = new Point(75, 0);
+            keepLastWorldsPanel.Controls.Add(keepLastWorldsLabel2);
+            keepLastWorldsLabel2.Location = new Point(110, 0);
+
             //Create ToolTips
             ToolTip toolTip = new ToolTip();
             toolTip.ShowAlways = true;
@@ -263,6 +298,9 @@ namespace MultiDelete
             toolTip.SetToolTip(updateScreenComboBox, "Select how often the screen should update during world deletion (Less updates = way faster world deletion)");
             toolTip.SetToolTip(threadsToUseLabel, "Configure how many threads MultiDelte should use to delete worlds. More Threads = faster world deletion");
             toolTip.SetToolTip(threadsTrackBar, "Configure how many threads MultiDelte should use to delete worlds. More Threads = faster world deletion");
+            toolTip.SetToolTip(keepLastWorldsLabel, "Select how many of the last worlds MultiDelete should keep.");
+            toolTip.SetToolTip(keepLastWorldsNUD, "Select how many of the last worlds MultiDelete should keep.");
+            toolTip.SetToolTip(keepLastWorldsLabel2, "Select how many of the last worlds MultiDelete should keep.");
 
             //Resets settingsMenu
             settingsPanel.Controls.Clear();
@@ -283,6 +321,7 @@ namespace MultiDelete
             settingsPanel.Controls.Add(threadsToUseLabel);
             settingsPanel.Controls.Add(threadsTrackBar);
             settingsPanel.Controls.Add(checkForUpdatesButton);
+            settingsPanel.Controls.Add(keepLastWorldsPanel);
             instancePathPanel = new List<Panel>();
             selectInstancePathButtons = new List<Button>();
             deleteInstancePathButtons = new List<Button>();
@@ -395,6 +434,7 @@ namespace MultiDelete
                 }  
                 threadsTrackBar.Value = options.ThreadCount;
                 threadsToUseLabel.Text = "Threads to use: " + options.ThreadCount;
+                keepLastWorldsNUD.Value = options.KeepLastWorlds;
             } else
             {
                 startWithEntrys[0].Text = "Random Speedrun";
@@ -460,7 +500,8 @@ namespace MultiDelete
                 DeleteCrashReports = deleteCrashReportsCheckBox.Checked,
                 DeleteRawalleLogs = deleteRawalleLogsCheckBox.Checked,
                 DeleteScreenshots = deleteScreenshotsCheckBox.Checked,
-                ThreadCount = threadsTrackBar.Value
+                ThreadCount = threadsTrackBar.Value,
+                KeepLastWorlds = Decimal.ToInt32(keepLastWorldsNUD.Value)
             };
 
             JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true };
@@ -760,6 +801,9 @@ namespace MultiDelete
             settingsPanel.Controls.SetChildIndex(threadsTrackBar, index);
             index++;
 
+            settingsPanel.Controls.SetChildIndex(keepLastWorldsPanel, index);
+            index++;
+
             settingsPanel.Controls.SetChildIndex(checkForUpdatesButton, index);
             index++;
 
@@ -952,5 +996,6 @@ namespace MultiDelete
         public bool DeleteRawalleLogs { get; set; }
         public bool DeleteScreenshots { get; set; }
         public int ThreadCount { get; set; }
+        public int KeepLastWorlds { get; set; }
     }
 }
