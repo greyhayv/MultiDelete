@@ -169,7 +169,6 @@ namespace MultiDelete
                     RecordingsPath = "",
                     UpdateScreen = "",
                     DeleteCrashReports = false,
-                    DeleteRawalleLogs = false,
                     DeleteScreenshots = false
                 };
             }
@@ -444,7 +443,6 @@ namespace MultiDelete
                     RecordingsPath = "",
                     UpdateScreen = "",
                     DeleteCrashReports = false,
-                    DeleteRawalleLogs = false,
                     DeleteScreenshots = false,
                     ThreadCount = 1
                 };
@@ -533,7 +531,6 @@ namespace MultiDelete
 
             bool delRecordings = options.DeleteRecordings;
             bool delCrashReports = options.DeleteCrashReports;
-            bool delRawalleLogs = options.DeleteRawalleLogs;
             bool delScreenshots = options.DeleteScreenshots;
 
             if (delRecordings)
@@ -543,10 +540,6 @@ namespace MultiDelete
             if(delCrashReports)
             {
                 deleteCrashReports();
-            }
-            if(delRawalleLogs)
-            {
-                deleteRawalleLogs();
             }
             if(delScreenshots)
             {
@@ -577,7 +570,6 @@ namespace MultiDelete
                     RecordingsPath = "",
                     UpdateScreen = "",
                     DeleteCrashReports = false,
-                    DeleteRawalleLogs = false,
                     DeleteScreenshots = false,
                     ThreadCount = 1
                 };
@@ -660,7 +652,6 @@ namespace MultiDelete
                     UpdateScreen = "",
                     RecordingsPath = "",
                     DeleteCrashReports = false,
-                    DeleteRawalleLogs = false,
                     DeleteScreenshots = false
                 };
             }
@@ -771,7 +762,6 @@ namespace MultiDelete
                     RecordingsPath = "",
                     UpdateScreen = "",
                     DeleteCrashReports = false,
-                    DeleteRawalleLogs = false,
                     DeleteScreenshots = false
                 };
             }
@@ -846,89 +836,6 @@ namespace MultiDelete
             }
         }
 
-        private void deleteRawalleLogs()
-        {
-            //Get Variables
-            Options options = new Options();
-            if (File.Exists(optionsFile))
-            {
-                options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
-            }
-            else
-            {
-                options = new Options
-                {
-                    InstancePaths = new string[0],
-                    DeleteAllWorlds = false,
-                    StartWith = new string[0],
-                    Include = new string[0],
-                    EndWith = new string[0],
-                    DeleteRecordings = false,
-                    RecordingsPath = "",
-                    UpdateScreen = "",
-                    DeleteCrashReports = false,
-                    DeleteRawalleLogs = false,
-                    DeleteScreenshots = false
-                };
-            }
-            string[] instancePaths = options.InstancePaths;
-            int deletedRawalleLogs = 0;
-            changeLocation(infoLabel, new Point(-8, 41));
-            changeText(infoLabel, "Deleting Rawalle-logs (0)");
-
-            //Get savespaths from instancePath
-            List<string> savesPaths = new List<string>();
-            foreach (string instancePath in instancePaths)
-            {
-                if (instancePath.EndsWith(@"\saves"))
-                {
-                    savesPaths.Add(instancePath);
-                }
-                else if (instancePath.EndsWith(@"\saves\"))
-                {
-                    savesPaths.Add(instancePath.Remove(instancePath.Length - 1));
-                }
-                else if (instancePath.EndsWith(@"\.minecraft"))
-                {
-                    savesPaths.Add(instancePath + @"\saves");
-                }
-                else if (instancePath.EndsWith(@"\.minecraft\"))
-                {
-                    savesPaths.Add(instancePath + "saves");
-                }
-                else if (instancePath.EndsWith(@"\"))
-                {
-                    savesPaths.Add(instancePath + @".minecraft\saves");
-                }
-                else
-                {
-                    savesPaths.Add(instancePath + @"\.minecraft\saves");
-                }
-            }
-
-            foreach (string savesPath in savesPaths)
-            {
-                if (savesPath.EndsWith(@"\"))
-                {
-                    savesPath.Remove(savesPath.Length - 1);
-                }
-                string minecraftPath = savesPath.Remove(savesPath.Length - 6);
-                foreach (string file in Directory.GetFiles(minecraftPath))
-                {
-                    if(file.Substring(minecraftPath.Length + 1).Equals("log.log"))
-                    {
-                        FileInfo fi = new FileInfo(file);
-                        size += fi.Length;
-
-                        File.Delete(file);
-                        deletedRawalleLogs++;
-                        changeText(infoLabel, "Deleting Rawalle-logs (" + deletedRawalleLogs.ToString() + ")");
-                        refreshUI();
-                    }
-                }
-            }
-        }
-
         private void deleteScreenshots()
         {
             //Get variables
@@ -950,7 +857,6 @@ namespace MultiDelete
                     RecordingsPath = "",
                     UpdateScreen = "",
                     DeleteCrashReports = false,
-                    DeleteRawalleLogs = false,
                     DeleteScreenshots = false
                 };
             }

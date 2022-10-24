@@ -34,7 +34,6 @@ namespace MultiDelete
         CheckBox deleteAllWorldsCheckBox = new CheckBox();
         CheckBox deleteRecordingsCheckBox = new CheckBox();
         CheckBox deleteCrashReportsCheckBox = new CheckBox();
-        CheckBox deleteRawalleLogsCheckBox = new CheckBox();
         CheckBox deleteScreenshotsCheckBox = new CheckBox();
         TextBox recordingsPathTextBox = new TextBox();
         Button checkForUpdatesButton = new Button();
@@ -135,15 +134,6 @@ namespace MultiDelete
             deleteCrashReportsCheckBox.TabStop = false;
             deleteCrashReportsCheckBox.Text = "Delete Crash-Reports";
             deleteCrashReportsCheckBox.UseVisualStyleBackColor = true;
-
-            deleteRawalleLogsCheckBox = new CheckBox();
-            deleteRawalleLogsCheckBox.AutoSize = false;
-            deleteRawalleLogsCheckBox.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            deleteRawalleLogsCheckBox.ForeColor = Color.FromArgb(194, 194, 194);
-            deleteRawalleLogsCheckBox.Size = new Size(200, 23);
-            deleteRawalleLogsCheckBox.TabStop = false;
-            deleteRawalleLogsCheckBox.Text = "Delete Rawalle logs";
-            deleteRawalleLogsCheckBox.UseVisualStyleBackColor = true;
 
             deleteScreenshotsCheckBox = new CheckBox();
             deleteScreenshotsCheckBox.AutoSize = false;
@@ -290,7 +280,6 @@ namespace MultiDelete
             toolTip.SetToolTip(deleteRecordingsCheckBox, "Select if MultiDelete should delete your Recordings");
             toolTip.SetToolTip(recordingsPathTextBox, "Select in which folder your Recordings are stored in");
             toolTip.SetToolTip(deleteCrashReportsCheckBox, "Select if MultiDelete should delete your Crash-reports");
-            toolTip.SetToolTip(deleteRawalleLogsCheckBox, "Select if MultiDelete should delete your Rawalle logs");
             toolTip.SetToolTip(deleteScreenshotsCheckBox, "Select if MultiDelete should delete your Screenshots");
             toolTip.SetToolTip(checkForUpdatesButton, "Check if a new Update is available");
             toolTip.SetToolTip(addMultipleInstanceButton, "Add multiple Instances at once via selecting multiple folders");
@@ -316,7 +305,6 @@ namespace MultiDelete
             settingsPanel.Controls.Add(updateScreenPanel);
             settingsPanel.Controls.Add(recordingsPathPanel);
             settingsPanel.Controls.Add(deleteCrashReportsCheckBox);
-            settingsPanel.Controls.Add(deleteRawalleLogsCheckBox);
             settingsPanel.Controls.Add(deleteScreenshotsCheckBox);
             settingsPanel.Controls.Add(threadsToUseLabel);
             settingsPanel.Controls.Add(threadsTrackBar);
@@ -423,7 +411,6 @@ namespace MultiDelete
 
                 deleteCrashReportsCheckBox.Checked = options.DeleteCrashReports;
                 deleteScreenshotsCheckBox.Checked = options.DeleteScreenshots;
-                deleteRawalleLogsCheckBox.Checked = options.DeleteRawalleLogs;
 
                 if(options.ThreadCount < threadsTrackBar.Minimum)
                 {
@@ -498,7 +485,6 @@ namespace MultiDelete
                 DeleteRecordings = deleteRecordingsCheckBox.Checked,
                 RecordingsPath = recordingsPathTextBox.Text,
                 DeleteCrashReports = deleteCrashReportsCheckBox.Checked,
-                DeleteRawalleLogs = deleteRawalleLogsCheckBox.Checked,
                 DeleteScreenshots = deleteScreenshotsCheckBox.Checked,
                 ThreadCount = threadsTrackBar.Value,
                 KeepLastWorlds = Decimal.ToInt32(keepLastWorldsNUD.Value)
@@ -789,9 +775,6 @@ namespace MultiDelete
             settingsPanel.Controls.SetChildIndex(deleteCrashReportsCheckBox, index);
             index++;
 
-            settingsPanel.Controls.SetChildIndex(deleteRawalleLogsCheckBox, index);
-            index++;
-
             settingsPanel.Controls.SetChildIndex(deleteScreenshotsCheckBox, index);
             index++;
 
@@ -993,7 +976,6 @@ namespace MultiDelete
         public bool DeleteRecordings { get; set; }
         public string RecordingsPath { get; set; }
         public bool DeleteCrashReports { get; set; }
-        public bool DeleteRawalleLogs { get; set; }
         public bool DeleteScreenshots { get; set; }
         public int ThreadCount { get; set; }
         public int KeepLastWorlds { get; set; }
