@@ -37,6 +37,7 @@ namespace MultiDelete
             // 
             // settingsPanel
             // 
+            this.settingsPanel.AutoScroll = true;
             this.settingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.settingsPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.settingsPanel.Location = new System.Drawing.Point(0, 0);
@@ -44,14 +45,11 @@ namespace MultiDelete
             this.settingsPanel.Size = new System.Drawing.Size(484, 761);
             this.settingsPanel.TabIndex = 10;
             this.settingsPanel.WrapContents = false;
-            this.settingsPanel.SizeChanged += new EventHandler(settingsPanel_SizeChanged);
-            this.settingsPanel.HorizontalScroll.Maximum = 0;
-            this.settingsPanel.AutoScroll = false;
-            this.settingsPanel.VerticalScroll.Visible = false;
-            this.settingsPanel.AutoScroll = true;
+            this.settingsPanel.SizeChanged += new System.EventHandler(this.settingsPanel_SizeChanged);
             // 
             // settingsMenu
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
@@ -65,7 +63,10 @@ namespace MultiDelete
             this.Text = "Settings";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.settingsMenu_FormClosed);
             this.Load += new System.EventHandler(this.settingsMenu_Load);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.settingsMenu_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.settingsMenu_DragEnter);
             this.ResumeLayout(false);
+
         }
 
         #endregion

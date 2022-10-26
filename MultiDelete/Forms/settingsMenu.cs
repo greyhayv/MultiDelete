@@ -559,6 +559,49 @@ namespace MultiDelete
                 importButton.Location = new Point(456, 0);
             }
         }
+
+        private void settingsMenu_DragEnter(object sender, DragEventArgs e)
+        {
+            if(e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop);
+                
+                if(!files.Any(file => file.EndsWith(".json", StringComparison.OrdinalIgnoreCase)))
+                {
+                    return;
+                }
+
+                e.Effect = DragDropEffects.Copy;
+            }
+        }
+
+        private void settingsMenu_DragDrop(object sender, DragEventArgs e)
+        {
+            if(e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                foreach(string file in files)
+                {
+                    if(!file.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    if (MessageBox.Show("Import settings from " + file + "?", "MultiDelete", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                    {
+                        return;
+                    }
+
+                    Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(file));
+
+                    saveOptions(options);
+                    loadSettings();
+
+                    return;
+                }
+            }
+        }
     }
 
     public class Options
