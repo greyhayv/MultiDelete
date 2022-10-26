@@ -37,7 +37,6 @@ namespace MultiDelete
             // 
             // settingsPanel
             // 
-            this.settingsPanel.AutoScroll = true;
             this.settingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.settingsPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.settingsPanel.Location = new System.Drawing.Point(0, 0);
@@ -46,6 +45,10 @@ namespace MultiDelete
             this.settingsPanel.TabIndex = 10;
             this.settingsPanel.WrapContents = false;
             this.settingsPanel.SizeChanged += new System.EventHandler(this.settingsPanel_SizeChanged);
+            this.settingsPanel.HorizontalScroll.Maximum = 0;
+            this.settingsPanel.AutoScroll = false;
+            this.settingsPanel.VerticalScroll.Visible = false;
+            this.settingsPanel.AutoScroll = true;
             // 
             // settingsMenu
             // 
