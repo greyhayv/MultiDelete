@@ -1,13 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Compile Update="MultiDelete.cs">
+    <Compile Update="Controls\FolderTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\MultiTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\RemoveFolderMultiTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\RemoveMultiTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Forms\MultiDelete.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="settingsMenu.cs">
+    <Compile Update="Forms\settingsMenu.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="updateScreen.cs">
+    <Compile Update="Forms\updateScreen.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>
