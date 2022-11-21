@@ -4,49 +4,51 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace MultiDelete.Controls
+namespace MultiDelete
 {
-    internal class FolderTextBox : Panel
+    public class FolderTextBox : Panel
     {
-        TextBox textBox = new TextBox();
-        Button folderButton = new Button();
+        BTextBox textBox = new BTextBox();
+        BButton folderButton = new BButton();
         private string folderDialogDescription;
+        private Color borderColor;
+
+        public Color BorderColor { get => borderColor; set { borderColor = value; textBox.BorderColor = value; folderButton.BorderColor = value; } }
+        public override Color BackColor { get => base.BackColor; set { base.BackColor = value; textBox.BackColor = value; } }
+        public override Color ForeColor { get => base.ForeColor; set { base.ForeColor = value; textBox.ForeColor = value; } }
 
         public FolderTextBox()
         {
             ToolTip toolTip = new ToolTip();
             toolTip.ShowAlways = true;
 
-            textBox.BackColor = ColorTranslator.FromHtml("#4C4C4C");
-            textBox.BorderStyle = BorderStyle.FixedSingle;
-            textBox.ForeColor = ColorTranslator.FromHtml("#C2C2C2");
-            textBox.Size = new Size(200, 22);
-            textBox.TabStop = false;
-            textBox.PlaceholderText = "Recordings Path";
+            textBox.setPlaceholderText("Recordings Path");
+            textBox.BorderSize = 1;
+            textBox.BorderColor = Color.FromArgb(194, 194, 194);
+            textBox.UnderlineStyle = false;
+            textBox.BackColor = Color.FromArgb(40, 40, 40);
+            textBox.ForeColor = Color.FromArgb(194, 194, 194);
 
             folderButton.Size = new Size(22, 22);
-            folderButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
-            folderButton.FlatStyle = FlatStyle.Popup;
             folderButton.TabStop = false;
             folderButton.UseVisualStyleBackColor = false;
             folderButton.Image = Properties.Resources.foldericon;
-            folderButton.Padding = new Padding(0, 0, 1, 0);
             folderButton.Click += new EventHandler(folderButton_Click);
+            folderButton.BorderSize = 1;
+            folderButton.BorderRadius = 10;
+            folderButton.BorderColor = Color.FromArgb(194, 194, 194);
             toolTip.SetToolTip(folderButton, "Browse");
 
-            Size = new Size(250, 22);
+            Size = new Size(250, 25);
             Controls.Add(textBox);
             textBox.Location = new Point(0, 0);
             Controls.Add(folderButton);
-            folderButton.Location = new Point(205, 0);
+            folderButton.Location = new Point(205, 1);
         }
 
         public void setToolTip(string str)
         {
-            ToolTip toolTip = new ToolTip();
-            toolTip.ShowAlways = true;
-
-            toolTip.SetToolTip(textBox, str);
+            textBox.setToolTip(str);
         }
 
         public void setText(string text)
@@ -61,7 +63,7 @@ namespace MultiDelete.Controls
 
         public void setEnabled(bool enabled)
         {
-            textBox.Enabled = enabled;
+            textBox.setEnabled(enabled);
             folderButton.Enabled = enabled;
         }
 

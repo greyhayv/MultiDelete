@@ -1,6 +1,7 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
+using System.Text.Json;
+using System.IO;
 
 namespace MultiDelete
 {
@@ -33,25 +34,27 @@ namespace MultiDelete
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MultiDelete));
-            this.deleteWorldsButton = new System.Windows.Forms.Button();
-            this.settingsButton = new System.Windows.Forms.Button();
-            this.focusButton = new System.Windows.Forms.Button();
+            this.deleteWorldsButton = new BButton();
+            this.settingsButton = new BButton();
+            this.focusButton = new BButton();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.infoLabel = new System.Windows.Forms.Label();
-            this.okButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
+            this.okButton = new BButton();
+            this.cancelButton = new BButton();
             this.SuspendLayout();
             // 
             // deleteWorldsButton
             // 
-            this.deleteWorldsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.deleteWorldsButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(76)))));
-            this.deleteWorldsButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.deleteWorldsButton.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.deleteWorldsButton.BackColor = System.Drawing.Color.Transparent;
+            this.deleteWorldsButton.BackgroundColor = System.Drawing.Color.Transparent;
+            this.deleteWorldsButton.BorderRadius = 20;
+            this.deleteWorldsButton.BorderSize = 1;
+            this.deleteWorldsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.deleteWorldsButton.Font = new System.Drawing.Font("Roboto", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.deleteWorldsButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(194)))), ((int)(((byte)(194)))), ((int)(((byte)(194)))));
-            this.deleteWorldsButton.Location = new System.Drawing.Point(167, 31);
+            this.deleteWorldsButton.Location = new System.Drawing.Point(154, 30);
             this.deleteWorldsButton.Name = "deleteWorldsButton";
-            this.deleteWorldsButton.Size = new System.Drawing.Size(150, 50);
+            this.deleteWorldsButton.Size = new System.Drawing.Size(175, 50);
             this.deleteWorldsButton.TabIndex = 0;
             this.deleteWorldsButton.TabStop = false;
             this.deleteWorldsButton.Text = "Delete Worlds";
@@ -60,23 +63,31 @@ namespace MultiDelete
             // 
             // settingsButton
             // 
-            this.settingsButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(76)))));
-            this.settingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.settingsButton.Font = new System.Drawing.Font("Roboto", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.settingsButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(194)))), ((int)(((byte)(194)))), ((int)(((byte)(194)))));
+            this.settingsButton.BackColor = System.Drawing.Color.Transparent;
+            this.settingsButton.BackgroundColor = System.Drawing.Color.Transparent;
+            this.settingsButton.BorderRadius = 18;
+            this.settingsButton.BorderSize = 1;
+            this.settingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.settingsButton.Font = new System.Drawing.Font("Nunito", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.settingsButton.Image = global::MultiDelete.Properties.Resources.settingsIcon;
             this.settingsButton.Location = new System.Drawing.Point(447, 7);
             this.settingsButton.Name = "settingsButton";
-            this.settingsButton.Padding = new System.Windows.Forms.Padding(0, 2, 1, 3);
             this.settingsButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.settingsButton.Size = new System.Drawing.Size(30, 30);
             this.settingsButton.TabIndex = 1;
             this.settingsButton.TabStop = false;
+            this.settingsButton.TextColor = MultiDelete.accentColor;
             this.settingsButton.UseVisualStyleBackColor = false;
             this.settingsButton.Click += new System.EventHandler(this.settingsButton_Click);
             // 
             // focusButton
             // 
+            this.focusButton.BackColor = System.Drawing.Color.Transparent;
+            this.focusButton.BackgroundColor = System.Drawing.Color.Transparent;
+            this.focusButton.BorderRadius = 20;
+            this.focusButton.BorderSize = 1;
+            this.focusButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.focusButton.ForeColor = MultiDelete.fontColor;
             this.focusButton.Location = new System.Drawing.Point(431, 48);
             this.focusButton.Name = "focusButton";
             this.focusButton.Size = new System.Drawing.Size(0, 0);
@@ -99,7 +110,6 @@ namespace MultiDelete
             // 
             this.infoLabel.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.infoLabel.Font = new System.Drawing.Font("Roboto", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.infoLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(194)))), ((int)(((byte)(194)))), ((int)(((byte)(194)))));
             this.infoLabel.Location = new System.Drawing.Point(-8, 41);
             this.infoLabel.Name = "infoLabel";
             this.infoLabel.Size = new System.Drawing.Size(500, 25);
@@ -111,10 +121,12 @@ namespace MultiDelete
             // okButton
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.okButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(76)))));
-            this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.okButton.BackColor = System.Drawing.Color.Transparent;
+            this.okButton.BackgroundColor = System.Drawing.Color.Transparent;
+            this.okButton.BorderRadius = 20;
+            this.okButton.BorderSize = 1;
+            this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.okButton.Font = new System.Drawing.Font("Roboto", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.okButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(194)))), ((int)(((byte)(194)))), ((int)(((byte)(194)))));
             this.okButton.Location = new System.Drawing.Point(193, 57);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(100, 40);
@@ -128,10 +140,12 @@ namespace MultiDelete
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(76)))));
-            this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.cancelButton.BackColor = System.Drawing.Color.Transparent;
+            this.cancelButton.BackgroundColor = System.Drawing.Color.Transparent;
+            this.cancelButton.BorderRadius = 20;
+            this.cancelButton.BorderSize = 1;
+            this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cancelButton.Font = new System.Drawing.Font("Roboto", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.cancelButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(194)))), ((int)(((byte)(194)))), ((int)(((byte)(194)))));
             this.cancelButton.Location = new System.Drawing.Point(198, 72);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -148,7 +162,6 @@ namespace MultiDelete
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.ClientSize = new System.Drawing.Size(484, 111);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
@@ -164,19 +177,19 @@ namespace MultiDelete
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MultiDelete";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.updateColors();
             this.ResumeLayout(false);
-
+            this.PerformLayout();
         }
 
         #endregion
 
-        private Button deleteWorldsButton;
-        private Button settingsButton;
-        private Button focusButton;
+        private BButton deleteWorldsButton;
+        private BButton settingsButton;
+        private BButton focusButton;
         private ProgressBar progressBar;
         private Label infoLabel;
-        private Button okButton;
-        private Button cancelButton;
+        private BButton okButton;
+        private BButton cancelButton;
     }
 }
-

@@ -63,6 +63,16 @@ namespace MultiDelete.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap downButton {
+            get {
+                object obj = ResourceManager.GetObject("downButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap exportIcon {
             get {
                 object obj = ResourceManager.GetObject("exportIcon", resourceCulture);
@@ -91,6 +101,16 @@ namespace MultiDelete.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon icon {
+            get {
+                object obj = ResourceManager.GetObject("icon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap importIcon {
@@ -106,6 +126,16 @@ namespace MultiDelete.Properties {
         internal static System.Drawing.Bitmap settingsIcon {
             get {
                 object obj = ResourceManager.GetObject("settingsIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap upButton {
+            get {
+                object obj = ResourceManager.GetObject("upButton", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

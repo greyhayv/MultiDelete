@@ -5,65 +5,91 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace MultiDelete.Controls
+namespace MultiDelete
 {
     internal class RemoveFolderMultiTextBox : MultiTextBox
     {
-        private List<Button> removeButtons = new List<Button>();
-        private List<Button> folderButtons = new List<Button>();
+        private List<BButton> removeButtons = new List<BButton>();
+        private List<BButton> folderButtons = new List<BButton>();
         private List<Panel> textBoxPanel = new List<Panel>();
+
+        public override Color BorderColor { get => base.BorderColor; set { 
+            base.BorderColor = value;
+            foreach(BTextBox textBox in textBoxes) {
+                textBox.BorderColor = value;
+            }
+            foreach(BButton button in folderButtons) {
+                button.BorderColor = value;
+            }
+            foreach(BButton button in removeButtons) {
+                button.BorderColor = value;
+            }
+        } }
+
+        public override Color BackColor { get => base.BackColor; set { 
+            base.BackColor = value;
+            foreach(BTextBox textBox in textBoxes) {
+                textBox.BackColor = value;
+            }
+            foreach(BButton button in folderButtons) {
+                button.BackColor = value;
+            }
+            foreach(BButton button in removeButtons) {
+                button.BackColor = value;
+            }
+        } }
 
         public override void createNewTextBox()
         {
             ToolTip toolTip = new ToolTip();
             toolTip.ShowAlways = true;
 
-            TextBox textBox = new TextBox();
-            textBox.BackColor = ColorTranslator.FromHtml("#4C4C4C");
-            textBox.BorderStyle = BorderStyle.FixedSingle;
-            textBox.ForeColor = ColorTranslator.FromHtml("#C2C2C2");
-            textBox.Size = new Size(200, 22);
-            textBox.TabStop = false;
-            textBox.TextChanged += new EventHandler(textChanged);
+            BTextBox textBox = new BTextBox();
+            textBox.BorderSize = 1;
+            textBox.BorderColor = BorderColor;
+            textBox.UnderlineStyle = false;
+            textBox.BackColor = BackColor;
+            textBox.ForeColor = ForeColor;
+            textBox.textBox.TextChanged += new EventHandler(textChanged);
             textBoxes.Add(textBox);
 
             if (toolTipStr != null)
             {
-                toolTip.SetToolTip(textBox, toolTipStr);
+                textBox.setToolTip(toolTipStr);
             }
 
-            Button removeButton = new Button();
+            BButton removeButton = new BButton();
             removeButton.Size = new Size(22, 22);
-            removeButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
-            removeButton.FlatStyle = FlatStyle.Popup;
             removeButton.TabStop = false;
             removeButton.UseVisualStyleBackColor = false;
             removeButton.Image = Properties.Resources.x;
-            removeButton.Padding = new Padding(0, 0, 1, 1);
             removeButton.Click += new EventHandler(removeButton_click);
+            removeButton.BorderSize = 1;
+            removeButton.BorderRadius = 10;
+            removeButton.BorderColor = BorderColor;
             toolTip.SetToolTip(removeButton, "Remove");
             removeButtons.Add(removeButton);
 
-            Button folderButton = new Button();
+            BButton folderButton = new BButton();
             folderButton.Size = new Size(22, 22);
-            folderButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
-            folderButton.FlatStyle = FlatStyle.Popup;
             folderButton.TabStop = false;
             folderButton.UseVisualStyleBackColor = false;
             folderButton.Image = Properties.Resources.foldericon;
-            folderButton.Padding = new Padding(0, 0, 1, 0);
             folderButton.Click += new EventHandler(folderButton_click);
+            folderButton.BorderSize = 1;
+            folderButton.BorderRadius = 10;
+            folderButton.BorderColor = BorderColor;
             toolTip.SetToolTip(folderButton, "Browse");
             folderButtons.Add(folderButton);
 
             Panel panel = new Panel();
-            panel.Size = new Size(275, 22);
+            panel.Size = new Size(275, 25);
             panel.Controls.Add(textBox);
             textBox.Location = new Point(0, 0);
             panel.Controls.Add(folderButton);
-            folderButton.Location = new Point(205, 0);
+            folderButton.Location = new Point(205, 1);
             panel.Controls.Add(removeButton);
-            removeButton.Location = new Point(230, 0);
+            removeButton.Location = new Point(230, 1);
             textBoxPanel.Add(panel);
 
             Controls.Add(panel);
@@ -80,6 +106,26 @@ namespace MultiDelete.Controls
             textBoxPanel.RemoveAt(i);
 
             setRemoveButtonVisibilaty();
+        }
+
+        public override void enableTextBoxes() {
+            base.enableTextBoxes();
+            foreach(BButton button in removeButtons) {
+                button.Enabled = true;
+            }
+            foreach(BButton button in folderButtons) {
+                button.Enabled = true;
+            }
+        }
+
+        public override void disableTextBoxes() {
+            base.disableTextBoxes();
+            foreach(BButton button in removeButtons) {
+                button.Enabled = false;
+            }
+            foreach(BButton button in folderButtons) {
+                button.Enabled = false;
+            }
         }
 
         private void setRemoveButtonVisibilaty()

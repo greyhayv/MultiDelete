@@ -9,25 +9,21 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Threading;
 using System.Diagnostics;
 using System.Data;
-using MultiDelete.Controls;
 using System.Linq;
 
 namespace MultiDelete
 {
     public partial class settingsMenu : Form
     {
-        string optionsFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete\options.json";
+        private MultiDelete multiDelete;
+        private string optionsFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete\options.json";
 
         //Settings menu elements
-        Label settingsHeading = new Label();
-        Button exportButton = new Button();
-        Button importButton = new Button();
-        Panel headingPanel = new Panel();
         RemoveFolderMultiTextBox instancePathMTB = new RemoveFolderMultiTextBox();
-        RemoveMultiTextBox startsWithMTB = new RemoveMultiTextBox();
+        RemoveMultiTextBox startWithMTB = new RemoveMultiTextBox();
         RemoveMultiTextBox includeMTB = new RemoveMultiTextBox();
         RemoveMultiTextBox endWithMTB = new RemoveMultiTextBox();
-        ComboBox updateScreenComboBox = new ComboBox();
+        BNumericUpDown updateScreenNUD = new BNumericUpDown();
         Label instancePathLabel = new Label();
         Label deleteAllWorldsThatLabel = new Label();
         Label startWithLabel = new Label();
@@ -37,71 +33,45 @@ namespace MultiDelete
         CheckBox deleteRecordingsCheckBox = new CheckBox();
         CheckBox deleteCrashReportsCheckBox = new CheckBox();
         CheckBox deleteScreenshotsCheckBox = new CheckBox();
-        Button checkForUpdatesButton = new Button();
+        BButton checkForUpdatesButton = new BButton();
         FolderTextBox recordingsFTB = new FolderTextBox();
         Panel updateScreenPanel = new Panel();
-        Button addMultipleInstanceButton = new Button();
+        BButton addMultipleInstanceButton = new BButton();
         Label updateScreenLabel = new Label();
+        Label updateScreenLabel2 = new Label();
         Label threadsToUseLabel = new Label();
         TrackBar threadsTrackBar = new TrackBar();
         Label keepLastWorldsLabel = new Label();
         Label keepLastWorldsLabel2 = new Label();
-        NumericUpDown keepLastWorldsNUD = new NumericUpDown();
+        BNumericUpDown keepLastWorldsNUD = new BNumericUpDown();
         Panel keepLastWorldsPanel = new Panel();
+        Label multiDeleteHeading = new Label();
+        LinkLabel viewRepositoryLabel = new LinkLabel();
+        Label bgColorLabel = new Label();
+        BButton bgColorButton = new BButton();
+        Panel bgColorPanel = new Panel();
+        Label accentColorLabel = new Label();
+        BButton accentColorButton = new BButton();
+        Panel accentColorPanel = new Panel();
+        Label fontColorLabel = new Label();
+        BButton fontColorButton = new BButton();
+        Panel fontColorPanel = new Panel();
 
-        public settingsMenu()
+        public settingsMenu(MultiDelete md)
         {
+            multiDelete = md;
+
             InitializeComponent();
-        }
 
-        private void settingsMenu_Load(object sender, EventArgs e)
-        {
             ToolTip toolTip = new ToolTip();
             toolTip.ShowAlways = true;
 
-            settingsHeading = new Label();
-            settingsHeading.TextAlign = ContentAlignment.MiddleCenter;
-            settingsHeading.AutoSize = true;
-            settingsHeading.Font = new Font("Roboto", 20.25F, FontStyle.Bold, GraphicsUnit.Point);
-            settingsHeading.ForeColor = Color.FromArgb(194, 194, 194);
-            settingsHeading.TabStop = false;
-            settingsHeading.Text = "Settings";
-
-            exportButton = new Button();
-            exportButton.Size = new Size(22, 22);
-            exportButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
-            exportButton.FlatStyle = FlatStyle.Popup;
-            exportButton.TabStop = false;
-            exportButton.UseVisualStyleBackColor = false;
-            exportButton.Image = Properties.Resources.exportIcon;
-            exportButton.Padding = new Padding(0, 0, 1, 1);
-            exportButton.Click += new EventHandler(exportButton_click);
             toolTip.SetToolTip(exportButton, "Export settings");
-
-            importButton = new Button();
-            importButton.Size = new Size(22, 22);
-            importButton.BackColor = ColorTranslator.FromHtml("#4C4C4C");
-            importButton.FlatStyle = FlatStyle.Popup;
-            importButton.TabStop = false;
-            importButton.UseVisualStyleBackColor = false;
-            importButton.Image = Properties.Resources.importIcon;
-            importButton.Padding = new Padding(0, 0, 1, 1);
-            importButton.Click += new EventHandler(importButton_click);
             toolTip.SetToolTip(importButton, "Import settings");
-
-            headingPanel = new Panel();
-            headingPanel.Size = new Size(478, 35);
-            headingPanel.Controls.Add(settingsHeading);
-            settingsHeading.Location = new Point(182, 0);
-            headingPanel.Controls.Add(exportButton);
-            exportButton.Location = new Point(431, 0);
-            headingPanel.Controls.Add(importButton);
-            importButton.Location = new Point(456, 0);
 
             instancePathLabel = new Label();
             instancePathLabel.AutoSize = false;
             instancePathLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            instancePathLabel.ForeColor = Color.FromArgb(194, 194, 194);
             instancePathLabel.Size = new Size(150, 23);
             instancePathLabel.TabStop = false;
             instancePathLabel.Text = "Instance-Paths:";
@@ -113,7 +83,7 @@ namespace MultiDelete
             deleteAllWorldsThatLabel = new Label();
             deleteAllWorldsThatLabel.AutoSize = true;
             deleteAllWorldsThatLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            deleteAllWorldsThatLabel.ForeColor = Color.FromArgb(194, 194, 194);
+            
             deleteAllWorldsThatLabel.Location = new Point(12, 132);
             deleteAllWorldsThatLabel.TabStop = false;
             deleteAllWorldsThatLabel.Text = "Delete all Worlds that";
@@ -121,19 +91,17 @@ namespace MultiDelete
             startWithLabel = new Label();
             startWithLabel.AutoSize = false;
             startWithLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            startWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
             startWithLabel.Size = new Size(93, 23);
             startWithLabel.TabStop = false;
             startWithLabel.Text = "start with:";
             toolTip.SetToolTip(startWithLabel, "Select what the name of the world has to start with to be deleted");
 
-            startsWithMTB = new RemoveMultiTextBox();
-            startsWithMTB.setToolTip("Select what the name of the world has to start with to be deleted");
+            startWithMTB = new RemoveMultiTextBox();
+            startWithMTB.setToolTip("Select what the name of the world has to start with to be deleted");
 
             includeLabel = new Label();
             includeLabel.AutoSize = false;
             includeLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            includeLabel.ForeColor = Color.FromArgb(194, 194, 194);
             includeLabel.Size = new Size(76, 23);
             includeLabel.TabStop = false;
             includeLabel.Text = "include:";
@@ -145,7 +113,6 @@ namespace MultiDelete
             endWithLabel = new Label();
             endWithLabel.AutoSize = false;
             endWithLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            endWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
             endWithLabel.Size = new Size(86, 23);
             endWithLabel.TabStop = false;
             endWithLabel.Text = "end with:";
@@ -157,7 +124,6 @@ namespace MultiDelete
             deleteAllWorldsCheckBox = new CheckBox();
             deleteAllWorldsCheckBox.AutoSize = false;
             deleteAllWorldsCheckBox.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            deleteAllWorldsCheckBox.ForeColor = Color.FromArgb(194, 194, 194);
             deleteAllWorldsCheckBox.Size = new Size(146, 23);
             deleteAllWorldsCheckBox.TabStop = false;
             deleteAllWorldsCheckBox.Text = "Delete all Worlds";
@@ -168,7 +134,6 @@ namespace MultiDelete
             deleteRecordingsCheckBox = new CheckBox();
             deleteRecordingsCheckBox.AutoSize = false;
             deleteRecordingsCheckBox.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            deleteRecordingsCheckBox.ForeColor = Color.FromArgb(194, 194, 194);
             deleteRecordingsCheckBox.Size = new Size(200, 23);
             deleteRecordingsCheckBox.TabStop = false;
             deleteRecordingsCheckBox.Text = "Delete Recordings";
@@ -179,7 +144,6 @@ namespace MultiDelete
             deleteCrashReportsCheckBox = new CheckBox();
             deleteCrashReportsCheckBox.AutoSize = false;
             deleteCrashReportsCheckBox.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            deleteCrashReportsCheckBox.ForeColor = Color.FromArgb(194, 194, 194);
             deleteCrashReportsCheckBox.Size = new Size(200, 23);
             deleteCrashReportsCheckBox.TabStop = false;
             deleteCrashReportsCheckBox.Text = "Delete Crash-Reports";
@@ -189,7 +153,6 @@ namespace MultiDelete
             deleteScreenshotsCheckBox = new CheckBox();
             deleteScreenshotsCheckBox.AutoSize = false;
             deleteScreenshotsCheckBox.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            deleteScreenshotsCheckBox.ForeColor = Color.FromArgb(194, 194, 194);
             deleteScreenshotsCheckBox.Size = new Size(200, 23);
             deleteScreenshotsCheckBox.TabStop = false;
             deleteScreenshotsCheckBox.Text = "Delete Screenshots";
@@ -199,73 +162,67 @@ namespace MultiDelete
             updateScreenLabel = new Label();
             updateScreenLabel.AutoSize = true;
             updateScreenLabel.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            updateScreenLabel.ForeColor = Color.FromArgb(194, 194, 194);
             updateScreenLabel.TabStop = false;
-            updateScreenLabel.Text = "Update screen";
+            updateScreenLabel.Text = "Update screen every";
             toolTip.SetToolTip(updateScreenLabel, "Select how often the screen should update during world deletion (Less updates = way faster world deletion)");
 
-            updateScreenComboBox = new ComboBox();
-            updateScreenComboBox.BackColor = Color.FromArgb(76, 76, 76);
-            updateScreenComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            updateScreenComboBox.FlatStyle = FlatStyle.Popup;
-            updateScreenComboBox.ForeColor = Color.FromArgb(194, 194, 194);
-            updateScreenComboBox.FormattingEnabled = true;
-            updateScreenComboBox.Items.AddRange(new object[] {
-            "every world",
-            "every 10. world",
-            "every 100. world",
-            "every 1000. world",
-            "never"});
-            updateScreenComboBox.Location = new Point(320, 12);
-            updateScreenComboBox.Size = new Size(121, 21);
-            updateScreenComboBox.TabStop = false;
-            updateScreenComboBox.SelectedIndex = 0;
-            updateScreenComboBox.SelectedIndexChanged += new EventHandler(updateScreenComboBox_SelectedIndexChanged);
-            toolTip.SetToolTip(updateScreenComboBox, "Select how often the screen should update during world deletion (Less updates = way faster world deletion)");
+            updateScreenNUD = new BNumericUpDown();
+            updateScreenNUD.Size = new Size(40, 26);
+            updateScreenNUD.TabStop = false;
+            updateScreenNUD.Value = 1;
+            updateScreenNUD.Minimum = 1;
+            updateScreenNUD.Maximum = 10000;
+            updateScreenNUD.TextAlign = HorizontalAlignment.Center;
+            toolTip.SetToolTip(updateScreenNUD, "Select how often the screen should update during world deletion (Less updates = way faster world deletion)");
+
+            updateScreenLabel2 = new Label();
+            updateScreenLabel2.AutoSize = true;
+            updateScreenLabel2.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            updateScreenLabel2.TabStop = false;
+            updateScreenLabel2.Text = "world.";
+            toolTip.SetToolTip(updateScreenLabel2, "Select how often the screen should update during world deletion (Less updates = way faster world deletion)");
 
             updateScreenPanel = new Panel();
-            updateScreenPanel.Size = new Size(400, 23);
+            updateScreenPanel.Size = new Size(400, 25);
             updateScreenPanel.Controls.Add(updateScreenLabel);
             updateScreenLabel.Location = new Point(0, 0);
-            updateScreenPanel.Controls.Add(updateScreenComboBox);
-            updateScreenComboBox.Location = new Point(110, 0);
+            updateScreenPanel.Controls.Add(updateScreenNUD);
+            updateScreenNUD.Location = new Point(150, 0);
+            updateScreenPanel.Controls.Add(updateScreenLabel2);
+            updateScreenLabel2.Location = new Point(190, 0);
 
             recordingsFTB = new FolderTextBox();
             recordingsFTB.setFolderDialogDescription("select recordings-path");
             recordingsFTB.setToolTip("Select in which folder MultiDelete should delete your recordings");
 
-            checkForUpdatesButton = new Button();
-            checkForUpdatesButton.BackColor = Color.FromArgb(76, 76, 76);
-            checkForUpdatesButton.FlatStyle = FlatStyle.Popup;
+            checkForUpdatesButton = new BButton();
             checkForUpdatesButton.Font = new Font("Roboto", 12.25F, FontStyle.Regular, GraphicsUnit.Point);
-            checkForUpdatesButton.ForeColor = Color.FromArgb(194, 194, 194);
             checkForUpdatesButton.Size = new Size(150, 50);
             checkForUpdatesButton.TabStop = false;
             checkForUpdatesButton.Text = "Check for Updates";
             checkForUpdatesButton.UseVisualStyleBackColor = false;
             checkForUpdatesButton.Click += new EventHandler(checkForUpdatesButton_Click);
+            checkForUpdatesButton.BorderSize = 1;
             toolTip.SetToolTip(checkForUpdatesButton, "Check if a new Update is available");
 
-            addMultipleInstanceButton = new Button();
-            addMultipleInstanceButton.BackColor = Color.FromArgb(76, 76, 76);
-            addMultipleInstanceButton.FlatStyle = FlatStyle.Popup;
+            addMultipleInstanceButton = new BButton();
             addMultipleInstanceButton.Font = new Font("Roboto", 12.25F, FontStyle.Regular, GraphicsUnit.Point);
-            addMultipleInstanceButton.ForeColor = Color.FromArgb(194, 194, 194);
             addMultipleInstanceButton.Size = new Size(200, 35);
             addMultipleInstanceButton.TabStop = false;
             addMultipleInstanceButton.Text = "Add multiple Instances";
             addMultipleInstanceButton.UseVisualStyleBackColor = false;
             addMultipleInstanceButton.Click += new EventHandler(addMultipleInstanceButton_Click);
+            addMultipleInstanceButton.BorderSize = 1;
             toolTip.SetToolTip(addMultipleInstanceButton, "Add multiple Instances at once via selecting multiple folders");
 
             threadsToUseLabel = new Label();
             threadsToUseLabel.AutoSize = true;
             threadsToUseLabel.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            threadsToUseLabel.ForeColor = Color.FromArgb(194, 194, 194);
             threadsToUseLabel.TabStop = false;
             threadsToUseLabel.Text = "Threads to use: 1";
             toolTip.SetToolTip(threadsToUseLabel, "Configure how many threads MultiDelte should use to delete worlds.");
 
+            threadsTrackBar = new TrackBar();
             threadsTrackBar.Maximum = Environment.ProcessorCount;
             threadsTrackBar.Minimum = 1;
             threadsTrackBar.Size = new Size(200, 45);
@@ -278,61 +235,258 @@ namespace MultiDelete
             keepLastWorldsLabel = new Label();
             keepLastWorldsLabel.AutoSize = true;
             keepLastWorldsLabel.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            keepLastWorldsLabel.ForeColor = Color.FromArgb(194, 194, 194);
             keepLastWorldsLabel.TabStop = false;
             keepLastWorldsLabel.Text = "Keep last";
             toolTip.SetToolTip(keepLastWorldsLabel, "Select how many of the last worlds MultiDelete should keep.");
 
-            keepLastWorldsNUD = new NumericUpDown();
-            keepLastWorldsNUD.BackColor = ColorTranslator.FromHtml("#4C4C4C");
-            keepLastWorldsNUD.BorderStyle = BorderStyle.FixedSingle;
-            keepLastWorldsNUD.ForeColor = ColorTranslator.FromHtml("#C2C2C2");
-            keepLastWorldsNUD.Size = new Size(35, 22);
+            keepLastWorldsNUD = new BNumericUpDown();
+            keepLastWorldsNUD.Size = new Size(37, 26);
             keepLastWorldsNUD.TabStop = false;
             keepLastWorldsNUD.Value = 10;
+            keepLastWorldsNUD.Maximum = 1000;
+            keepLastWorldsNUD.TextAlign = HorizontalAlignment.Center;
             toolTip.SetToolTip(keepLastWorldsNUD, "Select how many of the last worlds MultiDelete should keep.");
 
             keepLastWorldsLabel2 = new Label();
             keepLastWorldsLabel2.AutoSize = true;
             keepLastWorldsLabel2.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            keepLastWorldsLabel2.ForeColor = Color.FromArgb(194, 194, 194);
             keepLastWorldsLabel2.TabStop = false;
             keepLastWorldsLabel2.Text = "worlds.";
             toolTip.SetToolTip(keepLastWorldsLabel2, "Select how many of the last worlds MultiDelete should keep.");
 
             keepLastWorldsPanel = new Panel();
-            keepLastWorldsPanel.Size = new Size(400, 23);
+            keepLastWorldsPanel.Size = new Size(400, 34);
             keepLastWorldsPanel.Controls.Add(keepLastWorldsLabel);
-            keepLastWorldsLabel.Location = new Point(0, 0);
+            keepLastWorldsLabel.Location = new Point(0, 3);
             keepLastWorldsPanel.Controls.Add(keepLastWorldsNUD);
             keepLastWorldsNUD.Location = new Point(75, 0);
             keepLastWorldsPanel.Controls.Add(keepLastWorldsLabel2);
-            keepLastWorldsLabel2.Location = new Point(110, 0);
+            keepLastWorldsLabel2.Location = new Point(112, 3);
 
-            settingsPanel.Controls.Clear();
-            settingsPanel.Controls.Add(headingPanel);
-            settingsPanel.Controls.Add(instancePathLabel);
-            settingsPanel.Controls.Add(instancePathMTB);
-            settingsPanel.Controls.Add(addMultipleInstanceButton);
-            settingsPanel.Controls.Add(deleteAllWorldsCheckBox);
-            settingsPanel.Controls.Add(deleteAllWorldsThatLabel);
-            settingsPanel.Controls.Add(startWithLabel);
-            settingsPanel.Controls.Add(startsWithMTB);
-            settingsPanel.Controls.Add(includeLabel);
-            settingsPanel.Controls.Add(includeMTB);
-            settingsPanel.Controls.Add(endWithLabel);
-            settingsPanel.Controls.Add(endWithMTB);
-            settingsPanel.Controls.Add(updateScreenPanel);
-            settingsPanel.Controls.Add(threadsToUseLabel);
-            settingsPanel.Controls.Add(threadsTrackBar);
-            settingsPanel.Controls.Add(deleteRecordingsCheckBox);
-            settingsPanel.Controls.Add(recordingsFTB);
-            settingsPanel.Controls.Add(deleteCrashReportsCheckBox);
-            settingsPanel.Controls.Add(deleteScreenshotsCheckBox);
-            settingsPanel.Controls.Add(keepLastWorldsPanel);
-            settingsPanel.Controls.Add(checkForUpdatesButton);           
+            multiDeleteHeading = new Label();
+            multiDeleteHeading.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            multiDeleteHeading.AutoSize = true;
+            multiDeleteHeading.Font = new System.Drawing.Font("Roboto", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            multiDeleteHeading.TabStop = false;
+            multiDeleteHeading.Text = "MultiDelete " + MultiDelete.version;
+            multiDeleteHeading.Padding = new Padding(0, 10, 0, 5);
+
+            viewRepositoryLabel = new LinkLabel();
+            viewRepositoryLabel.AutoSize = true;
+            viewRepositoryLabel.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            viewRepositoryLabel.TabStop = false;
+            viewRepositoryLabel.Text = "View GitHub repository";
+            viewRepositoryLabel.LinkClicked += new LinkLabelLinkClickedEventHandler(viewRepositoryLabel_LinkClicked);
+            viewRepositoryLabel.Padding = new Padding(0, 0, 0, 5);
+            toolTip.SetToolTip(viewRepositoryLabel, "https://github.com/greyhayv/MultiDelete");
+
+            bgColorLabel = new Label();
+            bgColorLabel.AutoSize = true;
+            bgColorLabel.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            bgColorLabel.TabStop = false;
+            bgColorLabel.Text = "Background Color:";
+            toolTip.SetToolTip(bgColorLabel, "Select which color the background of MultiDelete should have.");
+
+            bgColorButton = new BButton();
+            bgColorButton.Size = new Size(30, 30);
+            bgColorButton.BorderRadius = 15;
+            bgColorButton.TabStop = false;
+            bgColorButton.UseVisualStyleBackColor = false;
+            bgColorButton.BorderSize = 1;
+            bgColorButton.DisableAnimations = true;
+            bgColorButton.Click += new EventHandler(bgColorButton_Click);
+            toolTip.SetToolTip(bgColorButton, "Select which color the background of MultiDelete should have.");
+
+            bgColorPanel = new Panel();
+            bgColorPanel.Size = new Size(400, 32);
+            bgColorPanel.Controls.Add(bgColorLabel);
+            bgColorLabel.Location = new Point(0, 5);
+            bgColorPanel.Controls.Add(bgColorButton);
+            bgColorButton.Location = new Point(140, 0);
+
+            accentColorLabel = new Label();
+            accentColorLabel.AutoSize = true;
+            accentColorLabel.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            accentColorLabel.TabStop = false;
+            accentColorLabel.Text = "Accent Color:";
+            toolTip.SetToolTip(accentColorLabel, "Select which Accent color MultiDelete should have.");
+
+            accentColorButton = new BButton();
+            accentColorButton.Size = new Size(30, 30);
+            accentColorButton.BorderRadius = 15;
+            accentColorButton.TabStop = false;
+            accentColorButton.UseVisualStyleBackColor = false;
+            accentColorButton.BorderSize = 1;
+            accentColorButton.DisableAnimations = true;
+            accentColorButton.Click += new EventHandler(accentColorButton_Click);
+            toolTip.SetToolTip(accentColorButton, "Select which Accent color MultiDelete should have.");
+
+            accentColorPanel = new Panel();
+            accentColorPanel.Size = new Size(400, 32);
+            accentColorPanel.Controls.Add(accentColorLabel);
+            accentColorLabel.Location = new Point(0, 5);
+            accentColorPanel.Controls.Add(accentColorButton);
+            accentColorButton.Location = new Point(105, 0);
+
+            fontColorLabel = new Label();
+            fontColorLabel.AutoSize = true;
+            fontColorLabel.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            fontColorLabel.TabStop = false;
+            fontColorLabel.Text = "Font Color:";
+            toolTip.SetToolTip(fontColorLabel, "Select which Font color MultiDelete should have.");
+
+            fontColorButton = new BButton();
+            fontColorButton.Size = new Size(30, 30);
+            fontColorButton.BorderRadius = 15;
+            fontColorButton.TabStop = false;
+            fontColorButton.UseVisualStyleBackColor = false;
+            fontColorButton.BorderSize = 1;
+            fontColorButton.DisableAnimations = true;
+            fontColorButton.Click += new EventHandler(fontColorButton_Click);
+            toolTip.SetToolTip(fontColorButton, "Select which Font color MultiDelete should have.");
+
+            fontColorPanel = new Panel();
+            fontColorPanel.Size = new Size(400, 32);
+            fontColorPanel.Controls.Add(fontColorLabel);
+            fontColorLabel.Location = new Point(0, 5);
+            fontColorPanel.Controls.Add(fontColorButton);
+            fontColorButton.Location = new Point(85, 0);
+
+            settingsTabPanel.clearControls();
+            settingsTabPanel.addControl("Instances", instancePathLabel);
+            settingsTabPanel.addControl("Instances", instancePathMTB);
+            settingsTabPanel.addControl("Instances", addMultipleInstanceButton);
+            settingsTabPanel.addControl("Criteria", deleteAllWorldsCheckBox);
+            settingsTabPanel.addControl("Criteria", deleteAllWorldsThatLabel);
+            settingsTabPanel.addControl("Criteria", startWithLabel);
+            settingsTabPanel.addControl("Criteria", startWithMTB);
+            settingsTabPanel.addControl("Criteria", includeLabel);
+            settingsTabPanel.addControl("Criteria", includeMTB);
+            settingsTabPanel.addControl("Criteria", endWithLabel);
+            settingsTabPanel.addControl("Criteria", endWithMTB);
+            settingsTabPanel.addControl("Advanced", updateScreenPanel);
+            settingsTabPanel.addControl("Advanced", threadsToUseLabel);
+            settingsTabPanel.addControl("Advanced", threadsTrackBar);
+            settingsTabPanel.addControl("Advanced", keepLastWorldsPanel);
+            settingsTabPanel.addControl("Advanced", deleteRecordingsCheckBox);
+            settingsTabPanel.addControl("Advanced", recordingsFTB);
+            settingsTabPanel.addControl("Advanced", deleteCrashReportsCheckBox);
+            settingsTabPanel.addControl("Advanced", deleteScreenshotsCheckBox);
+            settingsTabPanel.addControl("Appearance", bgColorPanel);
+            settingsTabPanel.addControl("Appearance", accentColorPanel);
+            settingsTabPanel.addControl("Appearance", fontColorPanel);
+            settingsTabPanel.addControl("About", multiDeleteHeading);
+            settingsTabPanel.addControl("About", viewRepositoryLabel);
+            settingsTabPanel.addControl("About", checkForUpdatesButton);
+
+            updateColors();
 
             loadSettings();
+        }
+
+        private void settingsMenu_Load(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void updateColors() {
+            instancePathLabel.ForeColor = MultiDelete.fontColor;
+
+            instancePathMTB.BorderColor = MultiDelete.accentColor;
+            instancePathMTB.BackColor = MultiDelete.bgColor;
+            instancePathMTB.ForeColor = MultiDelete.fontColor;
+        
+            deleteAllWorldsThatLabel.ForeColor = MultiDelete.fontColor;
+
+            startWithLabel.ForeColor = MultiDelete.fontColor;
+
+            startWithMTB.BorderColor = MultiDelete.accentColor;
+            startWithMTB.BackColor = MultiDelete.bgColor;
+            startWithMTB.ForeColor = MultiDelete.fontColor;
+
+            includeLabel.ForeColor = MultiDelete.fontColor;
+
+            includeMTB.BorderColor = MultiDelete.accentColor;
+            includeMTB.BackColor = MultiDelete.bgColor;
+            includeMTB.ForeColor = MultiDelete.fontColor;
+
+            endWithLabel.ForeColor = MultiDelete.fontColor;
+
+            endWithMTB.BorderColor = MultiDelete.accentColor;
+            endWithMTB.BackColor = MultiDelete.bgColor;
+            endWithMTB.ForeColor = MultiDelete.fontColor;
+
+            deleteAllWorldsCheckBox.ForeColor = MultiDelete.fontColor;
+
+            deleteRecordingsCheckBox.ForeColor = MultiDelete.fontColor;
+
+            deleteCrashReportsCheckBox.ForeColor = MultiDelete.fontColor;
+
+            deleteScreenshotsCheckBox.ForeColor = MultiDelete.fontColor;
+
+            updateScreenLabel.ForeColor = MultiDelete.fontColor;
+
+            updateScreenLabel2.ForeColor = MultiDelete.fontColor;
+
+            updateScreenNUD.BackColor = MultiDelete.bgColor;
+            updateScreenNUD.ForeColor = MultiDelete.fontColor;
+            updateScreenNUD.BorderColor = MultiDelete.accentColor;
+
+            recordingsFTB.BorderColor = MultiDelete.accentColor;
+            recordingsFTB.BackColor = MultiDelete.bgColor;
+            recordingsFTB.ForeColor = MultiDelete.fontColor;
+
+            checkForUpdatesButton.ForeColor = MultiDelete.fontColor;
+            checkForUpdatesButton.BorderColor = MultiDelete.accentColor;
+
+            addMultipleInstanceButton.ForeColor = MultiDelete.fontColor;
+            addMultipleInstanceButton.BorderColor = MultiDelete.accentColor;
+
+            threadsToUseLabel.ForeColor = MultiDelete.fontColor;
+
+            keepLastWorldsLabel.ForeColor = MultiDelete.fontColor;
+
+            keepLastWorldsNUD.BackColor = MultiDelete.bgColor;
+            keepLastWorldsNUD.ForeColor = MultiDelete.fontColor;
+            keepLastWorldsNUD.BorderColor = MultiDelete.accentColor;
+
+            keepLastWorldsLabel2.ForeColor = MultiDelete.fontColor;
+
+            multiDeleteHeading.ForeColor = MultiDelete.fontColor;
+
+            viewRepositoryLabel.LinkColor = MultiDelete.fontColor;
+            viewRepositoryLabel.ActiveLinkColor = MultiDelete.fontColor;
+
+            bgColorLabel.ForeColor = MultiDelete.fontColor;
+
+            bgColorButton.BackgroundColor = MultiDelete.bgColor;
+            bgColorButton.BorderColor = MultiDelete.accentColor;
+
+            accentColorLabel.ForeColor = MultiDelete.fontColor;
+
+            accentColorButton.BackgroundColor = MultiDelete.accentColor;
+            accentColorButton.BorderColor = MultiDelete.accentColor;
+
+            fontColorLabel.ForeColor = MultiDelete.fontColor;
+
+            fontColorButton.BackgroundColor = MultiDelete.fontColor;
+            fontColorButton.BorderColor = MultiDelete.fontColor;
+
+            settingsTabPanel.BorderColor = MultiDelete.accentColor;
+            settingsTabPanel.ButtonForeColor = MultiDelete.fontColor;
+            settingsTabPanel.BackColor = MultiDelete.bgColor;
+
+            importButton.BorderColor = MultiDelete.accentColor;
+
+            exportButton.BorderColor = MultiDelete.accentColor;
+
+            settingsHeading.ForeColor = MultiDelete.fontColor;
+
+            BackColor = MultiDelete.bgColor;
+
+            exportButton.Image = MultiDelete.recolorImage(exportButton.Image, MultiDelete.fontColor);
+
+            importButton.Image = MultiDelete.recolorImage(importButton.Image, MultiDelete.fontColor);
         }
 
         private void loadSettings()
@@ -344,13 +498,13 @@ namespace MultiDelete
                     Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
 
                     instancePathMTB.setTexts(options.InstancePaths);
-                    startsWithMTB.setTexts(options.StartWith);
+                    startWithMTB.setTexts(options.StartWith);
                     includeMTB.setTexts(options.Include);
                     endWithMTB.setTexts(options.EndWith);
                     recordingsFTB.setText(options.RecordingsPath);
                     deleteAllWorldsCheckBox.Checked = options.DeleteAllWorlds;
                     deleteAllWorldsCheckBox_CheckedChanged(new object(), new EventArgs());
-                    updateScreenComboBox.SelectedItem = options.UpdateScreen;
+                    updateScreenNUD.Value = options.UpdateScreenEvery;
                     deleteRecordingsCheckBox.Checked = options.DeleteRecordings;
                     deleteRecordingsCheckBox_CheckedChanged(new object(), new EventArgs());
                     deleteCrashReportsCheckBox.Checked = options.DeleteCrashReports;
@@ -391,11 +545,11 @@ namespace MultiDelete
                 EndWith = new string[0],
                 Include = new string[0],
                 InstancePaths = new string[0],
-                KeepLastWorlds = 10,
+                KeepLastWorlds = 0,
                 RecordingsPath = "",
                 StartWith = new string[] { "Random Speedrun", "Set Speedrun" },
                 ThreadCount = 1,
-                UpdateScreen = "every world"
+                UpdateScreenEvery = 1
             };
 
             saveOptions(options);
@@ -404,7 +558,7 @@ namespace MultiDelete
 
         private void checkForUpdatesButton_Click(object sender, EventArgs e)
         {
-            settingsPanel.Focus();
+            Focus();
             MultiDelete.checkForUpdates(true);
         }
 
@@ -426,16 +580,19 @@ namespace MultiDelete
             {
                 InstancePaths = instancePathMTB.getTexts().ToArray(),
                 DeleteAllWorlds = deleteAllWorldsCheckBox.Checked,
-                StartWith = startsWithMTB.getTexts().ToArray(),
+                StartWith = startWithMTB.getTexts().ToArray(),
                 Include = includeMTB.getTexts().ToArray(),
                 EndWith = endWithMTB.getTexts().ToArray(),
-                UpdateScreen = updateScreenComboBox.Text,
+                UpdateScreenEvery = (int)updateScreenNUD.Value,
                 DeleteRecordings = deleteRecordingsCheckBox.Checked,
                 RecordingsPath = recordingsFTB.getText(),
                 DeleteCrashReports = deleteCrashReportsCheckBox.Checked,
                 DeleteScreenshots = deleteScreenshotsCheckBox.Checked,
                 ThreadCount = threadsTrackBar.Value,
-                KeepLastWorlds = Decimal.ToInt32(keepLastWorldsNUD.Value)
+                KeepLastWorlds = Decimal.ToInt32(keepLastWorldsNUD.Value),
+                bgColor = ColorTranslator.ToHtml(MultiDelete.bgColor),
+                accentColor = ColorTranslator.ToHtml(MultiDelete.accentColor),
+                fontColor = ColorTranslator.ToHtml(MultiDelete.fontColor)
             };
 
             saveOptions(options);
@@ -445,7 +602,7 @@ namespace MultiDelete
         {
             if(deleteAllWorldsCheckBox.Checked)
             {
-                startsWithMTB.disableTextBoxes();
+                startWithMTB.disableTextBoxes();
                 includeMTB.disableTextBoxes();
                 endWithMTB.disableTextBoxes();
 
@@ -456,19 +613,19 @@ namespace MultiDelete
                 endWithLabel.ForeColor = Color.FromArgb(94, 94, 94);
             } else
             {
-                startsWithMTB.enableTextBoxes();
+                startWithMTB.enableTextBoxes();
                 includeMTB.enableTextBoxes();
                 endWithMTB.enableTextBoxes();
 
-                deleteAllWorldsThatLabel.ForeColor = Color.FromArgb(194, 194, 194);
-                startWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
-                includeLabel.ForeColor = Color.FromArgb(194, 194, 194);
-                endWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                deleteAllWorldsThatLabel.ForeColor = MultiDelete.fontColor;
+                startWithLabel.ForeColor = MultiDelete.fontColor;
+                includeLabel.ForeColor = MultiDelete.fontColor;
+                endWithLabel.ForeColor = MultiDelete.fontColor;
 
-                deleteAllWorldsThatLabel.ForeColor = Color.FromArgb(194, 194, 194);
-                startWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
-                includeLabel.ForeColor = Color.FromArgb(194, 194, 194);
-                endWithLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                deleteAllWorldsThatLabel.ForeColor = MultiDelete.fontColor;
+                startWithLabel.ForeColor = MultiDelete.fontColor;
+                includeLabel.ForeColor = MultiDelete.fontColor;
+                endWithLabel.ForeColor = MultiDelete.fontColor;
             }
         }
 
@@ -479,7 +636,7 @@ namespace MultiDelete
 
         private void addMultipleInstanceButton_Click(object sender, EventArgs e)
         {
-            settingsPanel.Focus();
+            Focus();
 
             CommonOpenFileDialog cofd = new CommonOpenFileDialog();
             cofd.Title = "Select multiple Instance-paths";
@@ -494,7 +651,7 @@ namespace MultiDelete
 
         private void updateScreenComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            settingsPanel.Focus();
+            Focus();
         }
 
         private void threadsTrackBar_ValueChanged(object sender, EventArgs e)
@@ -504,14 +661,62 @@ namespace MultiDelete
         }
         private void exportButton_click(object sender, EventArgs e)
         {
-            settingsPanel.Focus();
+            Focus();
             exportSettings();
         }
 
         private void importButton_click(object sender, EventArgs e)
         {
-            settingsPanel.Focus();
+            Focus();
             importSettings();
+        }
+
+        private void bgColorButton_Click(object sender, EventArgs e) {
+            Focus();
+            pickBGColor();
+        }
+
+        private void pickBGColor() {
+            ColorDialog cd = new ColorDialog();
+            cd.Color = MultiDelete.bgColor;
+            cd.FullOpen = true;
+            if(cd.ShowDialog() == DialogResult.OK) {
+                MultiDelete.bgColor = Color.FromArgb(255, cd.Color.R, cd.Color.G, cd.Color.B);
+                multiDelete.updateColors();
+                updateColors();
+            }
+        }
+
+        private void accentColorButton_Click(object sender, EventArgs e) {
+            Focus();
+            pickAccentColor();
+        }
+
+        private void pickAccentColor() {
+            ColorDialog cd = new ColorDialog();
+            cd.Color = MultiDelete.accentColor;
+            cd.FullOpen = true;
+            if(cd.ShowDialog() == DialogResult.OK) {
+                MultiDelete.accentColor = Color.FromArgb(255, cd.Color.R, cd.Color.G, cd.Color.B);
+                multiDelete.updateColors();
+                updateColors();
+            }
+        }
+
+        private void fontColorButton_Click(object sender, EventArgs e) {
+            Focus();
+            pickFontColor();
+        }
+
+        private void pickFontColor() {
+            ColorDialog cd = new ColorDialog();
+            cd.Color = MultiDelete.fontColor;
+            cd.FullOpen = true;
+            if(cd.ShowDialog() == DialogResult.OK) {
+                MultiDelete.fontColor = Color.FromArgb(255, cd.Color.R, cd.Color.G, cd.Color.B);
+                multiDelete.updateColors();
+                updateColors();
+            }
         }
 
         private void exportSettings()
@@ -531,32 +736,11 @@ namespace MultiDelete
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Import settings";
+            ofd.Filter = "JSON File (*.json) |*.json";
             if(ofd.ShowDialog() == DialogResult.OK)
             {
-                if(!ofd.FileName.EndsWith(".json"))
-                {
-                    MessageBox.Show("You need to select a valid settings File!", "MultiDelete", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
                 File.WriteAllText(optionsFile, File.ReadAllText(ofd.FileName));
                 loadSettings();
-            }
-        }
-
-        private void settingsPanel_SizeChanged(object sender, EventArgs e)
-        {
-            //Change size of headingPanel and position of import and export button depending on if scrollbar has appeared
-            if(settingsPanel.ClientSize.Width < 484)
-            {
-                headingPanel.Size = new Size(461, 35);
-                exportButton.Location = new Point(414, 0);
-                importButton.Location = new Point(439, 0);
-            }
-            else
-            {
-                headingPanel.Size = new Size(478, 35);
-                exportButton.Location = new Point(431, 0);
-                importButton.Location = new Point(456, 0);
             }
         }
 
@@ -602,6 +786,10 @@ namespace MultiDelete
                 }
             }
         }
+
+        private void viewRepositoryLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            System.Diagnostics.Process.Start("cmd", "/c start https://www.github.com/greyhayv/MultiDelete");
+        }
     }
 
     public class Options
@@ -611,12 +799,15 @@ namespace MultiDelete
         public string[] StartWith { get; set; }
         public string[] Include { get; set; }
         public string[] EndWith { get; set; }
-        public string UpdateScreen { get; set; }
+        public int UpdateScreenEvery { get; set; }
         public bool DeleteRecordings { get; set; }
         public string RecordingsPath { get; set; }
         public bool DeleteCrashReports { get; set; }
         public bool DeleteScreenshots { get; set; }
         public int ThreadCount { get; set; }
         public int KeepLastWorlds { get; set; }
+        public string bgColor { get; set; }
+        public string accentColor { get; set; }
+        public string fontColor { get; set; }
     }
 }

@@ -4,13 +4,34 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace MultiDelete.Controls
+namespace MultiDelete
 {
     internal class MultiTextBox : FlowLayoutPanel
     {
-        public readonly List<TextBox> textBoxes = new List<TextBox>();
+        public readonly List<BTextBox> textBoxes = new List<BTextBox>();
+        private Color borderColor;
 
         public string toolTipStr;
+        public virtual Color BorderColor { get => borderColor; set { 
+            borderColor = value;
+            foreach(BTextBox textBox in textBoxes) {
+                textBox.BorderColor = value;
+            }
+        } }
+
+        public override Color BackColor { get => base.BackColor; set { 
+            base.BackColor = value;
+            foreach(BTextBox textBox in textBoxes) {
+                textBox.BackColor = value;
+            }
+        } }
+
+        public override Color ForeColor { get => base.ForeColor; set { 
+            base.ForeColor = value;
+            foreach(BTextBox textBox in textBoxes) {
+                textBox.ForeColor = value;
+            }
+        } }
 
         public MultiTextBox()
         {
@@ -18,35 +39,34 @@ namespace MultiDelete.Controls
             FlowDirection = FlowDirection.TopDown;
             TabStop = false;
             AutoSize = true;
+            borderColor = Color.FromArgb(194, 194, 194);
 
             createNewTextBox();
         }
 
         public List<string> getTexts()
         {
-            List<string> entrys = new List<string>();
+            List<string> texts = new List<string>();
             for (int i = 0; i < textBoxes.Count - 1; i++)
             {
-                entrys.Add(textBoxes[i].Text);
+                texts.Add(textBoxes[i].Text);
             }
 
-            return entrys;
+            return texts;
         }
 
         public virtual void createNewTextBox()
         {
-            TextBox textBox = new TextBox();
-            textBox.BackColor = ColorTranslator.FromHtml("#4C4C4C");
-            textBox.BorderStyle = BorderStyle.FixedSingle;
-            textBox.ForeColor = ColorTranslator.FromHtml("#C2C2C2");
-            textBox.Size = new Size(200, 22);
-            textBox.TabStop = false;
-            textBox.TextChanged += new EventHandler(textChanged);
+            BTextBox textBox = new BTextBox();
+            textBox.BorderSize = 1;
+            textBox.BorderColor = borderColor;
+            textBox.UnderlineStyle = false;
+            textBox.BackColor = BackColor;
+            textBox.ForeColor = ForeColor;
+            textBox.textBox.TextChanged += new EventHandler(textChanged);
             if(toolTipStr != null)
             {
-                ToolTip toolTip = new ToolTip();
-                toolTip.ShowAlways = true;
-                toolTip.SetToolTip(textBox, toolTipStr);
+                textBox.setToolTip(toolTipStr);
             }
 
             textBoxes.Add(textBox);
@@ -55,12 +75,9 @@ namespace MultiDelete.Controls
 
         public void setToolTip(string str)
         {
-            ToolTip toolTip = new ToolTip();
-            toolTip.ShowAlways = true;
-
-            foreach(TextBox textBox in textBoxes)
+            foreach(BTextBox textBox in textBoxes)
             {
-                toolTip.SetToolTip(textBox, str);
+                textBox.setToolTip(str);
             }
 
             toolTipStr = str;
@@ -115,19 +132,19 @@ namespace MultiDelete.Controls
             }
         }
 
-        public void disableTextBoxes()
+        public virtual void disableTextBoxes()
         {
-            foreach(TextBox textBox in textBoxes)
+            foreach(BTextBox textBox in textBoxes)
             {
-                textBox.Enabled = false;
+                textBox.setEnabled(false);
             }
         }
 
-        public void enableTextBoxes()
+        public virtual void enableTextBoxes()
         {
-            foreach (TextBox textBox in textBoxes)
+            foreach(BTextBox textBox in textBoxes)
             {
-                textBox.Enabled = true;
+                textBox.setEnabled(true);
             }
         }
     }

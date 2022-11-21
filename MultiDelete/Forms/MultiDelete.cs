@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using System.Linq;
-using MultiDelete.Controls;
 
 namespace MultiDelete
 {
     public partial class MultiDelete : Form
     {
-        static string version = "v1.3";
+        public static string version = "v1.3";
+        public static Color bgColor;
+        public static Color accentColor;
+        public static Color fontColor;
 
-        private static settingsMenu settingsMenu = new settingsMenu();
-        private static updateScreen updateScreen = new updateScreen();
         static string programPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete";
         string optionsFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete\options.json";
         private List<string> worldsToDelete = new List<string>();
@@ -31,10 +31,57 @@ namespace MultiDelete
         private CountdownEvent worldDeletionCE = new CountdownEvent(0);
         private int[] threadDeletedWorlds = new int[0];
         private bool checkUpdates = true;
+        private settingsMenu settingsMenu;
 
         public MultiDelete()
         {
+            try {
+                Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+
+                if(options.bgColor == null) {
+                    bgColor = Color.FromArgb(15, 15, 15);
+                } else {
+                    bgColor = ColorTranslator.FromHtml(options.bgColor);
+                }
+
+                if(options.accentColor == null) {
+                    accentColor = Color.FromArgb(65, 65, 65);
+                } else {
+                    accentColor = ColorTranslator.FromHtml(options.accentColor);
+                }
+
+                if(options.fontColor == null) {
+                    fontColor = Color.FromArgb(194, 194, 194);
+                } else {
+                    fontColor = ColorTranslator.FromHtml(options.fontColor);
+                }
+            } catch {
+                bgColor = Color.FromArgb(15, 15, 15);
+                accentColor = Color.FromArgb(65, 65, 65);
+                fontColor = Color.FromArgb(194, 194, 194);
+            }
+
             InitializeComponent();
+        }
+
+        public void updateColors() {
+            deleteWorldsButton.BorderColor = MultiDelete.accentColor;
+            deleteWorldsButton.ForeColor = MultiDelete.fontColor;
+
+            settingsButton.BorderColor = MultiDelete.accentColor;
+            settingsButton.ForeColor = MultiDelete.fontColor;
+
+            infoLabel.ForeColor = MultiDelete.fontColor;
+
+            okButton.BorderColor = MultiDelete.accentColor;
+            okButton.ForeColor = MultiDelete.fontColor;
+
+            cancelButton.BorderColor = MultiDelete.accentColor;
+            cancelButton.ForeColor = MultiDelete.fontColor;
+
+            BackColor = MultiDelete.bgColor;
+
+            settingsButton.Image = recolorImage(settingsButton.Image, fontColor);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -50,15 +97,16 @@ namespace MultiDelete
             {
                 foreach(string argument in launchArgs)
                 {
-                    if(argument == "-delWorlds")
-                    {
-                        Task.Run(() => searchWorlds());
-                    } else if(argument == "-closeAfterDeletion")
-                    {
-                        closeAfterDeletion = true;
-                    } else if(argument == "-dontCheckUpdates")
-                    {
-                        checkUpdates = false;
+                    switch(argument) {
+                        case "-delWorlds":
+                            Task.Run(() => searchWorlds());
+                            continue;
+                        case "-closeAfterDeletion":
+                            closeAfterDeletion = true;
+                            continue;
+                        case "-dontCheckUpdates":
+                            checkUpdates = false;
+                            continue;
                     }
                 }
             }
@@ -77,6 +125,7 @@ namespace MultiDelete
             updateAvailable = false;
             newestVersion = sr.ReadToEnd();
 
+            updateScreen updateScreen = new updateScreen();
             if(newestVersion != version)
             {
                 updateAvailable = true;
@@ -96,6 +145,9 @@ namespace MultiDelete
         private void settingsButton_Click(object sender, EventArgs e)
         {
             focusButton.Focus();
+            if(settingsMenu == null) {
+                settingsMenu = new settingsMenu(this);
+            }
             settingsMenu.ShowDialog();
         }
 
@@ -118,22 +170,27 @@ namespace MultiDelete
             totalFilesSize = 0;
             cancelDeletion = false;
             worldsToDelete = new List<string>();
+            changeText(infoLabel, "Searching Worlds (0)");
 
             Options options = new Options();
             if(File.Exists(optionsFile))
             {
-                options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+                try {
+                    options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+                } catch {
+                    MessageBox.Show("There was an error reading the options file! Please delete the options file located at '" + optionsFile + "'", "MultiDelete", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
 
-            List<string> savesPaths = convertInstancePathToSavesPath(options.InstancePaths);
-
             //Checks if InstancePaths are configures
-            if(options.InstancePaths.Length == 0)
+            if(options.InstancePaths == null || options.InstancePaths.Length == 0)
             {
                 changeText(infoLabel, "Please add an Instance-Path in the Settingmenu!");
                 setLayout(MenuLayout.Error);
                 return;
             }
+
+            List<string> savesPaths = convertInstancePathToSavesPath(options.InstancePaths);
 
             //Checks if Worlds to delete are configured
             if(options.StartWith.Length == 0 && options.Include.Length == 0 && options.EndWith.Length == 0)
@@ -144,16 +201,6 @@ namespace MultiDelete
                 return;
             }
 
-            //Searches all Worlds To delete
-            if(options.UpdateScreen == "never")
-            {
-                changeText(infoLabel, "Searching Worlds");
-            } else
-            {
-                changeText(infoLabel, "Searching Worlds (0)");
-            }
-
-            worldsToDelete = new List<string>();
             foreach(string path in savesPaths)
             {
                 if(!Directory.Exists(path))
@@ -190,7 +237,7 @@ namespace MultiDelete
                         worldsToDelete.Add(world);
                         instanceWorlds.Add(world);
 
-                        updateWorldSearchingScreen(options.UpdateScreen);
+                        updateWorldSearchingScreen(options.UpdateScreenEvery);
 
                         continue;
                     }
@@ -208,7 +255,7 @@ namespace MultiDelete
                             worldsToDelete.Add(world);
                             instanceWorlds.Add(world);
 
-                            updateWorldSearchingScreen(options.UpdateScreen);
+                            updateWorldSearchingScreen(options.UpdateScreenEvery);
                         }
                     }
 
@@ -224,7 +271,7 @@ namespace MultiDelete
                             worldsToDelete.Add(world);
                             instanceWorlds.Add(world);
 
-                            updateWorldSearchingScreen(options.UpdateScreen);
+                            updateWorldSearchingScreen(options.UpdateScreenEvery);
                         }
                     }
                     if(options.EndWith.Length > 0)
@@ -239,7 +286,7 @@ namespace MultiDelete
                             worldsToDelete.Add(world);
                             instanceWorlds.Add(world);
 
-                            updateWorldSearchingScreen(options.UpdateScreen);
+                            updateWorldSearchingScreen(options.UpdateScreenEvery);
                         }
                     }
                 }
@@ -275,17 +322,10 @@ namespace MultiDelete
 
             deletedWorldCount = 0;
 
-            if(options.UpdateScreen == "never")
-            {
-                changeText(infoLabel, "Deleting Worlds");
-            }
-            else
-            {
-                changeText(infoLabel, "Deleting Worlds (0/" + worldsToDelete.Count.ToString() + ")");
-                changeMaximum(progressBar, worldsToDelete.Count);
-                changeValue(progressBar, 0);
-                setLayout(MenuLayout.ProgressBar);
-            }
+            changeText(infoLabel, "Deleting Worlds (0/" + worldsToDelete.Count.ToString() + ")");
+            changeMaximum(progressBar, worldsToDelete.Count);
+            changeValue(progressBar, 0);
+            setLayout(MenuLayout.ProgressBar);
 
             threadDeletedWorlds = new int[options.ThreadCount + 1];
 
@@ -326,7 +366,7 @@ namespace MultiDelete
                     Directory.Delete(world, true);
                     deletedWorldCount += 1;
 
-                    updateWorldDeletionScreen(options.UpdateScreen, deletedWorldCount);
+                    updateWorldDeletionScreen(options.UpdateScreenEvery, deletedWorldCount);
                 }
                 catch
                 {
@@ -386,7 +426,7 @@ namespace MultiDelete
                         totalDeletedWorlds += threadDeletedWorld;
                     }
 
-                    updateWorldDeletionScreen(options.UpdateScreen, totalDeletedWorlds);
+                    updateWorldDeletionScreen(options.UpdateScreenEvery, totalDeletedWorlds);
                 } catch
                 {
                     continue;
@@ -615,45 +655,18 @@ namespace MultiDelete
             }
         }
 
-        private void updateWorldSearchingScreen(string updateScreen)
+        private void updateWorldSearchingScreen(int updateScreen)
         {
-            if(updateScreen == "every world")
-            {
-                changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
-                refreshUI();
-            } else if(updateScreen == "every 10. world" && worldsToDelete.Count % 10 == 0)
-            {
-                changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
-                refreshUI();
-            } else if(updateScreen == "every 100. world" && worldsToDelete.Count % 100 == 0)
-            {
-                changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
-                refreshUI();
-            } else if(updateScreen == "every 1000. world" && worldsToDelete.Count % 1000 == 0)
+            if(worldsToDelete.Count % updateScreen == 0)
             {
                 changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
                 refreshUI();
             }
         }
 
-        private void updateWorldDeletionScreen(string updateScreen, int delWorldCount)
+        private void updateWorldDeletionScreen(int updateScreen, int delWorldCount)
         {
-            if(updateScreen == "every world")
-            {
-                changeText(infoLabel, "Deleting Worlds (" + delWorldCount.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
-                changeValue(progressBar, delWorldCount);
-                refreshUI();
-            } else if(updateScreen == "every 10. world" && delWorldCount % 10 == 0)
-            {
-                changeText(infoLabel, "Deleting Worlds (" + delWorldCount.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
-                changeValue(progressBar, delWorldCount);
-                refreshUI();
-            } else if(updateScreen == "every 100. world" && delWorldCount % 100 == 0)
-            {
-                changeText(infoLabel, "Deleting Worlds (" + delWorldCount.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
-                changeValue(progressBar, delWorldCount);
-                refreshUI();
-            } else if(updateScreen == "every 1000. world" && delWorldCount % 1000 == 0)
+            if(delWorldCount % updateScreen == 0)
             {
                 changeText(infoLabel, "Deleting Worlds (" + delWorldCount.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
                 changeValue(progressBar, delWorldCount);
@@ -786,42 +799,56 @@ namespace MultiDelete
             changeVisibilaty(progressBar, false);
             changeVisibilaty(settingsButton, false);
             changeLocation(cancelButton, new Point(198, 72));
-            changeLocation(deleteWorldsButton, new Point(167, 31));
+            changeLocation(deleteWorldsButton, new Point(154, 30));
             changeLocation(focusButton, new Point(431, 48));
             changeLocation(infoLabel, new Point(-8, 41));
             changeLocation(okButton, new Point(193, 57));
             changeLocation(progressBar, new Point(17, 44));
             changeLocation(settingsButton, new Point(447, 7));
 
-            if(layout == MenuLayout.MainMenu)
-            {
-                changeVisibilaty(deleteWorldsButton, true);
-                changeVisibilaty(settingsButton, true);
-            } else if(layout == MenuLayout.InfoLabel)
-            {
-                changeVisibilaty(infoLabel, true);
-                changeVisibilaty(cancelButton, true);
-                changeLocation(infoLabel, new Point(-8, 41));
-                changeFont(infoLabel, new Font("Roboto", 16));
-            } else if(layout == MenuLayout.Error)
-            {
-                changeVisibilaty(okButton, true);
-                changeVisibilaty(infoLabel, true);
-                changeLocation(infoLabel, new Point(-8, 23));
-                changeText(okButton, "OK");
-            } else if(layout == MenuLayout.ProgressBar)
-            {
-                changeVisibilaty(progressBar, true);
-                changeVisibilaty(infoLabel, true);
-                changeVisibilaty(cancelButton, true);
-                changeLocation(infoLabel, new Point(-8, 10));
-            } else if(layout == MenuLayout.Results)
-            {
-                changeText(okButton, "Done");
-                changeLocation(infoLabel, new Point(-8, 23));
-                changeVisibilaty(okButton, true);
-                changeVisibilaty(infoLabel, true);
+            switch(layout) {
+                case MenuLayout.MainMenu:
+                    changeVisibilaty(deleteWorldsButton, true);
+                    changeVisibilaty(settingsButton, true);
+                    return;
+                case MenuLayout.InfoLabel:
+                    changeVisibilaty(infoLabel, true);
+                    changeVisibilaty(cancelButton, true);
+                    changeLocation(infoLabel, new Point(-8, 41));
+                    changeFont(infoLabel, new Font("Roboto", 16));
+                    return;
+                case MenuLayout.Error:
+                    changeVisibilaty(okButton, true);
+                    changeVisibilaty(infoLabel, true);
+                    changeLocation(infoLabel, new Point(-8, 23));
+                    changeText(okButton, "OK");
+                    return;
+                case MenuLayout.ProgressBar:
+                    changeVisibilaty(progressBar, true);
+                    changeVisibilaty(infoLabel, true);
+                    changeVisibilaty(cancelButton, true);
+                    changeLocation(infoLabel, new Point(-8, 10));
+                    return;
+                case MenuLayout.Results:
+                    changeText(okButton, "Done");
+                    changeLocation(infoLabel, new Point(-8, 23));
+                    changeVisibilaty(okButton, true);
+                    changeVisibilaty(infoLabel, true);
+                    return;
             }
+        }
+
+        public static Image recolorImage(Image image, Color color) {
+            Bitmap bitmap = (Bitmap)image;
+            for(int x = 0; x < bitmap.Width; x++) {
+                for(int y = 0; y < bitmap.Height; y++) {
+                    if(bitmap.GetPixel(x, y).A > 0) {
+                        bitmap.SetPixel(x, y, Color.FromArgb(bitmap.GetPixel(x, y).A, color));
+                    }
+                }
+            }
+
+            return bitmap;
         }
     }
 

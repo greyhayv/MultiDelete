@@ -25,7 +25,7 @@ namespace MultiDelete
             heading.TextAlign = ContentAlignment.MiddleCenter;
             heading.AutoSize = false;
             heading.Font = new Font("Roboto", 20.25F, FontStyle.Bold, GraphicsUnit.Point);
-            heading.ForeColor = Color.FromArgb(194, 194, 194);
+            heading.ForeColor = MultiDelete.fontColor;
             heading.Size = new Size(461, 33);
             heading.TabStop = false;
             
@@ -49,7 +49,7 @@ namespace MultiDelete
             version.TextAlign = ContentAlignment.MiddleCenter;
             version.AutoSize = true;
             version.Font = new Font("Roboto", 17F, FontStyle.Bold, GraphicsUnit.Point);
-            version.ForeColor = Color.FromArgb(194, 194, 194);
+            version.ForeColor = MultiDelete.fontColor;
             version.TabStop = false;
             version.Text = MultiDelete.newestVersion;
             updatePanel.Controls.Add(version);
@@ -76,7 +76,7 @@ namespace MultiDelete
                     lineLabel.AutoSize = true;
                     lineLabel.MaximumSize = new Size(461, 999999999);
                     lineLabel.Font = new Font("Roboto", 15F, FontStyle.Bold, GraphicsUnit.Point);
-                    lineLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                    lineLabel.ForeColor = MultiDelete.fontColor;
                     lineLabel.TabStop = false;
                     string text = line.Substring(line.IndexOf("<h1>") + 4);
                     text = text.Remove(text.Length - 5);
@@ -88,7 +88,7 @@ namespace MultiDelete
                     lineLabel.AutoSize = true;
                     lineLabel.MaximumSize = new Size(461, 999999999);
                     lineLabel.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
-                    lineLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                    lineLabel.ForeColor = MultiDelete.fontColor;
                     lineLabel.TabStop = false;
                     string text = line.Substring(line.IndexOf("<p>") + 3);
                     if(line.EndsWith("<br>") || line.EndsWith("</p>"))
@@ -105,7 +105,7 @@ namespace MultiDelete
                     lineLabel.AutoSize = true;
                     lineLabel.MaximumSize = new Size(461, 999999999);
                     lineLabel.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
-                    lineLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                    lineLabel.ForeColor = MultiDelete.fontColor;
                     lineLabel.TabStop = false;
                     string text = line.Remove(line.Length - 4);
                     lineLabel.Text = text;
@@ -116,7 +116,7 @@ namespace MultiDelete
                     lineLabel.AutoSize = true;
                     lineLabel.MaximumSize = new Size(461, 999999999);
                     lineLabel.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
-                    lineLabel.ForeColor = Color.FromArgb(194, 194, 194);
+                    lineLabel.ForeColor = MultiDelete.fontColor;
                     lineLabel.TabStop = false;
                     string text = line.Remove(line.Length - 10);
                     lineLabel.Text = text;

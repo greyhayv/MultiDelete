@@ -30,10 +30,10 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(updateScreen));
             this.updatePanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.remindMeLaterButton = new System.Windows.Forms.Button();
-            this.downloadButton = new System.Windows.Forms.Button();
+            this.remindMeLaterButton = new BButton();
+            this.downloadButton = new BButton();
             this.focusLabel = new System.Windows.Forms.Label();
-            this.closeButton = new System.Windows.Forms.Button();
+            this.closeButton = new BButton();
             this.SuspendLayout();
             // 
             // updatePanel
@@ -49,10 +49,14 @@
             // remindMeLaterButton
             // 
             this.remindMeLaterButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.remindMeLaterButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(76)))));
-            this.remindMeLaterButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.remindMeLaterButton.BackColor = System.Drawing.Color.Transparent;
+            this.remindMeLaterButton.BackgroundColor = System.Drawing.Color.Transparent;
+            this.remindMeLaterButton.BorderColor = MultiDelete.accentColor;
+            this.remindMeLaterButton.BorderRadius = 20;
+            this.remindMeLaterButton.BorderSize = 1;
+            this.remindMeLaterButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.remindMeLaterButton.Font = new System.Drawing.Font("Roboto", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.remindMeLaterButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(194)))), ((int)(((byte)(194)))), ((int)(((byte)(194)))));
+            this.remindMeLaterButton.ForeColor = MultiDelete.fontColor;
             this.remindMeLaterButton.Location = new System.Drawing.Point(5, 706);
             this.remindMeLaterButton.Name = "remindMeLaterButton";
             this.remindMeLaterButton.Size = new System.Drawing.Size(235, 50);
@@ -65,10 +69,14 @@
             // downloadButton
             // 
             this.downloadButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.downloadButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(76)))));
-            this.downloadButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.downloadButton.BackColor = System.Drawing.Color.Transparent;
+            this.downloadButton.BackgroundColor = System.Drawing.Color.Transparent;
+            this.downloadButton.BorderColor = MultiDelete.accentColor;
+            this.downloadButton.BorderRadius = 20;
+            this.downloadButton.BorderSize = 1;
+            this.downloadButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.downloadButton.Font = new System.Drawing.Font("Roboto", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.downloadButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(194)))), ((int)(((byte)(194)))), ((int)(((byte)(194)))));
+            this.downloadButton.ForeColor = MultiDelete.fontColor;
             this.downloadButton.Location = new System.Drawing.Point(244, 706);
             this.downloadButton.Name = "downloadButton";
             this.downloadButton.Size = new System.Drawing.Size(235, 50);
@@ -89,10 +97,14 @@
             // closeButton
             // 
             this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.closeButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(76)))));
-            this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.closeButton.BackColor = System.Drawing.Color.Transparent;
+            this.closeButton.BackgroundColor = System.Drawing.Color.Transparent;
+            this.closeButton.BorderColor = MultiDelete.accentColor;
+            this.closeButton.BorderRadius = 20;
+            this.closeButton.BorderSize = 1;
+            this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.closeButton.Font = new System.Drawing.Font("Roboto", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.closeButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(194)))), ((int)(((byte)(194)))), ((int)(((byte)(194)))));
+            this.closeButton.ForeColor = MultiDelete.fontColor;
             this.closeButton.Location = new System.Drawing.Point(5, 706);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(474, 50);
@@ -107,7 +119,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
+            this.BackColor = MultiDelete.bgColor;
             this.ClientSize = new System.Drawing.Size(484, 761);
             this.Controls.Add(this.closeButton);
             this.Controls.Add(this.focusLabel);
@@ -129,9 +141,9 @@
         #endregion
 
         private System.Windows.Forms.FlowLayoutPanel updatePanel;
-        private System.Windows.Forms.Button remindMeLaterButton;
-        private System.Windows.Forms.Button downloadButton;
+        private BButton remindMeLaterButton;
+        private BButton downloadButton;
         private System.Windows.Forms.Label focusLabel;
-        private System.Windows.Forms.Button closeButton;
+        private BButton closeButton;
     }
 }
