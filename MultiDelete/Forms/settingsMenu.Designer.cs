@@ -68,10 +68,10 @@ namespace MultiDelete
             settingsHeading = new Label();
             settingsHeading.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             settingsHeading.AutoSize = true;
-            settingsHeading.Font = new System.Drawing.Font("Roboto", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            settingsHeading.Font = new System.Drawing.Font("Roboto", 23F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             settingsHeading.TabStop = false;
             settingsHeading.Text = "Settings";
-            settingsHeading.Location = new System.Drawing.Point(185, 3);
+            settingsHeading.Location = new System.Drawing.Point(179, 1);
             // 
             // settingsMenu
             // 

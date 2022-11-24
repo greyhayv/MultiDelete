@@ -549,7 +549,10 @@ namespace MultiDelete
                 RecordingsPath = "",
                 StartWith = new string[] { "Random Speedrun", "Set Speedrun" },
                 ThreadCount = 1,
-                UpdateScreenEvery = 1
+                UpdateScreenEvery = 1,
+                bgColor = "#0F0F0F",
+                accentColor = "#414141",
+                fontColor = "#C2C2C2"
             };
 
             saveOptions(options);
