@@ -183,6 +183,15 @@ namespace MultiDelete
             updateScreenLabel.Text = "Update screen every";
             toolTip.SetToolTip(updateScreenLabel, "Select how often the screen should update during world deletion (Less updates = way faster world deletion)");
             //
+            // moveToRecycleBinCheckBox
+            //
+            moveToRecycleBinCheckBox.AutoSize = true;
+            moveToRecycleBinCheckBox.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            moveToRecycleBinCheckBox.TabStop = false;
+            moveToRecycleBinCheckBox.Text = "Move Files to Recycle Bin";
+            moveToRecycleBinCheckBox.UseVisualStyleBackColor = true;
+            toolTip.SetToolTip(moveToRecycleBinCheckBox, "Select if the files should be moved to the Recycle Bin instead of being instantly deleted. NOTE: This makes world deletion waaay slower");
+            //
             // updateScreenNUD
             //
             updateScreenNUD.Size = new Size(40, 26);
@@ -415,6 +424,7 @@ namespace MultiDelete
             settingsTabPanel.addControl("Advanced", recordingsFTB);
             settingsTabPanel.addControl("Advanced", deleteCrashReportsCheckBox);
             settingsTabPanel.addControl("Advanced", deleteScreenshotsCheckBox);
+            settingsTabPanel.addControl("Advanced", moveToRecycleBinCheckBox);
             settingsTabPanel.addControl("Appearance", bgColorPanel);
             settingsTabPanel.addControl("Appearance", accentColorPanel);
             settingsTabPanel.addControl("Appearance", fontColorPanel);
@@ -481,6 +491,8 @@ namespace MultiDelete
             deleteCrashReportsCheckBox.ForeColor = MultiDelete.fontColor;
 
             deleteScreenshotsCheckBox.ForeColor = MultiDelete.fontColor;
+
+            moveToRecycleBinCheckBox.ForeColor = MultiDelete.fontColor;
 
             updateScreenLabel.ForeColor = MultiDelete.fontColor;
 
@@ -589,6 +601,7 @@ namespace MultiDelete
         private Label fontColorLabel = new Label();
         private BButton fontColorButton = new BButton();
         private FlowLayoutPanel fontColorPanel = new FlowLayoutPanel();
+        private CheckBox moveToRecycleBinCheckBox = new CheckBox();
 
         #endregion
     }

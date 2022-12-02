@@ -273,7 +273,7 @@ namespace MultiDelete
                 }
 
                 try {
-                    delWorld(world, ref totalFilesSize, ref deletedWorldCount, options.UpdateScreenEvery, ref worldsToDelete);
+                    delWorld(world, ref totalFilesSize, ref deletedWorldCount, options.UpdateScreenEvery, ref worldsToDelete, ref options);
                 } catch {
                     continue;
                 }
@@ -307,7 +307,7 @@ namespace MultiDelete
                 }
 
                 try {
-                    delWorld(worldsToDelete[i], ref deletedWorldsSize, ref totalDeletedWorlds, options.UpdateScreenEvery, ref worldsToDelete);
+                    delWorld(worldsToDelete[i], ref deletedWorldsSize, ref totalDeletedWorlds, options.UpdateScreenEvery, ref worldsToDelete, ref options);
                 } catch {
                     continue;
                 }
@@ -346,7 +346,7 @@ namespace MultiDelete
                     continue;
                 }
 
-                delFile(file, "Recordings", ref totalFilesSize, ref deletedRecordings);
+                delFile(file, "Recordings", ref totalFilesSize, ref deletedRecordings, ref options);
 
                 MessageBox.Show("wawa");
             }
@@ -370,7 +370,7 @@ namespace MultiDelete
                 }
 
                 foreach(string crashReport in Directory.GetFiles(crashReportsPath)) {
-                    delFile(crashReport, "Crash-reports", ref totalFilesSize, ref deletedCrashReports);
+                    delFile(crashReport, "Crash-reports", ref totalFilesSize, ref deletedCrashReports, ref options);
                 }
 
                 foreach(string file in Directory.GetFiles(minecraftPath)) {
@@ -378,7 +378,7 @@ namespace MultiDelete
                         continue;
                     }
 
-                    delFile(file, "Crash-reports", ref totalFilesSize, ref deletedCrashReports);
+                    delFile(file, "Crash-reports", ref totalFilesSize, ref deletedCrashReports, ref options);
                 }
             }
         }
@@ -403,7 +403,7 @@ namespace MultiDelete
                 }
 
                 foreach(string screenshot in Directory.GetFiles(screenshotsPath)) {
-                    delFile(screenshot, "Screenshots", ref totalFilesSize, ref deletedScreenshots);
+                    delFile(screenshot, "Screenshots", ref totalFilesSize, ref deletedScreenshots, ref options);
                 }
             }
         }
@@ -599,21 +599,31 @@ namespace MultiDelete
             return bitmap;
         }
 
-        private void delWorld(string dir, ref long totalFilesSize, ref int deletedWorldCount, int updateScreen, ref List<string> worldsToDelete) {
+        private void delWorld(string dir, ref long totalFilesSize, ref int deletedWorldCount, int updateScreen, ref List<string> worldsToDelete, ref Options options) {
             DirectoryInfo di = new DirectoryInfo(dir);
             totalFilesSize += calcDirSize(di);
 
-            Directory.Delete(dir, true);
+            if(options.moveToRecycleBin) {
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(dir, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+            } else {
+                Directory.Delete(dir, true);
+            }
+            
             deletedWorldCount += 1;
 
             updateWorldDeletionScreen(updateScreen, deletedWorldCount, ref worldsToDelete);
         }
 
-        private void delFile(string file, string fileType, ref long totalFilesSize, ref int deletedFileCount) {
+        private void delFile(string file, string fileType, ref long totalFilesSize, ref int deletedFileCount, ref Options options) {
             FileInfo fi = new FileInfo(file);
             totalFilesSize += fi.Length;
 
-            File.Delete(file);
+            if(options.moveToRecycleBin) {
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(file, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+            } else {
+                File.Delete(file);
+            }
+
             deletedFileCount++;
             changeText(infoLabel, "Deleting " + fileType + " (" + deletedFileCount.ToString() + ")");
             refreshUI();

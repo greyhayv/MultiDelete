@@ -45,6 +45,7 @@ namespace MultiDelete
                     threadsTrackBar.TrackBarValue = options.ThreadCount;
                     threadsToUseLabel.Text = "Threads to use: " + threadsTrackBar.TrackBarValue;
                     keepLastWorldsNUD.Value = options.KeepLastWorlds;
+                    moveToRecycleBinCheckBox.Checked = options.moveToRecycleBin;
                 } catch {
                     if(MessageBox.Show("There was an error importing the settings! Load default settings?", "MultiDelete", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes) {
                         loadDefaultSettings();
@@ -73,7 +74,8 @@ namespace MultiDelete
                 UpdateScreenEvery = 1,
                 bgColor = "#0F0F0F",
                 accentColor = "#414141",
-                fontColor = "#C2C2C2"
+                fontColor = "#C2C2C2",
+                moveToRecycleBin = false
             };
 
             saveOptions(options);
@@ -110,7 +112,8 @@ namespace MultiDelete
                 KeepLastWorlds = Decimal.ToInt32(keepLastWorldsNUD.Value),
                 bgColor = ColorTranslator.ToHtml(MultiDelete.bgColor),
                 accentColor = ColorTranslator.ToHtml(MultiDelete.accentColor),
-                fontColor = ColorTranslator.ToHtml(MultiDelete.fontColor)
+                fontColor = ColorTranslator.ToHtml(MultiDelete.fontColor),
+                moveToRecycleBin = moveToRecycleBinCheckBox.Checked
             };
 
             saveOptions(options);
@@ -305,5 +308,6 @@ namespace MultiDelete
         public string bgColor { get; set; }
         public string accentColor { get; set; }
         public string fontColor { get; set; }
+        public bool moveToRecycleBin { get; set; }
     }
 }
