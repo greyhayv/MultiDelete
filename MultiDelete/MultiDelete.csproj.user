@@ -10,6 +10,9 @@
     <Compile Update="Controls\BTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\BTrackBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="Controls\FolderTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
