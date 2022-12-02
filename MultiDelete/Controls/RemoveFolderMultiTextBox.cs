@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace MultiDelete
@@ -11,26 +9,21 @@ namespace MultiDelete
     {
         private List<BButton> removeButtons = new List<BButton>();
         private List<BButton> folderButtons = new List<BButton>();
-        private List<Panel> textBoxPanel = new List<Panel>();
+        private string folderDialogDescription;
 
-        public override Color BorderColor { get => base.BorderColor; set { 
-            base.BorderColor = value;
-            foreach(BTextBox textBox in textBoxes) {
-                textBox.BorderColor = value;
+        public override string ToolTip { get => base.ToolTip; set { 
+            base.ToolTip = value; 
+            ToolTip toolTip = new ToolTip();
+            toolTip.ShowAlways = true;
+            foreach(BButton button in removeButtons) {
+                toolTip.SetToolTip(button, value);
             }
             foreach(BButton button in folderButtons) {
-                button.BorderColor = value;
-            }
-            foreach(BButton button in removeButtons) {
-                button.BorderColor = value;
+                toolTip.SetToolTip(button, value);
             }
         } }
-
         public override Color BackColor { get => base.BackColor; set { 
             base.BackColor = value;
-            foreach(BTextBox textBox in textBoxes) {
-                textBox.BackColor = value;
-            }
             foreach(BButton button in folderButtons) {
                 button.BackColor = value;
             }
@@ -38,25 +31,38 @@ namespace MultiDelete
                 button.BackColor = value;
             }
         } }
+        public override Color BorderColor { get => base.BorderColor; set { 
+            base.BorderColor = value;
+            foreach(BButton button in folderButtons) {
+                button.BorderColor = value;
+            }
+            foreach(BButton button in removeButtons) {
+                button.BorderColor = value;
+            }
+        } }
+        public override Color ForeColor { get => base.ForeColor; set { 
+            base.ForeColor = value; 
+            foreach(BButton button in folderButtons) {
+                button.ForeColor = value;
+            }
+            foreach(BButton button in removeButtons) {
+                button.ForeColor = value;
+            }
+        } }
+        public override bool MTBEnabled { get => base.MTBEnabled; set { 
+            base.MTBEnabled = value;
+            foreach(BButton button in removeButtons) {
+                button.Enabled = value;
+            }
+            foreach(BButton button in folderButtons) {
+                button.Enabled = value;
+            }
+        } }
+        public string FolderDialogDescription { get => folderDialogDescription; set => folderDialogDescription = value; }
 
         public override void createNewTextBox()
         {
-            ToolTip toolTip = new ToolTip();
-            toolTip.ShowAlways = true;
-
-            BTextBox textBox = new BTextBox();
-            textBox.BorderSize = 1;
-            textBox.BorderColor = BorderColor;
-            textBox.UnderlineStyle = false;
-            textBox.BackColor = BackColor;
-            textBox.ForeColor = ForeColor;
-            textBox.textBox.TextChanged += new EventHandler(textChanged);
-            textBoxes.Add(textBox);
-
-            if (toolTipStr != null)
-            {
-                textBox.setToolTip(toolTipStr);
-            }
+            base.createNewTextBox();
 
             BButton removeButton = new BButton();
             removeButton.Size = new Size(22, 22);
@@ -67,7 +73,7 @@ namespace MultiDelete
             removeButton.BorderSize = 1;
             removeButton.BorderRadius = 10;
             removeButton.BorderColor = BorderColor;
-            toolTip.SetToolTip(removeButton, "Remove");
+            removeButton.ToolTip = ToolTip;
             removeButtons.Add(removeButton);
 
             BButton folderButton = new BButton();
@@ -79,105 +85,56 @@ namespace MultiDelete
             folderButton.BorderSize = 1;
             folderButton.BorderRadius = 10;
             folderButton.BorderColor = BorderColor;
-            toolTip.SetToolTip(folderButton, "Browse");
+            folderButton.ToolTip = ToolTip;
             folderButtons.Add(folderButton);
 
-            Panel panel = new Panel();
-            panel.Size = new Size(275, 25);
-            panel.Controls.Add(textBox);
-            textBox.Location = new Point(0, 0);
-            panel.Controls.Add(folderButton);
-            folderButton.Location = new Point(205, 1);
-            panel.Controls.Add(removeButton);
-            removeButton.Location = new Point(230, 1);
-            textBoxPanel.Add(panel);
-
-            Controls.Add(panel);
+            panels[panels.Count - 1].Controls.Add(removeButton);
+            panels[panels.Count - 1].Controls.Add(folderButton);
 
             setRemoveButtonVisibilaty();
         }
 
         public override void deleteTextBox(int i)
         {
-            Controls.Remove(textBoxPanel[i]);
-            textBoxes.RemoveAt(i);
+            base.deleteTextBox(i);
+
             removeButtons.RemoveAt(i);
             folderButtons.RemoveAt(i);
-            textBoxPanel.RemoveAt(i);
 
             setRemoveButtonVisibilaty();
-        }
-
-        public override void enableTextBoxes() {
-            base.enableTextBoxes();
-            foreach(BButton button in removeButtons) {
-                button.Enabled = true;
-            }
-            foreach(BButton button in folderButtons) {
-                button.Enabled = true;
-            }
-        }
-
-        public override void disableTextBoxes() {
-            base.disableTextBoxes();
-            foreach(BButton button in removeButtons) {
-                button.Enabled = false;
-            }
-            foreach(BButton button in folderButtons) {
-                button.Enabled = false;
-            }
         }
 
         private void setRemoveButtonVisibilaty()
         {
             for (int i = 0; i < removeButtons.Count; i++)
             {
-                if (i < removeButtons.Count - 1)
-                {
-                    removeButtons[i].Visible = true;
-                }
-                else
+                if (i >= removeButtons.Count - 1)
                 {
                     removeButtons[i].Visible = false;
+                    return;
                 }
+                
+                removeButtons[i].Visible = true;
             }
         }
 
         private void removeButton_click(object sender, EventArgs e)
         {
             Focus();
-            int index = 0;
-            for (int i = 0; i < removeButtons.Count; i++)
-            {
-                if (removeButtons[i].Equals(sender))
-                {
-                    index = i;
-                }
-            }
-            deleteTextBox(index);
+
+            deleteTextBox(removeButtons.IndexOf((BButton)sender));
         }
 
         private void folderButton_click(object sender, EventArgs e)
         {
             Focus();
-            int index = 0;
-            for(int i = 0; i < folderButtons.Count; i++)
-            {
-                if (folderButtons[i].Equals(sender))
-                {
-                    index = i;
-                }
-            }
 
-            using (var fbd = new FolderBrowserDialog())
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            fbd.UseDescriptionForTitle = true;
+            fbd.Description = folderDialogDescription;
+            if(fbd.ShowDialog() == DialogResult.OK)
             {
-                fbd.UseDescriptionForTitle = true;
-                fbd.Description = "Select Instance-path";
-                fbd.ShowDialog();
-                if (fbd.SelectedPath != "")
-                {
-                    textBoxes[index].Text = fbd.SelectedPath;
-                }
+                textBoxes[folderButtons.IndexOf((BButton)sender)].Text = fbd.SelectedPath;
             }
         }
     }

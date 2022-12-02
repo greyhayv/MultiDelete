@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text.Json;
-using System.Net;
 using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
@@ -18,23 +17,13 @@ namespace MultiDelete
         public static Color accentColor;
         public static Color fontColor;
 
-        static string programPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete";
-        string optionsFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete\options.json";
-        private List<string> worldsToDelete = new List<string>();
-        private List<string> recordingsToDelete = new List<string>();
+        private string programPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete";
+        private string optionsFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete\options.json";
         private bool cancelDeletion = false;
-        public static bool updateAvailable = false;
-        public static string newestVersion = "";
-        private long totalFilesSize = 0;
         private bool closeAfterDeletion = false;
-        private int deletedWorldCount = 0;
-        private CountdownEvent worldDeletionCE = new CountdownEvent(0);
-        private int[] threadDeletedWorlds = new int[0];
         private bool checkUpdates = true;
-        private settingsMenu settingsMenu;
 
-        public MultiDelete()
-        {
+        public MultiDelete() {
             try {
                 Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
 
@@ -64,42 +53,20 @@ namespace MultiDelete
             InitializeComponent();
         }
 
-        public void updateColors() {
-            deleteWorldsButton.BorderColor = MultiDelete.accentColor;
-            deleteWorldsButton.ForeColor = MultiDelete.fontColor;
-
-            settingsButton.BorderColor = MultiDelete.accentColor;
-            settingsButton.ForeColor = MultiDelete.fontColor;
-
-            infoLabel.ForeColor = MultiDelete.fontColor;
-
-            okButton.BorderColor = MultiDelete.accentColor;
-            okButton.ForeColor = MultiDelete.fontColor;
-
-            cancelButton.BorderColor = MultiDelete.accentColor;
-            cancelButton.ForeColor = MultiDelete.fontColor;
-
-            BackColor = MultiDelete.bgColor;
-
-            settingsButton.Image = recolorImage(settingsButton.Image, fontColor);
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
-            if(!Directory.Exists(programPath))
-            {
+
+            if(!Directory.Exists(programPath)) {
                 Directory.CreateDirectory(programPath);
             }
 
             //Check launch arguments
             string[] launchArgs = Environment.GetCommandLineArgs();
-            if(launchArgs.Length > 1)
-            {
-                foreach(string argument in launchArgs)
-                {
+            if(launchArgs.Length > 1) {
+                foreach(string argument in launchArgs) {
                     switch(argument) {
                         case "-delWorlds":
-                            Task.Run(() => searchWorlds());
+                            Task.Run(() => deleteWorlds());
                             continue;
                         case "-closeAfterDeletion":
                             closeAfterDeletion = true;
@@ -111,70 +78,62 @@ namespace MultiDelete
                 }
             }
 
-            if(checkUpdates)
-            {
+            if(checkUpdates) {
                 Task.Run(() => checkForUpdates(false));
             }
         }
 
-        public static void checkForUpdates(bool openDialogIfNoNewVersion)
-        {
-            WebClient wc = new WebClient();
-            Stream stream = wc.OpenRead("https://raw.githubusercontent.com/greyhayv/MultiDelete/master/version.txt");
-            StreamReader sr = new StreamReader(stream);
-            updateAvailable = false;
-            newestVersion = sr.ReadToEnd();
+        public static async void checkForUpdates(bool openDialogIfNoNewVersion) {
+            try {
+                Octokit.GitHubClient client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("MultiDelete"));
+                Octokit.Release latestRelease = await client.Repository.Release.GetLatest("greyhayv", "MultiDelete");
+                string newestVersion = latestRelease.Name;
 
-            updateScreen updateScreen = new updateScreen();
-            if(newestVersion != version)
-            {
-                updateAvailable = true;
-                updateScreen.ShowDialog();
-            } else if(openDialogIfNoNewVersion)
-            {
-                updateScreen.ShowDialog();
+                if(newestVersion != version) {
+                    updateScreen updateScreen = new updateScreen(true);
+                    updateScreen.ShowDialog();
+                } else if(openDialogIfNoNewVersion) {
+                    updateScreen updateScreen = new updateScreen(false);
+                    updateScreen.ShowDialog();
+                }
+            } catch {
+                if(openDialogIfNoNewVersion) {
+                    MessageBox.Show("The API Call Limit was exceeded.");
+                }
             }
         }
 
-        private void deleteWorldsButton_Click(object sender, EventArgs e)
-        {
-            focusButton.Focus();
-            Task.Run(() => searchWorlds());
+        private void deleteWorldsButton_Click(object sender, EventArgs e) {
+            Focus();
+            Task.Run(() => deleteWorlds());
         }
 
-        private void settingsButton_Click(object sender, EventArgs e)
-        {
-            focusButton.Focus();
-            if(settingsMenu == null) {
-                settingsMenu = new settingsMenu(this);
-            }
+        private void settingsButton_Click(object sender, EventArgs e) {
+            Focus();
+            settingsMenu settingsMenu = new settingsMenu(this);
             settingsMenu.ShowDialog();
         }
 
-        private void okButton_Click(object sender, EventArgs e)
-        {
+        private void okButton_Click(object sender, EventArgs e) {
             setLayout(MenuLayout.MainMenu);
         }
 
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            setLayout(MenuLayout.MainMenu);
+        private void cancelButton_Click(object sender, EventArgs e) {
             cancelDeletion = true;
+            setLayout(MenuLayout.MainMenu);
         }
 
-        private void searchWorlds()
-        {
+        private void deleteWorlds() {
             setLayout(MenuLayout.InfoLabel);
 
-            List<string> checkedPaths = new List<string>();
-            totalFilesSize = 0;
             cancelDeletion = false;
-            worldsToDelete = new List<string>();
+            List<string> checkedPaths = new List<string>();
+            long totalFilesSize = 0;
+            List<string> worldsToDelete = new List<string>();
             changeText(infoLabel, "Searching Worlds (0)");
 
             Options options = new Options();
-            if(File.Exists(optionsFile))
-            {
+            if(File.Exists(optionsFile)) {
                 try {
                     options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
                 } catch {
@@ -183,404 +142,251 @@ namespace MultiDelete
             }
 
             //Checks if InstancePaths are configures
-            if(options.InstancePaths == null || options.InstancePaths.Length == 0)
-            {
+            if(options.InstancePaths == null || options.InstancePaths.Length == 0) {
                 changeText(infoLabel, "Please add an Instance-Path in the Settingmenu!");
                 setLayout(MenuLayout.Error);
                 return;
             }
 
-            List<string> savesPaths = convertInstancePathToSavesPath(options.InstancePaths);
-
             //Checks if Worlds to delete are configured
-            if(options.StartWith.Length == 0 && options.Include.Length == 0 && options.EndWith.Length == 0)
-            {
+            if(options.StartWith.Length == 0 && options.Include.Length == 0 && options.EndWith.Length == 0) {
                 changeText(infoLabel, "Please select what worlds to delete in the Settingsmenu!");
                 changeFont(infoLabel, new Font("Roboto", 13));
                 setLayout(MenuLayout.Error);
                 return;
             }
 
-            foreach(string path in savesPaths)
-            {
-                if(!Directory.Exists(path))
-                {
+            foreach(string path in savesPathsFromInstancePaths(options.InstancePaths)) {
+                if(!Directory.Exists(path)) {
                     changeText(infoLabel, "The Saves-Path '" + path + "' doesnt exist!");
                     changeFont(infoLabel, new Font("Roboto", 13), true);
                     setLayout(MenuLayout.Error);
 
-                    //Make Font smaller if it text to long to be displayed
-                    while (infoLabel.Width < TextRenderer.MeasureText(infoLabel.Text, infoLabel.Font).Width)
-                    {
+                    //Make Font smaller if it text is to long to be displayed
+                    while(infoLabel.Width < TextRenderer.MeasureText(infoLabel.Text, infoLabel.Font).Width) {
                         changeFont(infoLabel, new Font("Roboto", infoLabel.Font.Size - 0.5f), true);
                     }
 
                     return;
                 }
 
-                if(checkedPaths.Contains(path))
-                {
+                if(checkedPaths.Contains(path)) {
                     continue;
                 }
 
                 List<string> instanceWorlds = new List<string>();
-                foreach(string world in Directory.GetDirectories(path))
-                {
-                    if(cancelDeletion)
-                    {
-                        cancelDeletion = false;
+                foreach(string world in Directory.GetDirectories(path)) {
+                    if(cancelDeletion) {
                         return;
                     }
 
-                    if(options.DeleteAllWorlds)
-                    {
+                    if(options.DeleteAllWorlds) {
                         worldsToDelete.Add(world);
                         instanceWorlds.Add(world);
 
-                        updateWorldSearchingScreen(options.UpdateScreenEvery);
+                        updateWorldSearchingScreen(options.UpdateScreenEvery, ref worldsToDelete);
 
                         continue;
                     }
 
                     string worldName = world.Substring(path.Length + 1);
-                    if(options.StartWith.Length > 0)
-                    {
-                        foreach(string str in options.StartWith)
-                        {
-                            if(!worldName.StartsWith(str))
-                            {
+                    if(options.StartWith.Length > 0) {
+                        foreach(string str in options.StartWith) {
+                            if(!worldName.StartsWith(str)) {
                                 continue;
                             }
 
                             worldsToDelete.Add(world);
                             instanceWorlds.Add(world);
 
-                            updateWorldSearchingScreen(options.UpdateScreenEvery);
+                            updateWorldSearchingScreen(options.UpdateScreenEvery, ref worldsToDelete);
                         }
                     }
 
-                    if(options.Include.Length > 0)
-                    {
-                        foreach(string str in options.Include)
-                        {
-                            if(!worldName.Contains(str))
-                            {
+                    if(options.Include.Length > 0) {
+                        foreach(string str in options.Include) {
+                            if(!worldName.Contains(str)) {
                                 continue;
                             }
 
                             worldsToDelete.Add(world);
                             instanceWorlds.Add(world);
 
-                            updateWorldSearchingScreen(options.UpdateScreenEvery);
+                            updateWorldSearchingScreen(options.UpdateScreenEvery, ref worldsToDelete);
                         }
                     }
-                    if(options.EndWith.Length > 0)
-                    {
-                        foreach(string str in options.EndWith)
-                        {
-                            if(!worldName.EndsWith(str))
-                            {
+
+                    if(options.EndWith.Length > 0) {
+                        foreach(string str in options.EndWith) {
+                            if(!worldName.EndsWith(str)) {
                                 continue;
                             }
 
                             worldsToDelete.Add(world);
                             instanceWorlds.Add(world);
 
-                            updateWorldSearchingScreen(options.UpdateScreenEvery);
+                            updateWorldSearchingScreen(options.UpdateScreenEvery, ref worldsToDelete);
                         }
                     }
                 }
 
-                //Remove last x worlds form list
+                //Remove last x worlds from list
                 List<DirectoryInfo> worldDIs = new List<DirectoryInfo>();
-                foreach(string instanceWorld in instanceWorlds)
-                {
+                foreach(string instanceWorld in instanceWorlds) {
                     worldDIs.Add(new DirectoryInfo(instanceWorld));
                 }
                 instanceWorlds = worldDIs.OrderByDescending(f => f.LastWriteTime).Select(f => f.FullName).ToList();
 
-                for(int i = 0; i < options.KeepLastWorlds; i++)
-                {
-                    if(instanceWorlds.Count <= i)
-                    {
+                for(int i = 0; i < options.KeepLastWorlds; i++) {
+                    if(instanceWorlds.Count <= i) {
                         continue;
                     }
                     worldsToDelete.Remove(instanceWorlds[i]);
                 }
                 checkedPaths.Add(path);
             }
-            deleteWorlds();
-        }
-
-        private void deleteWorlds()
-        {
-            Options options = new Options();
-            if(File.Exists(optionsFile))
-            {
-                options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
-            }
-
-            deletedWorldCount = 0;
+            
+            int deletedWorldCount = 0;
 
             changeText(infoLabel, "Deleting Worlds (0/" + worldsToDelete.Count.ToString() + ")");
             changeMaximum(progressBar, worldsToDelete.Count);
             changeValue(progressBar, 0);
             setLayout(MenuLayout.ProgressBar);
 
-            threadDeletedWorlds = new int[options.ThreadCount + 1];
-
-            worldDeletionCE = new CountdownEvent(options.ThreadCount);
+            CountdownEvent worldDeletionCE = new CountdownEvent(options.ThreadCount);
 
             //Divide worlds under threads
-            for(int i = 0; i < options.ThreadCount; i++)
-            {
+            for(int i = 0; i < options.ThreadCount; i++) {
                 int i2 = i;
-                ThreadPool.QueueUserWorkItem(state => delWorlds(i2 * (worldsToDelete.Count / options.ThreadCount), (i2 + 1) * (worldsToDelete.Count / options.ThreadCount), i), worldDeletionCE);
+                ThreadPool.QueueUserWorkItem(state => delWorldsThread(i2 * (worldsToDelete.Count / options.ThreadCount), (i2 + 1) * (worldsToDelete.Count / options.ThreadCount), ref worldsToDelete, ref deletedWorldCount, ref totalFilesSize, ref worldDeletionCE), worldDeletionCE);
             }
             worldDeletionCE.Wait();
 
-            foreach(int delWorlds in threadDeletedWorlds)
-            {
-                deletedWorldCount += delWorlds;
-            }
-
             //Delte leftover worlds
-            foreach(string world in worldsToDelete)
-            {
-                if(cancelDeletion)
-                {
-                    cancelDeletion = false;
+            foreach(string world in worldsToDelete) {
+                if(cancelDeletion) {
                     return;
                 }
 
-                if(!Directory.Exists(world))
-                {
+                if(!Directory.Exists(world)) {
                     continue;
                 }
 
-                try
-                {
-                    DirectoryInfo di = new DirectoryInfo(world);
-                    addDirSize(di);
-
-                    Directory.Delete(world, true);
-                    deletedWorldCount += 1;
-
-                    updateWorldDeletionScreen(options.UpdateScreenEvery, deletedWorldCount);
-                }
-                catch
-                {
+                try {
+                    delWorld(world, ref totalFilesSize, ref deletedWorldCount, options.UpdateScreenEvery, ref worldsToDelete);
+                } catch {
                     continue;
                 }
             }
 
-            bool delRecordings = options.DeleteRecordings;
-            bool delCrashReports = options.DeleteCrashReports;
-            bool delScreenshots = options.DeleteScreenshots;
 
-            if(delRecordings)
-            {
-                searchRecordings();
+            if(options.DeleteRecordings) {
+                deleteRecordings(ref totalFilesSize);
             }
-            if(delCrashReports)
-            {
-                deleteCrashReports();
+            if(options.DeleteCrashReports) {
+                deleteCrashReports(ref totalFilesSize);
             }
-            if(delScreenshots)
-            {
-                deleteScreenshots();
+            if(options.DeleteScreenshots) {
+                deleteScreenshots(ref totalFilesSize);
             }
 
-            showResults();
+            showResults(ref worldsToDelete, totalFilesSize);
         }
 
-        private void delWorlds(int startIndex, int endIndex, int threadNumber)
-        {
+        private void delWorldsThread(int startIndex, int endIndex, ref List<string> worldsToDelete, ref int totalDeletedWorlds, ref long deletedFileSize, ref CountdownEvent countdownEvent) {
             Options options = new Options();
-            if(File.Exists(optionsFile))
-            {
+            if(File.Exists(optionsFile)) {
                 options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
             }
 
-            //deletes All found Worlds
-            changeMaximum(progressBar, worldsToDelete.Count);
-            for(int i = startIndex; i < endIndex; i++)
-            {
-                if(cancelDeletion)
-                {
-                    worldDeletionCE.Signal();
+            long deletedWorldsSize = 0;
+            for(int i = startIndex; i < endIndex; i++) {
+                if(cancelDeletion) {
+                    countdownEvent.Signal();
                     return;
                 }
 
-                try
-                {
-                    DirectoryInfo di = new DirectoryInfo(worldsToDelete[i]);
-                    addDirSize(di);
-
-                    Directory.Delete(worldsToDelete[i], true);
-                    threadDeletedWorlds[threadNumber] += 1;
-
-                    int totalDeletedWorlds = deletedWorldCount;
-                    foreach(int threadDeletedWorld in threadDeletedWorlds)
-                    {
-                        totalDeletedWorlds += threadDeletedWorld;
-                    }
-
-                    updateWorldDeletionScreen(options.UpdateScreenEvery, totalDeletedWorlds);
-                } catch
-                {
+                try {
+                    delWorld(worldsToDelete[i], ref deletedWorldsSize, ref totalDeletedWorlds, options.UpdateScreenEvery, ref worldsToDelete);
+                } catch {
                     continue;
                 }
             }
 
-            worldDeletionCE.Signal();
-            return;
+            deletedFileSize += deletedWorldsSize;
+            countdownEvent.Signal();
         }
 
-        private void searchRecordings()
-        {
-            recordingsToDelete = new List<string>();
-
-            Options options = new Options();
-            if(File.Exists(optionsFile))
-            {
-                options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
-            }
-
+        private void deleteRecordings(ref long totalFilesSize) {
             setLayout(MenuLayout.InfoLabel);
-            if(String.IsNullOrWhiteSpace(options.RecordingsPath))
-            {
-                //Checks if Recordings-Path is configured
-                changeFont(infoLabel, new Font("Roboto", 15));
-                changeText(infoLabel, "Please add your Recordings-Path in the Settingmenu!");
-                changeLocation(infoLabel, new Point(-8, 23));
-                changeText(okButton, "OK");
-                setLayout(MenuLayout.Error);
+            Options options = new Options();
+            if(File.Exists(optionsFile)) {
+                options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            }
+
+            if(String.IsNullOrWhiteSpace(options.RecordingsPath)) {
                 return;
             }
 
-            changeText(infoLabel, "Searching Recordings (0)");
-            recordingsToDelete = new List<string>();
-            if(!Directory.Exists(options.RecordingsPath))
-            {
-                changeText(infoLabel, "The Recordings-Path '" + options.RecordingsPath + "' doesnt exist!");
-                changeFont(infoLabel, new Font("Roboto", 13), true);
-                changeText(okButton, "OK");
-                setLayout(MenuLayout.Error);
-
-                //Make Font smaller if its to long to be displayed
-                while (infoLabel.Width < TextRenderer.MeasureText(infoLabel.Text, infoLabel.Font).Width)
-                {
-                    changeFont(infoLabel, new Font("Roboto", infoLabel.Font.Size - 0.5f), true);
-                }
-
+            if(!Directory.Exists(options.RecordingsPath)) {
+                MessageBox.Show("The Recordings-Path does not exist!", "MultiDelete", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            //Search Recordings to delete
-            foreach(string recording in Directory.GetFiles(options.RecordingsPath))
-            {
-                if(cancelDeletion)
-                {
-                    cancelDeletion = false;
-                    return;
-                }
-
-                if(!recording.EndsWith(".mp4") && !recording.EndsWith(".webm") && !recording.EndsWith(".mkv") && !recording.EndsWith(".flv") && !recording.EndsWith(".vob") && !recording.EndsWith(".ogv") && !recording.EndsWith(".ogg") && !recording.EndsWith(".drc") && !recording.EndsWith(".gif") && !recording.EndsWith(".gifv") && !recording.EndsWith(".mng") && !recording.EndsWith(".avi") && !recording.EndsWith(".MTS") && !recording.EndsWith(".M2TS") && !recording.EndsWith("TS") && !recording.EndsWith(".mov") && !recording.EndsWith(".qt") && !recording.EndsWith(".wmv") && !recording.EndsWith(".yuv") && !recording.EndsWith(".rm") && !recording.EndsWith(".rmvb") && !recording.EndsWith(".viv") && !recording.EndsWith(".asf") && !recording.EndsWith(".amv") && !recording.EndsWith(".m4p") && !recording.EndsWith(".m4v") && !recording.EndsWith(".mpg") && !recording.EndsWith(".mp2") && !recording.EndsWith(".mpeg") && !recording.EndsWith(".mpe") && !recording.EndsWith(".mpv") && !recording.EndsWith(".mpg") && !recording.EndsWith(".m2v") && !recording.EndsWith(".m4v") && !recording.EndsWith(".svi") && !recording.EndsWith(".3gp") && !recording.EndsWith(".3g2") && !recording.EndsWith(".mxf") && !recording.EndsWith(".roq") && !recording.EndsWith(".nsv") && !recording.EndsWith(".flv") && !recording.EndsWith(".f4v") && !recording.EndsWith(".f4p") && !recording.EndsWith(".f4a") && !recording.EndsWith(".f4b"))
-                {
-                    continue;
-                }
-
-                recordingsToDelete.Add(recording);
-                changeText(infoLabel, "Searching Recordings (" + recordingsToDelete.Count.ToString() + ")");
-                refreshUI();
-            }
-
-            deleteRecordings();
-        }
-
-        private void deleteRecordings()
-        {
             int deletedRecordings = 0;
-            changeText(infoLabel, "Deleting Recordings (0/" + recordingsToDelete.Count.ToString() + ")");
-            changeMaximum(progressBar, recordingsToDelete.Count);
-            setLayout(MenuLayout.ProgressBar);
-            foreach(string recording in recordingsToDelete)
-            {
-                if(cancelDeletion)
-                {
-                    cancelDeletion = false;
+            changeLocation(infoLabel, new Point(-8, 41));
+            changeText(infoLabel, "Deleting Recordings (0)");
+
+            foreach(string file in Directory.GetFiles(options.RecordingsPath)) {
+                if(cancelDeletion) {
                     return;
                 }
 
-                FileInfo fi = new FileInfo(recording);
-                totalFilesSize += fi.Length;
+                if(!file.EndsWith(".mp4") && !file.EndsWith(".webm") && !file.EndsWith(".mkv") && !file.EndsWith(".flv") && !file.EndsWith(".vob") && !file.EndsWith(".ogv") && !file.EndsWith(".ogg") && !file.EndsWith(".drc") && !file.EndsWith(".gif") && !file.EndsWith(".gifv") && !file.EndsWith(".mng") && !file.EndsWith(".avi") && !file.EndsWith(".MTS") && !file.EndsWith(".M2TS") && !file.EndsWith("TS") && !file.EndsWith(".mov") && !file.EndsWith(".qt") && !file.EndsWith(".wmv") && !file.EndsWith(".yuv") && !file.EndsWith(".rm") && !file.EndsWith(".rmvb") && !file.EndsWith(".viv") && !file.EndsWith(".asf") && !file.EndsWith(".amv") && !file.EndsWith(".m4p") && !file.EndsWith(".m4v") && !file.EndsWith(".mpg") && !file.EndsWith(".mp2") && !file.EndsWith(".mpeg") && !file.EndsWith(".mpe") && !file.EndsWith(".mpv") && !file.EndsWith(".mpg") && !file.EndsWith(".m2v") && !file.EndsWith(".m4v") && !file.EndsWith(".svi") && !file.EndsWith(".3gp") && !file.EndsWith(".3g2") && !file.EndsWith(".mxf") && !file.EndsWith(".roq") && !file.EndsWith(".nsv") && !file.EndsWith(".flv") && !file.EndsWith(".f4v") && !file.EndsWith(".f4p") && !file.EndsWith(".f4a") && !file.EndsWith(".f4b")) {
+                    continue;
+                }
 
-                File.Delete(recording);
-                deletedRecordings += 1;
-                changeText(infoLabel, "Deleting Recordings (" + deletedRecordings.ToString() + "/" + recordingsToDelete.Count.ToString() + ")");
-                changeValue(progressBar, deletedRecordings);
-                refreshUI();
+                delFile(file, "Recordings", ref totalFilesSize, ref deletedRecordings);
+
+                MessageBox.Show("wawa");
             }
         }
 
-        private void deleteCrashReports()
-        {
+        private void deleteCrashReports(ref long totalFilesSize) {
             setLayout(MenuLayout.InfoLabel);
             Options options = new Options();
-            if(File.Exists(optionsFile))
-            {
+            if(File.Exists(optionsFile)) {
                 options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
             }
 
             int deletedCrashReports = 0;
             changeText(infoLabel, "Deleting Crash-reports (0)");
 
-            List<string> savesPaths = convertInstancePathToSavesPath(options.InstancePaths);
-
-            foreach(string savesPath in savesPaths)
-            {
+            foreach(string savesPath in savesPathsFromInstancePaths(options.InstancePaths)) {
                 string minecraftPath = savesPath.Remove(savesPath.Length - 6);
                 string crashReportsPath = minecraftPath + @"\crash-reports";
-                if(!Directory.Exists(crashReportsPath))
-                {
+                if(!Directory.Exists(crashReportsPath)) {
                     continue;
                 }
 
-                foreach(string crashReport in Directory.GetFiles(crashReportsPath))
-                {
-                    FileInfo fi = new FileInfo(crashReport);
-                    totalFilesSize += fi.Length;
-
-                    File.Delete(crashReport);
-                    deletedCrashReports++;
-                    changeText(infoLabel, "Deleting Crash-reports (" + deletedCrashReports.ToString() + ")");
-                    refreshUI();
+                foreach(string crashReport in Directory.GetFiles(crashReportsPath)) {
+                    delFile(crashReport, "Crash-reports", ref totalFilesSize, ref deletedCrashReports);
                 }
 
-                foreach(string file in Directory.GetFiles(minecraftPath))
-                {
-                    if(!file.Substring(minecraftPath.Length + 1).StartsWith("hs_err_pid"))
-                    {
+                foreach(string file in Directory.GetFiles(minecraftPath)) {
+                    if(!file.Substring(minecraftPath.Length + 1).StartsWith("hs_err_pid")) {
                         continue;
                     }
 
-                    FileInfo fi = new FileInfo(file);
-                    totalFilesSize += fi.Length;
-
-                    File.Delete(file);
-                    deletedCrashReports++;
-                    changeText(infoLabel, "Deleting Crash-reports (" + deletedCrashReports.ToString() + ")");
-                    refreshUI();
+                    delFile(file, "Crash-reports", ref totalFilesSize, ref deletedCrashReports);
                 }
             }
         }
 
-        private void deleteScreenshots()
-        {
+        private void deleteScreenshots(ref long totalFilesSize) {
+            setLayout(MenuLayout.InfoLabel);
             Options options = new Options();
-            if(File.Exists(optionsFile))
-            {
+            if(File.Exists(optionsFile)) {
                 options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
             }
 
@@ -588,114 +394,77 @@ namespace MultiDelete
             changeLocation(infoLabel, new Point(-8, 41));
             changeText(infoLabel, "Deleting Screenshots (0)");
 
-            List<string> savesPaths = convertInstancePathToSavesPath(options.InstancePaths);
-
-            foreach(string savesPath in savesPaths)
-            {
+            foreach(string savesPath in savesPathsFromInstancePaths(options.InstancePaths)) {
                 string minecraftPath = savesPath.Remove(savesPath.Length - 6);
                 string screenshotsPath = minecraftPath + @"\screenshots";
 
-                if(!Directory.Exists(screenshotsPath))
-                {
+                if(!Directory.Exists(screenshotsPath)) {
                     continue;
                 }
 
-                foreach(string screenshot in Directory.GetFiles(screenshotsPath))
-                {
-                    FileInfo fi = new FileInfo(screenshot);
-                    totalFilesSize += fi.Length;
-
-                    File.Delete(screenshot);
-                    deletedScreenshots++;
-                    changeText(infoLabel, "Deleting Screenshots (" + deletedScreenshots.ToString() + ")");
-                    refreshUI();
+                foreach(string screenshot in Directory.GetFiles(screenshotsPath)) {
+                    delFile(screenshot, "Screenshots", ref totalFilesSize, ref deletedScreenshots);
                 }
             }
         }
 
-        private void showResults()
-        {
+        private void showResults(ref List<string> worldsToDelete, long totalFilesSize) {
             //Convert file sizes
-            string fileSize = "";
-            if(totalFilesSize < 1024)
-            {
+            string fileSize;
+            if(totalFilesSize < 1024) {
                 fileSize = totalFilesSize.ToString() + " Bytes";
-            }
-            else if(totalFilesSize < 1048576)
-            {
-                fileSize = Math.Round(Decimal.Divide(totalFilesSize, 1024), 2) + "kB";
-            }
-            else if(totalFilesSize < 1073741824)
-            {
-                fileSize = Math.Round(Decimal.Divide(Decimal.Divide(totalFilesSize, 1024), 1024), 2) + "MB";
-            }
-            else
-            {
-                fileSize = Math.Round(Decimal.Divide(Decimal.Divide(Decimal.Divide(totalFilesSize, 1024), 1024), 1024), 2) + "GB";
+            } else if(totalFilesSize < Math.Pow(1024, 2)) {
+                fileSize = Math.Round(((double)totalFilesSize / 1024d), 2) + "kB";
+            } else if(totalFilesSize < Math.Pow(1024, 3)) {
+                fileSize = Math.Round(((double)totalFilesSize / (double)Math.Pow(1024d, 2)), 2) + "MB";
+            } else {
+                fileSize = Math.Round(((double)totalFilesSize / (double)Math.Pow(1024d, 3)), 2) + "GB";
             }
 
             changeVisibilaty(progressBar, false);
-            if(worldsToDelete.Count == 0)
-            {
+            if(worldsToDelete.Count == 0) {
                 changeText(infoLabel, "No Worlds got found! (" + fileSize + ")");
-            }
-            else if(worldsToDelete.Count == 1)
-            {
+            } else if(worldsToDelete.Count == 1) {
                 changeText(infoLabel, "Deleted 1 World! (" + fileSize + ")");
-            }
-            else
-            {
+            } else {
                 changeText(infoLabel, "Deleted " + worldsToDelete.Count.ToString() + " Worlds! (" + fileSize + ")");
             }
             setLayout(MenuLayout.Results);
 
-            if(closeAfterDeletion)
-            {
+            if(closeAfterDeletion) {
                 Application.Exit();
             }
         }
 
-        private void updateWorldSearchingScreen(int updateScreen)
-        {
-            if(worldsToDelete.Count % updateScreen == 0)
-            {
+        private void updateWorldSearchingScreen(int updateScreen, ref List<string> worldsToDelete) {
+            if(worldsToDelete.Count % updateScreen == 0) {
                 changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
                 refreshUI();
             }
         }
 
-        private void updateWorldDeletionScreen(int updateScreen, int delWorldCount)
-        {
-            if(delWorldCount % updateScreen == 0)
-            {
+        private void updateWorldDeletionScreen(int updateScreen, int delWorldCount, ref List<string> worldsToDelete) {
+            if(delWorldCount % updateScreen == 0) {
                 changeText(infoLabel, "Deleting Worlds (" + delWorldCount.ToString() + "/" + worldsToDelete.Count.ToString() + ")");
                 changeValue(progressBar, delWorldCount);
                 refreshUI();
             }
         }
 
-        private List<string> convertInstancePathToSavesPath(string[] instancePaths)
-        {
+        private List<string> savesPathsFromInstancePaths(string[] instancePaths) {
             List<string> savesPaths = new List<string>();
-            foreach(string instancePath in instancePaths)
-            {
-                if(instancePath.EndsWith(@"\saves"))
-                {
+            foreach(string instancePath in instancePaths) {
+                if(instancePath.EndsWith(@"\saves")) {
                     savesPaths.Add(instancePath);
-                } else if(instancePath.EndsWith(@"\saves\"))
-                {
+                } else if(instancePath.EndsWith(@"\saves\")) {
                     savesPaths.Add(instancePath.Remove(instancePath.Length - 1));
-                } else if(instancePath.EndsWith(@"\.minecraft"))
-                {
+                } else if(instancePath.EndsWith(@"\.minecraft")) {
                     savesPaths.Add(instancePath + @"\saves");
-                } else if(instancePath.EndsWith(@"\.minecraft\"))
-                {
+                } else if(instancePath.EndsWith(@"\.minecraft\")) {
                     savesPaths.Add(instancePath + "saves");
-                } else if(instancePath.EndsWith(@"\"))
-                {
+                } else if(instancePath.EndsWith(@"\")) {
                     savesPaths.Add(instancePath + @".minecraft\saves");
-                } else
-                {
+                } else {
                     savesPaths.Add(instancePath + @"\.minecraft\saves");
                 }
             }
@@ -703,104 +472,85 @@ namespace MultiDelete
             return savesPaths;
         }
 
-        private void changeText(Label label, String text)
-        {
+        private void changeText(Label label, String text) {
             label.BeginInvoke((Action)(() => label.Text = text));
         }
 
-        private void changeText(Button button, String text)
-        {
+        private void changeText(Button button, String text) {
             button.BeginInvoke((Action)(() => button.Text = text));
         }
 
-        private void changeVisibilaty(Button button, bool visible)
-        {
+        private void changeVisibilaty(Button button, bool visible) {
             button.BeginInvoke((Action)(() => button.Visible = visible));
         }
 
-        private void changeVisibilaty(Label label, bool visible)
-        {
+        private void changeVisibilaty(Label label, bool visible) {
             label.BeginInvoke((Action)(() => label.Visible = visible));
         }
 
-        private void changeVisibilaty(ProgressBar progressBar, bool visible)
-        {
+        private void changeVisibilaty(ProgressBar progressBar, bool visible) {
             progressBar.BeginInvoke((Action)(() => progressBar.Visible = visible));
         }
 
-        private void changeFont(Label label, Font font)
-        {
+        private void changeFont(Label label, Font font) {
             label.BeginInvoke((Action) (() => label.Font = font));
         }
 
-        private void changeFont(Label label, Font font, bool Invoke)
-        {
-            if(Invoke)
-            {
+        private void changeFont(Label label, Font font, bool Invoke){
+            if(Invoke) {
                 label.Invoke((Action)(() => label.Font = font));
-            } else
-            {
+            } else {
                 label.BeginInvoke((Action)(() => label.Font = font));
             }
         }
 
-        private void changeLocation(Label label, Point location)
-        {
+        private void changeLocation(Label label, Point location) {
             label.BeginInvoke((Action)(() => label.Location = location));
         }
 
-        private void changeLocation(Button button, Point location)
-        {
+        private void changeLocation(Button button, Point location) {
             button.BeginInvoke((Action)(() => button.Location = location));
         }
 
-        private void changeLocation(ProgressBar progressBar, Point location)
-        {
+        private void changeLocation(ProgressBar progressBar, Point location) {
             progressBar.BeginInvoke((Action)(() => progressBar.Location = location));
         }
 
-        private void changeMaximum(ProgressBar progressBar, int max)
-        {
+        private void changeMaximum(ProgressBar progressBar, int max) {
             progressBar.Invoke((Action)(() => progressBar.Maximum = max));
         }
 
-        private void changeValue(ProgressBar progressBar, int value)
-        {
+        private void changeValue(ProgressBar progressBar, int value) {
             progressBar.BeginInvoke((Action)(() => progressBar.Value = value));
         }
 
-        private void refreshUI()
-        {
+        private void refreshUI() {
             Invoke((Action)(() => Refresh()));
         }
 
-        private void addDirSize(DirectoryInfo di)
-        {
+        private long calcDirSize(DirectoryInfo di) {
+            long fileSize = 0;
             FileInfo[] fis = di.GetFiles();
-            foreach(FileInfo fi in fis)
-            {
-                totalFilesSize += fi.Length;
+            foreach(FileInfo fi in fis) {
+                fileSize += fi.Length;
             }
-            DirectoryInfo[] subDirectorys = di.GetDirectories();
-            foreach(DirectoryInfo di2 in subDirectorys)
-            {
-                addDirSize(di2);
+            foreach(DirectoryInfo di2 in di.GetDirectories()) {
+                fileSize += calcDirSize(di2);
             }
+
+            return fileSize;
         }
 
-        private void setLayout(MenuLayout layout)
-        {
-            //Reset menu
+        private void setLayout(MenuLayout layout) {
+            //Reset layout
             changeVisibilaty(cancelButton, false);
             changeVisibilaty(deleteWorldsButton, false);
-            changeVisibilaty(focusButton, false);
             changeVisibilaty(infoLabel, false);
             changeVisibilaty(okButton, false);
             changeVisibilaty(progressBar, false);
             changeVisibilaty(settingsButton, false);
             changeLocation(cancelButton, new Point(198, 72));
             changeLocation(deleteWorldsButton, new Point(154, 30));
-            changeLocation(focusButton, new Point(431, 48));
             changeLocation(infoLabel, new Point(-8, 41));
             changeLocation(okButton, new Point(193, 57));
             changeLocation(progressBar, new Point(17, 44));
@@ -842,18 +592,35 @@ namespace MultiDelete
             Bitmap bitmap = (Bitmap)image;
             for(int x = 0; x < bitmap.Width; x++) {
                 for(int y = 0; y < bitmap.Height; y++) {
-                    if(bitmap.GetPixel(x, y).A > 0) {
-                        bitmap.SetPixel(x, y, Color.FromArgb(bitmap.GetPixel(x, y).A, color));
-                    }
+                    bitmap.SetPixel(x, y, Color.FromArgb(bitmap.GetPixel(x, y).A, color));
                 }
             }
 
             return bitmap;
         }
+
+        private void delWorld(string dir, ref long totalFilesSize, ref int deletedWorldCount, int updateScreen, ref List<string> worldsToDelete) {
+            DirectoryInfo di = new DirectoryInfo(dir);
+            totalFilesSize += calcDirSize(di);
+
+            Directory.Delete(dir, true);
+            deletedWorldCount += 1;
+
+            updateWorldDeletionScreen(updateScreen, deletedWorldCount, ref worldsToDelete);
+        }
+
+        private void delFile(string file, string fileType, ref long totalFilesSize, ref int deletedFileCount) {
+            FileInfo fi = new FileInfo(file);
+            totalFilesSize += fi.Length;
+
+            File.Delete(file);
+            deletedFileCount++;
+            changeText(infoLabel, "Deleting " + fileType + " (" + deletedFileCount.ToString() + ")");
+            refreshUI();
+        }
     }
 
-    public enum MenuLayout
-    {
+    public enum MenuLayout {
         MainMenu,
         InfoLabel,
         Error,

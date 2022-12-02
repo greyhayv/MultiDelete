@@ -32,7 +32,6 @@
             this.updatePanel = new System.Windows.Forms.FlowLayoutPanel();
             this.remindMeLaterButton = new BButton();
             this.downloadButton = new BButton();
-            this.focusLabel = new System.Windows.Forms.Label();
             this.closeButton = new BButton();
             this.SuspendLayout();
             // 
@@ -86,14 +85,6 @@
             this.downloadButton.UseVisualStyleBackColor = false;
             this.downloadButton.Click += new System.EventHandler(this.downloadButton_Click);
             // 
-            // focusLabel
-            // 
-            this.focusLabel.AutoSize = true;
-            this.focusLabel.Location = new System.Drawing.Point(-100, -100);
-            this.focusLabel.Name = "focusLabel";
-            this.focusLabel.Size = new System.Drawing.Size(0, 15);
-            this.focusLabel.TabIndex = 3;
-            // 
             // closeButton
             // 
             this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -112,7 +103,6 @@
             this.closeButton.TabStop = false;
             this.closeButton.Text = "Close";
             this.closeButton.UseVisualStyleBackColor = false;
-            this.closeButton.Visible = false;
             this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
             // 
             // updateScreen
@@ -122,7 +112,6 @@
             this.BackColor = MultiDelete.bgColor;
             this.ClientSize = new System.Drawing.Size(484, 761);
             this.Controls.Add(this.closeButton);
-            this.Controls.Add(this.focusLabel);
             this.Controls.Add(this.downloadButton);
             this.Controls.Add(this.remindMeLaterButton);
             this.Controls.Add(this.updatePanel);
@@ -143,7 +132,6 @@
         private System.Windows.Forms.FlowLayoutPanel updatePanel;
         private BButton remindMeLaterButton;
         private BButton downloadButton;
-        private System.Windows.Forms.Label focusLabel;
         private BButton closeButton;
     }
 }

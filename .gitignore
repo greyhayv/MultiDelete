@@ -1,6 +1,6 @@
 .vs/
 .vscode/
-MultiDelete/bin/Debug/netcoreapp3.1/
+MultiDelete/obj/Debug/netcoreapp3.1/
 MultiDelete/bin/Debug/netcoreapp3.1/publish/
 MultiDelete/obj/
 MultiDelete/obj/Debug/netcoreapp3.1/

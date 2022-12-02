@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
-using System.Text.Json;
-using System.IO;
+﻿using System.Windows.Forms;
 
 namespace MultiDelete
 {
@@ -36,7 +33,6 @@ namespace MultiDelete
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MultiDelete));
             this.deleteWorldsButton = new BButton();
             this.settingsButton = new BButton();
-            this.focusButton = new BButton();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.infoLabel = new System.Windows.Forms.Label();
             this.okButton = new BButton();
@@ -79,22 +75,6 @@ namespace MultiDelete
             this.settingsButton.TextColor = MultiDelete.accentColor;
             this.settingsButton.UseVisualStyleBackColor = false;
             this.settingsButton.Click += new System.EventHandler(this.settingsButton_Click);
-            // 
-            // focusButton
-            // 
-            this.focusButton.BackColor = System.Drawing.Color.Transparent;
-            this.focusButton.BackgroundColor = System.Drawing.Color.Transparent;
-            this.focusButton.BorderRadius = 20;
-            this.focusButton.BorderSize = 1;
-            this.focusButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.focusButton.ForeColor = MultiDelete.fontColor;
-            this.focusButton.Location = new System.Drawing.Point(431, 48);
-            this.focusButton.Name = "focusButton";
-            this.focusButton.Size = new System.Drawing.Size(0, 0);
-            this.focusButton.TabIndex = 2;
-            this.focusButton.TabStop = false;
-            this.focusButton.Text = "button1";
-            this.focusButton.UseVisualStyleBackColor = true;
             // 
             // progressBar
             // 
@@ -167,7 +147,6 @@ namespace MultiDelete
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.infoLabel);
             this.Controls.Add(this.progressBar);
-            this.Controls.Add(this.focusButton);
             this.Controls.Add(this.settingsButton);
             this.Controls.Add(this.deleteWorldsButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -182,11 +161,30 @@ namespace MultiDelete
             this.PerformLayout();
         }
 
+        public void updateColors() {
+            deleteWorldsButton.BorderColor = MultiDelete.accentColor;
+            deleteWorldsButton.ForeColor = MultiDelete.fontColor;
+
+            settingsButton.BorderColor = MultiDelete.accentColor;
+            settingsButton.ForeColor = MultiDelete.fontColor;
+
+            infoLabel.ForeColor = MultiDelete.fontColor;
+
+            okButton.BorderColor = MultiDelete.accentColor;
+            okButton.ForeColor = MultiDelete.fontColor;
+
+            cancelButton.BorderColor = MultiDelete.accentColor;
+            cancelButton.ForeColor = MultiDelete.fontColor;
+
+            BackColor = MultiDelete.bgColor;
+
+            settingsButton.Image = recolorImage(settingsButton.Image, fontColor);
+        }
+
         #endregion
 
         private BButton deleteWorldsButton;
         private BButton settingsButton;
-        private BButton focusButton;
         private ProgressBar progressBar;
         private Label infoLabel;
         private BButton okButton;
