@@ -46,16 +46,20 @@ namespace MultiDelete
                     threadsToUseLabel.Text = "Threads to use: " + threadsTrackBar.TrackBarValue;
                     keepLastWorldsNUD.Value = options.KeepLastWorlds;
                     moveToRecycleBinCheckBox.Checked = options.moveToRecycleBin;
+                    MultiDelete.bgColor = ColorTranslator.FromHtml(options.bgColor);
+                    MultiDelete.accentColor = ColorTranslator.FromHtml(options.accentColor);
+                    MultiDelete.fontColor = ColorTranslator.FromHtml(options.fontColor);
                 } catch {
                     if(MessageBox.Show("There was an error importing the settings! Load default settings?", "MultiDelete", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes) {
                         loadDefaultSettings();
                     }
                 }
-
-                return;
+            } else {
+                loadDefaultSettings();
             }
 
-            loadDefaultSettings();
+            updateColors();
+            multiDelete.updateColors();
         }
 
         private void loadDefaultSettings() {
@@ -288,6 +292,12 @@ namespace MultiDelete
 
         private void viewRepositoryLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             System.Diagnostics.Process.Start("cmd", "/c start https://www.github.com/greyhayv/MultiDelete");
+        }
+
+        private void resetSettinsButton_Click(object sender, EventArgs e) {
+            if(MessageBox.Show("Are you sure you want to reset your settings?", "MultiDelete", MessageBoxButtons.YesNo) == DialogResult.Yes) {
+                loadDefaultSettings();
+            }
         }
     }
 

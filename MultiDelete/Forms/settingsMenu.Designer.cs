@@ -401,6 +401,17 @@ namespace MultiDelete
             fontColorPanel.Controls.Add(fontColorLabel);
             fontColorPanel.Controls.Add(fontColorButton);
             //
+            // resetSettingsButton
+            //
+            resetSettingsButton.Font = new Font("Roboto", 12.25F, FontStyle.Regular, GraphicsUnit.Point);
+            resetSettingsButton.Size = new Size(150, 35);
+            resetSettingsButton.TabStop = false;
+            resetSettingsButton.Text = "Reset Settings";
+            resetSettingsButton.UseVisualStyleBackColor = false;
+            resetSettingsButton.Click += new EventHandler(resetSettinsButton_Click);
+            resetSettingsButton.BorderSize = 1;
+            toolTip.SetToolTip(resetSettingsButton, "Reset all of your settings to default");
+            //
             // settingsTabPanel
             //
             settingsTabPanel.Dock = DockStyle.Bottom;
@@ -425,6 +436,7 @@ namespace MultiDelete
             settingsTabPanel.addControl("Advanced", deleteCrashReportsCheckBox);
             settingsTabPanel.addControl("Advanced", deleteScreenshotsCheckBox);
             settingsTabPanel.addControl("Advanced", moveToRecycleBinCheckBox);
+            settingsTabPanel.addControl("Advanced", resetSettingsButton);
             settingsTabPanel.addControl("Appearance", bgColorPanel);
             settingsTabPanel.addControl("Appearance", accentColorPanel);
             settingsTabPanel.addControl("Appearance", fontColorPanel);
@@ -512,6 +524,9 @@ namespace MultiDelete
             addMultipleInstanceButton.ForeColor = MultiDelete.fontColor;
             addMultipleInstanceButton.BorderColor = MultiDelete.accentColor;
 
+            resetSettingsButton.ForeColor = MultiDelete.fontColor;
+            resetSettingsButton.BorderColor = MultiDelete.accentColor;
+
             threadsToUseLabel.ForeColor = MultiDelete.fontColor;
 
             keepLastWorldsLabel.ForeColor = MultiDelete.fontColor;
@@ -547,16 +562,14 @@ namespace MultiDelete
             settingsTabPanel.BackColor = MultiDelete.bgColor;
 
             importButton.BorderColor = MultiDelete.accentColor;
+            importButton.Image = MultiDelete.recolorImage(importButton.Image, MultiDelete.fontColor);
 
             exportButton.BorderColor = MultiDelete.accentColor;
+            exportButton.Image = MultiDelete.recolorImage(exportButton.Image, MultiDelete.fontColor);
 
             settingsHeading.ForeColor = MultiDelete.fontColor;
 
             BackColor = MultiDelete.bgColor;
-
-            exportButton.Image = MultiDelete.recolorImage(exportButton.Image, MultiDelete.fontColor);
-
-            importButton.Image = MultiDelete.recolorImage(importButton.Image, MultiDelete.fontColor);
         }
 
         private ToolTip toolTip = new ToolTip();
@@ -602,6 +615,7 @@ namespace MultiDelete
         private BButton fontColorButton = new BButton();
         private FlowLayoutPanel fontColorPanel = new FlowLayoutPanel();
         private CheckBox moveToRecycleBinCheckBox = new CheckBox();
+        private BButton resetSettingsButton = new BButton();
 
         #endregion
     }

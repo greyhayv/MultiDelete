@@ -46,8 +46,8 @@ namespace MultiDelete
             }
             return texts;
         } set {
-            foreach(BTextBox textBox in textBoxes) {
-                textBox.Text = "";
+            for(int i = textBoxes.Count - 1; i >= 0; i--) {
+                textBoxes[i].Text = "";
             }
             for(int i = 0; i < value.Count; i++)
             {
