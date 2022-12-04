@@ -17,12 +17,10 @@ namespace MultiDelete
             this.multiDelete = multiDelete;
 
             InitializeComponent();
-
-            loadSettings();
         }
 
         private void settingsMenu_Load(object sender, EventArgs e)  {
-            
+            loadSettings();
         }
 
         private void loadSettings() {
@@ -52,6 +50,9 @@ namespace MultiDelete
                 } catch {
                     if(MessageBox.Show("There was an error importing the settings! Load default settings?", "MultiDelete", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes) {
                         loadDefaultSettings();
+                    } else {
+                        FormClosed -= settingsMenu_FormClosed;
+                        Close();
                     }
                 }
             } else {

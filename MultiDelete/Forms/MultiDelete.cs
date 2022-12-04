@@ -137,7 +137,9 @@ namespace MultiDelete
                 try {
                     options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
                 } catch {
-                    MessageBox.Show("There was an error reading the options file! Please delete the options file located at '" + optionsFile + "'", "MultiDelete", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("There was an error reading the options file! Please open the settings menu and click load default settings!", "MultiDelete", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    setLayout(MenuLayout.MainMenu);
+                    return;
                 }
             }
 
