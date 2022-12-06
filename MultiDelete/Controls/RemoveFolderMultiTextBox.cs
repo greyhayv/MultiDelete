@@ -64,18 +64,6 @@ namespace MultiDelete
         {
             base.createNewTextBox();
 
-            BButton removeButton = new BButton();
-            removeButton.Size = new Size(22, 22);
-            removeButton.TabStop = false;
-            removeButton.UseVisualStyleBackColor = false;
-            removeButton.Image = Properties.Resources.x;
-            removeButton.Click += new EventHandler(removeButton_click);
-            removeButton.BorderSize = 1;
-            removeButton.BorderRadius = 10;
-            removeButton.BorderColor = BorderColor;
-            removeButton.ToolTip = ToolTip;
-            removeButtons.Add(removeButton);
-
             BButton folderButton = new BButton();
             folderButton.Size = new Size(22, 22);
             folderButton.TabStop = false;
@@ -87,9 +75,20 @@ namespace MultiDelete
             folderButton.BorderColor = BorderColor;
             folderButton.ToolTip = ToolTip;
             folderButtons.Add(folderButton);
-
-            panels[panels.Count - 1].Controls.Add(removeButton);
             panels[panels.Count - 1].Controls.Add(folderButton);
+
+            BButton removeButton = new BButton();
+            removeButton.Size = new Size(22, 22);
+            removeButton.TabStop = false;
+            removeButton.UseVisualStyleBackColor = false;
+            removeButton.Image = Properties.Resources.x;
+            removeButton.Click += new EventHandler(removeButton_click);
+            removeButton.BorderSize = 1;
+            removeButton.BorderRadius = 10;
+            removeButton.BorderColor = BorderColor;
+            removeButton.ToolTip = ToolTip;
+            removeButtons.Add(removeButton);
+            panels[panels.Count - 1].Controls.Add(removeButton);
 
             setRemoveButtonVisibilaty();
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Linq;
 
 namespace MultiDelete
 {
@@ -344,6 +345,7 @@ namespace MultiDelete
             //
             bgColorPanel.Size = new Size(400, 35);
             bgColorPanel.FlowDirection = FlowDirection.LeftToRight;
+            bgColorPanel.Visible = false;
             bgColorPanel.Controls.Add(bgColorLabel);
             bgColorPanel.Controls.Add(bgColorButton);
             //
@@ -370,7 +372,8 @@ namespace MultiDelete
             // accentColorPanel
             //
             accentColorPanel.Size = new Size(400, 35);
-            bgColorPanel.FlowDirection = FlowDirection.LeftToRight;
+            accentColorPanel.FlowDirection = FlowDirection.LeftToRight;
+            accentColorPanel.Visible = false;
             accentColorPanel.Controls.Add(accentColorLabel);
             accentColorPanel.Controls.Add(accentColorButton);
             //
@@ -398,6 +401,7 @@ namespace MultiDelete
             //
             fontColorPanel.Size = new Size(400, 35);
             fontColorPanel.FlowDirection = FlowDirection.LeftToRight;
+            fontColorPanel.Visible = false;
             fontColorPanel.Controls.Add(fontColorLabel);
             fontColorPanel.Controls.Add(fontColorButton);
             //
@@ -411,6 +415,31 @@ namespace MultiDelete
             resetSettingsButton.Click += new EventHandler(resetSettinsButton_Click);
             resetSettingsButton.BorderSize = 1;
             toolTip.SetToolTip(resetSettingsButton, "Reset all of your settings to default");
+            //
+            // themeLabel
+            //
+            themeLabel.AutoSize = true;
+            themeLabel.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            themeLabel.TabStop = false;
+            themeLabel.Text = "Theme:";
+            themeLabel.Padding = new Padding(0, 4, 0, 0);
+            toolTip.SetToolTip(themeLabel, "Select which Theme MultiDelete should have.");
+            //
+            // themeComboBox
+            //
+            themeComboBox.TabStop = false;
+            themeComboBox.SelectionChangeCommitted += new EventHandler(themeComboBox_SelectionChangeCommitted);
+            themeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            themeComboBox.Items.AddRange(Enum.GetNames(typeof(Themes)));
+            toolTip.SetToolTip(themeComboBox, toolTip.GetToolTip(themeLabel));
+            //
+            // themePanel
+            //
+            themePanel.TabStop = false;
+            themePanel.FlowDirection = FlowDirection.LeftToRight;
+            themePanel.Size = new Size(300, 27);
+            themePanel.Controls.Add(themeLabel);
+            themePanel.Controls.Add(themeComboBox);
             //
             // settingsTabPanel
             //
@@ -437,6 +466,7 @@ namespace MultiDelete
             settingsTabPanel.addControl("Advanced", deleteScreenshotsCheckBox);
             settingsTabPanel.addControl("Advanced", moveToRecycleBinCheckBox);
             settingsTabPanel.addControl("Advanced", resetSettingsButton);
+            settingsTabPanel.addControl("Appearance", themePanel);
             settingsTabPanel.addControl("Appearance", bgColorPanel);
             settingsTabPanel.addControl("Appearance", accentColorPanel);
             settingsTabPanel.addControl("Appearance", fontColorPanel);
@@ -561,6 +591,11 @@ namespace MultiDelete
             settingsTabPanel.ButtonForeColor = MultiDelete.fontColor;
             settingsTabPanel.BackColor = MultiDelete.bgColor;
 
+            themeLabel.ForeColor = MultiDelete.fontColor;
+
+            themeComboBox.BackColor = MultiDelete.bgColor;
+            themeComboBox.ForeColor = MultiDelete.fontColor;
+
             importButton.BorderColor = MultiDelete.accentColor;
             importButton.Image = MultiDelete.recolorImage(importButton.Image, MultiDelete.fontColor);
 
@@ -616,6 +651,9 @@ namespace MultiDelete
         private FlowLayoutPanel fontColorPanel = new FlowLayoutPanel();
         private CheckBox moveToRecycleBinCheckBox = new CheckBox();
         private BButton resetSettingsButton = new BButton();
+        private Label themeLabel = new Label();
+        private ComboBox themeComboBox = new ComboBox();
+        private FlowLayoutPanel themePanel = new FlowLayoutPanel();
 
         #endregion
     }

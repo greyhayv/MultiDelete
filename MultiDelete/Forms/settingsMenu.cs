@@ -11,7 +11,7 @@ namespace MultiDelete
     public partial class settingsMenu : Form
     {
         private MultiDelete multiDelete;
-        private string optionsFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete\options.json";
+        private readonly string optionsFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete\options.json";
 
         public settingsMenu(MultiDelete multiDelete) {
             this.multiDelete = multiDelete;
@@ -21,6 +21,7 @@ namespace MultiDelete
 
         private void settingsMenu_Load(object sender, EventArgs e)  {
             loadSettings();
+            themeComboBox_SelectionChangeCommitted(new object(), new EventArgs());
         }
 
         private void loadSettings() {
@@ -44,9 +45,10 @@ namespace MultiDelete
                     threadsToUseLabel.Text = "Threads to use: " + threadsTrackBar.TrackBarValue;
                     keepLastWorldsNUD.Value = options.KeepLastWorlds;
                     moveToRecycleBinCheckBox.Checked = options.moveToRecycleBin;
-                    MultiDelete.bgColor = ColorTranslator.FromHtml(options.bgColor);
-                    MultiDelete.accentColor = ColorTranslator.FromHtml(options.accentColor);
-                    MultiDelete.fontColor = ColorTranslator.FromHtml(options.fontColor);
+                    MultiDelete.bgColor = ColorTranslator.FromHtml(options.CustomBgColor);
+                    MultiDelete.accentColor = ColorTranslator.FromHtml(options.CustomAccentColor);
+                    MultiDelete.fontColor = ColorTranslator.FromHtml(options.CustomFontColor);
+                    themeComboBox.SelectedItem = options.Theme.ToString();
                 } catch {
                     if(MessageBox.Show("There was an error importing the settings! Load default settings?", "MultiDelete", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes) {
                         loadDefaultSettings();
@@ -77,10 +79,11 @@ namespace MultiDelete
                 StartWith = new string[] { "Random Speedrun", "Set Speedrun" },
                 ThreadCount = 1,
                 UpdateScreenEvery = 1,
-                bgColor = "#0F0F0F",
-                accentColor = "#414141",
-                fontColor = "#C2C2C2",
-                moveToRecycleBin = false
+                CustomBgColor = "#0F0F0F",
+                CustomAccentColor = "#414141",
+                CustomFontColor = "#C2C2C2",
+                moveToRecycleBin = false,
+                Theme = Themes.Dark
             };
 
             saveOptions(options);
@@ -102,24 +105,34 @@ namespace MultiDelete
         }
 
         private void saveOptions() {
-            Options options = new Options {
-                InstancePaths = instancePathMTB.Texts.ToArray(),
-                DeleteAllWorlds = deleteAllWorldsCheckBox.Checked,
-                StartWith = startWithMTB.Texts.ToArray(),
-                Include = includeMTB.Texts.ToArray(),
-                EndWith = endWithMTB.Texts.ToArray(),
-                UpdateScreenEvery = (int)updateScreenNUD.Value,
-                DeleteRecordings = deleteRecordingsCheckBox.Checked,
-                RecordingsPath = recordingsFTB.Text,
-                DeleteCrashReports = deleteCrashReportsCheckBox.Checked,
-                DeleteScreenshots = deleteScreenshotsCheckBox.Checked,
-                ThreadCount = threadsTrackBar.Value,
-                KeepLastWorlds = Decimal.ToInt32(keepLastWorldsNUD.Value),
-                bgColor = ColorTranslator.ToHtml(MultiDelete.bgColor),
-                accentColor = ColorTranslator.ToHtml(MultiDelete.accentColor),
-                fontColor = ColorTranslator.ToHtml(MultiDelete.fontColor),
-                moveToRecycleBin = moveToRecycleBinCheckBox.Checked
-            };
+            Options options;
+
+            try {
+                options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            } catch {
+                options = new Options();
+            }
+
+            options.InstancePaths = instancePathMTB.Texts.ToArray();
+            options.DeleteAllWorlds = deleteAllWorldsCheckBox.Checked;
+            options.StartWith = startWithMTB.Texts.ToArray();
+            options.Include = includeMTB.Texts.ToArray();
+            options.EndWith = endWithMTB.Texts.ToArray();
+            options.UpdateScreenEvery = (int)updateScreenNUD.Value;
+            options.DeleteRecordings = deleteRecordingsCheckBox.Checked;
+            options.RecordingsPath = recordingsFTB.Text;
+            options.DeleteCrashReports = deleteCrashReportsCheckBox.Checked;
+            options.DeleteScreenshots = deleteScreenshotsCheckBox.Checked;
+            options.ThreadCount = threadsTrackBar.Value;
+            options.KeepLastWorlds = Decimal.ToInt32(keepLastWorldsNUD.Value);
+            options.moveToRecycleBin = moveToRecycleBinCheckBox.Checked;
+            options.Theme = (Themes)Enum.Parse(typeof(Themes), (string)themeComboBox.SelectedItem);
+
+            if(options.Theme == Themes.Custom) {
+                options.CustomBgColor = ColorTranslator.ToHtml(MultiDelete.bgColor);
+                options.CustomAccentColor = ColorTranslator.ToHtml(MultiDelete.accentColor);
+                options.CustomFontColor = ColorTranslator.ToHtml(MultiDelete.fontColor);
+            }
 
             saveOptions(options);
         }
@@ -200,6 +213,7 @@ namespace MultiDelete
                 MultiDelete.bgColor = Color.FromArgb(255, cd.Color);
                 updateColors();
                 multiDelete.updateColors();
+                saveOptions();
             }
         }
 
@@ -216,6 +230,7 @@ namespace MultiDelete
                 MultiDelete.accentColor = Color.FromArgb(255, cd.Color);
                 updateColors();
                 multiDelete.updateColors();
+                saveOptions();
             }
         }
 
@@ -232,6 +247,7 @@ namespace MultiDelete
                 MultiDelete.fontColor = Color.FromArgb(255, cd.Color);
                 updateColors();
                 multiDelete.updateColors();
+                saveOptions();
             }
         }
 
@@ -300,6 +316,26 @@ namespace MultiDelete
                 loadDefaultSettings();
             }
         }
+
+        private void themeComboBox_SelectionChangeCommitted(object sender, EventArgs e) {
+            Theme theme = new Theme((Themes)Enum.Parse(typeof(Themes), (string)themeComboBox.SelectedItem));
+
+            if(theme.theme == Themes.Custom) {
+                bgColorPanel.Visible = true;
+                accentColorPanel.Visible = true;
+                fontColorPanel.Visible = true;
+            } else {
+                bgColorPanel.Visible = false;
+                accentColorPanel.Visible = false;
+                fontColorPanel.Visible = false;
+            }
+            
+            MultiDelete.bgColor = theme.BgColor;
+            MultiDelete.accentColor = theme.AccentColor;
+            MultiDelete.fontColor = theme.FontColor;
+            updateColors();
+            multiDelete.updateColors();
+        }
     }
 
     public struct Options
@@ -316,9 +352,10 @@ namespace MultiDelete
         public bool DeleteScreenshots { get; set; }
         public int ThreadCount { get; set; }
         public int KeepLastWorlds { get; set; }
-        public string bgColor { get; set; }
-        public string accentColor { get; set; }
-        public string fontColor { get; set; }
+        public string CustomBgColor { get; set; }
+        public string CustomAccentColor { get; set; }
+        public string CustomFontColor { get; set; }
         public bool moveToRecycleBin { get; set; }
+        public Themes Theme { get; set; }
     }
 }

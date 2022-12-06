@@ -17,38 +17,23 @@ namespace MultiDelete
         public static Color accentColor;
         public static Color fontColor;
 
-        private string programPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete";
-        private string optionsFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete\options.json";
+        private readonly string programPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete";
+        private readonly string optionsFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete\options.json";
         private bool cancelDeletion = false;
         private bool closeAfterDeletion = false;
         private bool checkUpdates = true;
 
         public MultiDelete() {
+            Theme theme;
             try {
                 Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
-
-                if(options.bgColor == null) {
-                    bgColor = Color.FromArgb(15, 15, 15);
-                } else {
-                    bgColor = ColorTranslator.FromHtml(options.bgColor);
-                }
-
-                if(options.accentColor == null) {
-                    accentColor = Color.FromArgb(65, 65, 65);
-                } else {
-                    accentColor = ColorTranslator.FromHtml(options.accentColor);
-                }
-
-                if(options.fontColor == null) {
-                    fontColor = Color.FromArgb(194, 194, 194);
-                } else {
-                    fontColor = ColorTranslator.FromHtml(options.fontColor);
-                }
+                theme = new Theme(options.Theme);
             } catch {
-                bgColor = Color.FromArgb(15, 15, 15);
-                accentColor = Color.FromArgb(65, 65, 65);
-                fontColor = Color.FromArgb(194, 194, 194);
+                theme = new Theme(Themes.Dark);
             }
+            bgColor = theme.BgColor;
+            accentColor = theme.AccentColor;
+            fontColor = theme.FontColor;
 
             InitializeComponent();
         }
@@ -349,8 +334,6 @@ namespace MultiDelete
                 }
 
                 delFile(file, "Recordings", ref totalFilesSize, ref deletedRecordings, ref options);
-
-                MessageBox.Show("wawa");
             }
         }
 
