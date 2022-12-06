@@ -12,7 +12,7 @@ namespace MultiDelete
 {
     public partial class MultiDelete : Form
     {
-        public static string version = "v1.3";
+        public static string version = "v1.4";
         public static Color bgColor;
         public static Color accentColor;
         public static Color fontColor;

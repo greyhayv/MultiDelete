@@ -51,8 +51,6 @@ namespace MultiDelete
             this.deleteWorldsButton.Location = new System.Drawing.Point(154, 30);
             this.deleteWorldsButton.Name = "deleteWorldsButton";
             this.deleteWorldsButton.Size = new System.Drawing.Size(175, 50);
-            this.deleteWorldsButton.TabIndex = 0;
-            this.deleteWorldsButton.TabStop = false;
             this.deleteWorldsButton.Text = "Delete Worlds";
             this.deleteWorldsButton.UseVisualStyleBackColor = false;
             this.deleteWorldsButton.Click += new System.EventHandler(this.deleteWorldsButton_Click);
@@ -70,8 +68,6 @@ namespace MultiDelete
             this.settingsButton.Name = "settingsButton";
             this.settingsButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.settingsButton.Size = new System.Drawing.Size(30, 30);
-            this.settingsButton.TabIndex = 1;
-            this.settingsButton.TabStop = false;
             this.settingsButton.TextColor = MultiDelete.accentColor;
             this.settingsButton.UseVisualStyleBackColor = false;
             this.settingsButton.Click += new System.EventHandler(this.settingsButton_Click);
@@ -83,7 +79,6 @@ namespace MultiDelete
             this.progressBar.Name = "progressBar";
             this.progressBar.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.progressBar.Size = new System.Drawing.Size(450, 23);
-            this.progressBar.TabIndex = 3;
             this.progressBar.Visible = false;
             // 
             // infoLabel
@@ -93,7 +88,6 @@ namespace MultiDelete
             this.infoLabel.Location = new System.Drawing.Point(-8, 41);
             this.infoLabel.Name = "infoLabel";
             this.infoLabel.Size = new System.Drawing.Size(500, 25);
-            this.infoLabel.TabIndex = 4;
             this.infoLabel.Text = "Searching Worlds (0)";
             this.infoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.infoLabel.Visible = false;
@@ -110,8 +104,6 @@ namespace MultiDelete
             this.okButton.Location = new System.Drawing.Point(193, 57);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(100, 40);
-            this.okButton.TabIndex = 5;
-            this.okButton.TabStop = false;
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = false;
             this.okButton.Visible = false;
@@ -130,8 +122,6 @@ namespace MultiDelete
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.cancelButton.Size = new System.Drawing.Size(90, 35);
-            this.cancelButton.TabIndex = 6;
-            this.cancelButton.TabStop = false;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = false;
             this.cancelButton.Visible = false;
