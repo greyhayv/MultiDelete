@@ -111,9 +111,9 @@ namespace MultiDelete
             //
             includeLabel.AutoSize = false;
             includeLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            includeLabel.Size = new Size(76, 23);
+            includeLabel.Size = new Size(150, 23);
             includeLabel.TabStop = false;
-            includeLabel.Text = "include:";
+            includeLabel.Text = "or include:";
             toolTip.SetToolTip(includeLabel, "Select what the name of the world has to include to be deleted");
             //
             // includeMTB
@@ -124,9 +124,9 @@ namespace MultiDelete
             //
             endWithLabel.AutoSize = false;
             endWithLabel.Font = new Font("Roboto", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            endWithLabel.Size = new Size(86, 23);
+            endWithLabel.Size = new Size(150, 23);
             endWithLabel.TabStop = false;
-            endWithLabel.Text = "end with:";
+            endWithLabel.Text = "or end with:";
             toolTip.SetToolTip(endWithLabel, "Select what the name of the world has to end with to be deleted");
             //
             // endWithMTB
