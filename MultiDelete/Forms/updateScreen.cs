@@ -90,6 +90,7 @@ namespace MultiDelete
         private void downloadNewsetVersion() {
             if(!File.Exists("Updater.exe")) {
                 MessageBox.Show("The Updater wasnt found", "MultiDelete", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
             try {
                 Process process = new Process();
