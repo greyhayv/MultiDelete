@@ -88,6 +88,9 @@ namespace MultiDelete
         }
 
         private void downloadNewsetVersion() {
+            if(!File.Exists("Updater.exe")) {
+                MessageBox.Show("The Updater wasnt found", "MultiDelete", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             try {
                 Process process = new Process();
                 process.StartInfo.FileName = "Updater.exe";
@@ -96,7 +99,7 @@ namespace MultiDelete
                 process.StartInfo.Arguments = latestRelease.tag_name;
                 process.Start();
             } catch {
-                MessageBox.Show("Updater wasn't found.", "MultiDelete", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Update was cancelled", "MultiDelete", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
