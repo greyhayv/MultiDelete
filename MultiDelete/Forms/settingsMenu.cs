@@ -182,10 +182,6 @@ namespace MultiDelete
             }
         }
 
-        private void updateScreenComboBox_SelectedIndexChanged(object sender, EventArgs e) {
-            Focus();
-        }
-
         private void threadsTrackBar_ValueChanged(object sender, EventArgs e) {
             threadsToUseLabel.Text = "Threads to use: " + ((TrackBar)sender).Value;
         }
