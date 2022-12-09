@@ -156,6 +156,10 @@ namespace MultiDelete
                 return;
             }
 
+            if(options.UpdateScreenEvery == 0) {
+                options.UpdateScreenEvery = 1;
+            }
+
             foreach(string path in savesPathsFromInstancePaths(options.InstancePaths)) {
                 if(!Directory.Exists(path)) {
                     changeText(infoLabel, "The Saves-Path '" + path + "' doesnt exist!");
