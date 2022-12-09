@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,6 +9,9 @@ using System.Threading;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace MultiDelete
 {
@@ -73,22 +75,26 @@ namespace MultiDelete
 
         public static async void checkForUpdates(bool openDialogIfNoNewVersion) {
             HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri("https://api.github.com/");
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("MultiDelete", version));
-            HttpResponseMessage response = await client.GetAsync("https://api.github.com/repos/greyhayv/MultiDelete/releases/latest");
+            byte[] byteArray = new UTF8Encoding().GetBytes(ClientProperties.CLIENT_ID + ":" + ClientProperties.CLIENT_SECRET);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            HttpResponseMessage response = await client.GetAsync("repos/greyhayv/MultiDelete/releases/latest");
 
             if(response.IsSuccessStatusCode) {
-                ReleaseInfo latestRelease = JsonSerializer.Deserialize<ReleaseInfo>(await response.Content.ReadAsStringAsync());
+                ReleaseInfo latestRelease = JsonSerializer.Deserialize<ReleaseInfo>(response.Content.ReadAsStringAsync().Result);
 
                 if(latestRelease.tag_name != version) {
-                    updateScreen updateScreen = new updateScreen(true);
+                    updateScreen updateScreen = new updateScreen(latestRelease);
                     updateScreen.ShowDialog();
                 } else if(openDialogIfNoNewVersion) {
-                    updateScreen updateScreen = new updateScreen(false);
+                    updateScreen updateScreen = new updateScreen(latestRelease);
                     updateScreen.ShowDialog();
                 }
             } else {
+                Console.WriteLine(response.StatusCode);
                 if(openDialogIfNoNewVersion) {
                     MessageBox.Show("Api rate limit exceeded.", "MultiDelete", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }

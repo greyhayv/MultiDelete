@@ -3,18 +3,17 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text.Json;
 
 namespace MultiDelete
 {
     public partial class updateScreen : Form
     {
-        private string newestVersion;
+        private ReleaseInfo latestRelease;
 
-        public updateScreen(bool updateAvailable) {
+        public updateScreen(ReleaseInfo latestRelease) {
             InitializeComponent();
+            
+            this.latestRelease = latestRelease;
 
             Label heading = new Label();
             heading.TextAlign = ContentAlignment.MiddleCenter;
@@ -24,7 +23,7 @@ namespace MultiDelete
             heading.Size = new Size(461, 33);
             heading.TabStop = false;
             
-            if(updateAvailable) {
+            if(latestRelease.tag_name != MultiDelete.version) {
                 heading.Text = "Update Available!";
                 closeButton.Visible = false;
             } else {
@@ -34,29 +33,22 @@ namespace MultiDelete
             }
             updatePanel.Controls.Add(heading);
 
-            loadChangelogs();
+            loadChangelogs(latestRelease);
         }
 
-        private async void loadChangelogs() {
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("MultiDelete", MultiDelete.version));
-
-            HttpResponseMessage response = await client.GetAsync("https://api.github.com/repos/greyhayv/MultiDelete/releases/latest");
-            ReleaseInfo latestRelease = JsonSerializer.Deserialize<ReleaseInfo>(await response.Content.ReadAsStringAsync());
-
-            newestVersion = latestRelease.tag_name;
-
+        private void loadChangelogs(ReleaseInfo latestRelease) {
             Label versionLabel = new Label();
             versionLabel.TextAlign = ContentAlignment.MiddleCenter;
             versionLabel.AutoSize = true;
             versionLabel.Font = new Font("Roboto", 18, FontStyle.Bold, GraphicsUnit.Point);
             versionLabel.ForeColor = MultiDelete.fontColor;
             versionLabel.TabStop = false;
-            versionLabel.Text = newestVersion;
+            versionLabel.Text = latestRelease.tag_name;
             updatePanel.Controls.Add(versionLabel);
             
+            if(latestRelease.body == null) {
+                return;
+            }
             using(StringReader reader = new StringReader(latestRelease.body)) {
                 string line;
                 while((line = reader.ReadLine()) != null) {
@@ -96,7 +88,7 @@ namespace MultiDelete
         }
 
         private void downloadNewsetVersion() {
-            string version = newestVersion;
+            string version = latestRelease.tag_name;
             string url = "https://github.com/greyhayv/MultiDelete/releases/download/" + version + "/MultiDelete" + version.Substring(1) + "_Installer.exe";
             url = url.Replace("&", "^&");
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
