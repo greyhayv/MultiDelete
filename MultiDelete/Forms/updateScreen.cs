@@ -88,10 +88,7 @@ namespace MultiDelete
         }
 
         private void downloadNewsetVersion() {
-            string version = latestRelease.tag_name;
-            string url = "https://github.com/greyhayv/MultiDelete/releases/download/" + version + "/MultiDelete" + version.Substring(1) + "_Installer.exe";
-            url = url.Replace("&", "^&");
-            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            Process.Start("Updater.exe", latestRelease.tag_name);
         }
 
         private void closeButton_Click(object sender, EventArgs e) {
