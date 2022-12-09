@@ -9,9 +9,7 @@ using System.Threading;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net;
 using System.Text;
-using System.Security.Cryptography;
 
 namespace MultiDelete
 {
@@ -73,7 +71,7 @@ namespace MultiDelete
             }
         }
 
-        public static async void checkForUpdates(bool openDialogIfNoNewVersion) {
+        public async void checkForUpdates(bool openDialogIfNoNewVersion) {
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri("https://api.github.com/");
             client.DefaultRequestHeaders.Accept.Clear();
@@ -88,10 +86,10 @@ namespace MultiDelete
 
                 if(latestRelease.tag_name != version) {
                     updateScreen updateScreen = new updateScreen(latestRelease);
-                    updateScreen.ShowDialog();
+                    this.Invoke((Action)(() => updateScreen.ShowDialog()));
                 } else if(openDialogIfNoNewVersion) {
                     updateScreen updateScreen = new updateScreen(latestRelease);
-                    updateScreen.ShowDialog();
+                    this.Invoke((Action)(() => updateScreen.ShowDialog()));
                 }
             } else {
                 Console.WriteLine(response.StatusCode);

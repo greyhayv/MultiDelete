@@ -92,7 +92,7 @@ namespace MultiDelete
 
         private void checkForUpdatesButton_Click(object sender, EventArgs e) {
             Focus();
-            MultiDelete.checkForUpdates(true);
+            multiDelete.checkForUpdates(true);
         }
 
         private void settingsMenu_FormClosed(object sender, EventArgs e) {
