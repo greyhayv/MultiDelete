@@ -9,7 +9,7 @@ namespace Updater
         static void Main(string[] args)
         {
             if(args.Length == 0) {
-                Console.WriteLine("Please enter the version you want to update to as the first arguent.");
+                Console.WriteLine("Please enter the version you want to update to as the first argument.");
                 Console.ReadKey();
                 return;
             }
@@ -33,6 +33,7 @@ namespace Updater
                 }
 
                 try {
+                    File.SetAttributes(file, FileAttributes.Normal);
                     File.Delete(file);
                     Console.WriteLine("Deleted " + file);
                 } catch(Exception e) {

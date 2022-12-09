@@ -88,7 +88,16 @@ namespace MultiDelete
         }
 
         private void downloadNewsetVersion() {
-            Process.Start("Updater.exe", latestRelease.tag_name);
+            try {
+                Process process = new Process();
+                process.StartInfo.FileName = "Updater.exe";
+                process.StartInfo.UseShellExecute = true;
+                process.StartInfo.Verb = "runas";
+                process.StartInfo.Arguments = latestRelease.tag_name;
+                process.Start();
+            } catch {
+                MessageBox.Show("Updater wasn't found.", "MultiDelete", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void closeButton_Click(object sender, EventArgs e) {
