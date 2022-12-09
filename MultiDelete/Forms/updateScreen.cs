@@ -3,6 +3,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace MultiDelete
 {
@@ -35,10 +38,15 @@ namespace MultiDelete
         }
 
         private async void loadChangelogs() {
-            Octokit.GitHubClient client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("MultiDelete"));
-            Octokit.Release lastestRelease = await client.Repository.Release.GetLatest("greyhayv", "MultiDelete");
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("MultiDelete", MultiDelete.version));
 
-            newestVersion = lastestRelease.Name;
+            HttpResponseMessage response = await client.GetAsync("https://api.github.com/repos/greyhayv/MultiDelete/releases/latest");
+            ReleaseInfo latestRelease = JsonSerializer.Deserialize<ReleaseInfo>(await response.Content.ReadAsStringAsync());
+
+            newestVersion = latestRelease.tag_name;
 
             Label versionLabel = new Label();
             versionLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -49,7 +57,7 @@ namespace MultiDelete
             versionLabel.Text = newestVersion;
             updatePanel.Controls.Add(versionLabel);
             
-            using(StringReader reader = new StringReader(lastestRelease.Body)) {
+            using(StringReader reader = new StringReader(latestRelease.body)) {
                 string line;
                 while((line = reader.ReadLine()) != null) {
                     Label label = new Label();

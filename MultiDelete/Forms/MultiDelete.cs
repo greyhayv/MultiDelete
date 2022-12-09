@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
@@ -7,6 +8,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace MultiDelete
 {
@@ -69,21 +72,25 @@ namespace MultiDelete
         }
 
         public static async void checkForUpdates(bool openDialogIfNoNewVersion) {
-            try {
-                Octokit.GitHubClient client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("MultiDelete"));
-                Octokit.Release latestRelease = await client.Repository.Release.GetLatest("greyhayv", "MultiDelete");
-                string newestVersion = latestRelease.Name;
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("MultiDelete", version));
+            HttpResponseMessage response = await client.GetAsync("https://api.github.com/repos/greyhayv/MultiDelete/releases/latest");
 
-                if(newestVersion != version) {
+            if(response.IsSuccessStatusCode) {
+                ReleaseInfo latestRelease = JsonSerializer.Deserialize<ReleaseInfo>(await response.Content.ReadAsStringAsync());
+
+                if(latestRelease.tag_name != version) {
                     updateScreen updateScreen = new updateScreen(true);
                     updateScreen.ShowDialog();
                 } else if(openDialogIfNoNewVersion) {
                     updateScreen updateScreen = new updateScreen(false);
                     updateScreen.ShowDialog();
                 }
-            } catch {
+            } else {
                 if(openDialogIfNoNewVersion) {
-                    MessageBox.Show("The API Call Limit was exceeded.");
+                    MessageBox.Show("Api rate limit exceeded.", "MultiDelete", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -621,5 +628,10 @@ namespace MultiDelete
         Error,
         ProgressBar,
         Results
+    }
+
+    public class ReleaseInfo {
+        public string tag_name { get; set; }
+        public string body { get; set; }
     }
 }

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_LastSelectedProfileId>C:\Development\MultiDelete\project\MultiDelete\Properties\PublishProfiles\ClickOnceProfile.pubxml</_LastSelectedProfileId>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Update="Controls\BButton.cs">
       <SubType>Component</SubType>
@@ -26,9 +29,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Update="Controls\TabFlowLayoutPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Dialogs\ColorPicker.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Update="Forms\MultiDelete.cs">
