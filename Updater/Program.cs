@@ -30,10 +30,55 @@ namespace Updater
                 return;
             }
 
+            //Download zip of newest version
+            string zipPath = Directory.GetCurrentDirectory() + @"\MultiDelete" + version.Substring(1) + ".zip";
+            if(!File.Exists(zipPath)) {
+                Console.WriteLine("Downloading newest version");
+                HttpClient client = new HttpClient();
+                Uri uri = new Uri("https://github.com/greyhayv/MultiDelete/releases/download/" + version + "/MultiDelete" + version.Substring(1) + ".zip");
+                HttpResponseMessage respone = client.GetAsync(uri.ToString()).Result;
+                if(respone.IsSuccessStatusCode) {
+                    byte[] zipBytes = respone.Content.ReadAsByteArrayAsync().Result;
+                    File.WriteAllBytes(zipPath, zipBytes);
+                } else {
+                    Console.WriteLine("There was an error downloading the update:");
+                    Console.WriteLine(respone.StatusCode);
+                    Console.ReadKey();
+                    return;
+                }
+            }
+
+            if(Path.GetFileNameWithoutExtension(System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName) == "newUpdater") {
+                if(File.Exists("Updater.exe")) {
+                    File.Delete("Updater.exe");
+                }
+                File.Move("newUpdater.exe", "Updater.exe");
+            } else {
+                //update Updater
+                Console.WriteLine("Excuting new updater");
+                using(ZipArchive archive = ZipFile.OpenRead(zipPath)) {
+                    ZipArchiveEntry? entry = archive.GetEntry("Updater.exe");
+                    if(entry != null) {
+                        string newUpdaterDir = Directory.GetCurrentDirectory() + "\\newUpdater.exe";
+                        if(File.Exists(newUpdaterDir)) {
+                            File.Delete(newUpdaterDir);
+                        }
+                        entry.ExtractToFile(newUpdaterDir);
+                        Process process = new Process();
+                        process.StartInfo.FileName = "newUpdater.exe";
+                        process.StartInfo.UseShellExecute = true;
+                        process.StartInfo.Verb = "runas";
+                        process.StartInfo.Arguments = version;
+                        process.Start();
+                        return;
+                    }
+                }
+            }
+
             //Delete current version
             Console.WriteLine("Deleting current version");
             foreach(string file in Directory.GetFiles(Directory.GetCurrentDirectory())) {
-                if(file.EndsWith("\\Updater.exe")) {
+                if(file.EndsWith("\\Updater.exe") || file == zipPath) {
                     continue;
                 }
 
@@ -46,22 +91,6 @@ namespace Updater
                     Console.ReadKey();
                     return;
                 }
-            }
-
-            Console.WriteLine("Downloading newest version");
-            //Download zip of newest version
-            HttpClient client = new HttpClient();
-            Uri uri = new Uri("https://github.com/greyhayv/MultiDelete/releases/download/" + version + "/MultiDelete" + version.Substring(1) + ".zip");
-            string zipPath = Directory.GetCurrentDirectory() + @"\MultiDelete" + version.Substring(1) + ".zip";
-            HttpResponseMessage respone = client.GetAsync(uri.ToString()).Result;
-            if(respone.IsSuccessStatusCode) {
-                byte[] zipBytes = respone.Content.ReadAsByteArrayAsync().Result;
-                File.WriteAllBytes(zipPath, zipBytes);
-            } else {
-                Console.WriteLine("There was an error downloading the update:");
-                Console.WriteLine(respone.StatusCode);
-                Console.ReadKey();
-                return;
             }
 
             //unzip file
@@ -101,7 +130,6 @@ namespace Updater
                 Console.ReadKey();
                 return;
             }
-
         }
     }
 }
