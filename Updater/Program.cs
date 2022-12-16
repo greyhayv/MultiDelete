@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Net;
 using System.IO.Compression;
 
 namespace Updater
@@ -20,9 +19,15 @@ namespace Updater
         private static void updateMultiDelete(string version) {
             //Kill MultiDelete processes
             Console.WriteLine("Killing MultiDelete processes");
-            foreach(Process process in Process.GetProcessesByName("MultiDelete")) {
-                process.Kill();
-                process.WaitForExit();
+            try {
+                foreach(Process process in Process.GetProcessesByName("MultiDelete")) {
+                    process.Kill();
+                    process.WaitForExit();
+                }
+            } catch(Exception e) {
+                Console.WriteLine(e.ToString());
+                Console.ReadKey();
+                return;
             }
 
             //Delete current version
@@ -53,21 +58,50 @@ namespace Updater
                 byte[] zipBytes = respone.Content.ReadAsByteArrayAsync().Result;
                 File.WriteAllBytes(zipPath, zipBytes);
             } else {
-                Console.WriteLine("There was an error downloading the update");
+                Console.WriteLine("There was an error downloading the update:");
+                Console.WriteLine(respone.StatusCode);
                 Console.ReadKey();
                 return;
             }
 
             //unzip file
-            ZipFile.ExtractToDirectory(zipPath, Directory.GetCurrentDirectory());
+            try {
+                using(ZipArchive archive = ZipFile.OpenRead(zipPath)) {
+                    foreach(ZipArchiveEntry entry in archive.Entries) {
+                        if(entry.ToString() == "Updater.exe") {
+                            continue;
+                        }
+                        
+                        entry.ExtractToFile(Directory.GetCurrentDirectory() + "\\" + entry.ToString());
+                        Console.WriteLine("Extracted " + entry.ToString());
+                    }
+                }
+            } catch(Exception e) {
+                Console.WriteLine(e.ToString());
+                Console.ReadKey();
+                return;
+            }
 
             //delete zip
-            File.Delete(zipPath);
+            try {
+                File.Delete(zipPath);
+            } catch(Exception e) {
+                Console.WriteLine(e.ToString());
+                Console.ReadKey();
+                return;
+            }
 
-            Console.WriteLine("Update finished! Starting MultiDelete");
+            Console.WriteLine("Update finished! Starting MultiDelete!");
 
             //Start MultiDelete
-            Process.Start("MultiDelete.exe");
+            try {
+                Process.Start("MultiDelete.exe");
+            } catch(Exception e) {
+                Console.WriteLine(e.ToString());
+                Console.ReadKey();
+                return;
+            }
+
         }
     }
 }
