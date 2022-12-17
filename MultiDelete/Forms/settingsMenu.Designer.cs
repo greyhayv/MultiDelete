@@ -460,10 +460,10 @@ namespace MultiDelete
             settingsTabPanel.addControl("Advanced", threadsToUseLabel);
             settingsTabPanel.addControl("Advanced", threadsTrackBar);
             settingsTabPanel.addControl("Advanced", keepLastWorldsPanel);
-            settingsTabPanel.addControl("Advanced", deleteRecordingsCheckBox);
-            settingsTabPanel.addControl("Advanced", recordingsFTB);
-            settingsTabPanel.addControl("Advanced", deleteCrashReportsCheckBox);
-            settingsTabPanel.addControl("Advanced", deleteScreenshotsCheckBox);
+            settingsTabPanel.addControl("Other Files", deleteRecordingsCheckBox);
+            settingsTabPanel.addControl("Other Files", recordingsFTB);
+            settingsTabPanel.addControl("Other Files", deleteCrashReportsCheckBox);
+            settingsTabPanel.addControl("Other Files", deleteScreenshotsCheckBox);
             settingsTabPanel.addControl("Advanced", moveToRecycleBinCheckBox);
             settingsTabPanel.addControl("Advanced", resetSettingsButton);
             settingsTabPanel.addControl("Appearance", themePanel);
@@ -611,7 +611,7 @@ namespace MultiDelete
         private Label settingsHeading = new Label();
         private BButton exportButton = new BButton();
         private BButton importButton = new BButton();
-        private TabFlowLayoutPanel settingsTabPanel = new TabFlowLayoutPanel(new System.Collections.Generic.List<string> {"Instances", "Criteria", "Advanced", "Appearance", "About"});
+        private TabFlowLayoutPanel settingsTabPanel = new TabFlowLayoutPanel(new System.Collections.Generic.List<string> {"Instances", "Criteria", "Other Files","Advanced", "Appearance", "About"});
         private RemoveFolderMultiTextBox instancePathMTB = new RemoveFolderMultiTextBox();
         private RemoveMultiTextBox startWithMTB = new RemoveMultiTextBox();
         private RemoveMultiTextBox includeMTB = new RemoveMultiTextBox();
