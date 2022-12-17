@@ -456,14 +456,14 @@ namespace MultiDelete
             settingsTabPanel.addControl("Criteria", includeMTB);
             settingsTabPanel.addControl("Criteria", endWithLabel);
             settingsTabPanel.addControl("Criteria", endWithMTB);
-            settingsTabPanel.addControl("Advanced", updateScreenPanel);
-            settingsTabPanel.addControl("Advanced", threadsToUseLabel);
-            settingsTabPanel.addControl("Advanced", threadsTrackBar);
-            settingsTabPanel.addControl("Advanced", keepLastWorldsPanel);
             settingsTabPanel.addControl("Other Files", deleteRecordingsCheckBox);
             settingsTabPanel.addControl("Other Files", recordingsFTB);
             settingsTabPanel.addControl("Other Files", deleteCrashReportsCheckBox);
             settingsTabPanel.addControl("Other Files", deleteScreenshotsCheckBox);
+            settingsTabPanel.addControl("Advanced", updateScreenPanel);
+            settingsTabPanel.addControl("Advanced", threadsToUseLabel);
+            settingsTabPanel.addControl("Advanced", threadsTrackBar);
+            settingsTabPanel.addControl("Advanced", keepLastWorldsPanel);
             settingsTabPanel.addControl("Advanced", moveToRecycleBinCheckBox);
             settingsTabPanel.addControl("Advanced", resetSettingsButton);
             settingsTabPanel.addControl("Appearance", themePanel);
