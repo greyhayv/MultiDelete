@@ -37,11 +37,11 @@ namespace MultiDelete
                     try {
                         Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
                         if(options.CustomBgColor == null) {
-                            throw new Exception();
+                            throw new NullReferenceException();
                         } else if(options.CustomAccentColor == null) {
-                            throw new Exception();
+                            throw new NullReferenceException();
                         } else if(options.CustomFontColor == null) {
-                            throw new Exception();
+                            throw new NullReferenceException();
                         }
                         bgColor = ColorTranslator.FromHtml(options.CustomBgColor);
                         accentColor = ColorTranslator.FromHtml(options.CustomAccentColor);

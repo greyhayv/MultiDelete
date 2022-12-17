@@ -378,6 +378,3 @@ Temporary Items
 InteropTests/NativeTests/out
 /src/System.Windows.Forms/src/comctl32.dll
 *.received.*
-
-MultiDelete/bin/Debug/net6.0-windows/MultiDelete.dll
-MultiDelete/bin/Debug/net6.0-windows/MultiDelete.pdb
