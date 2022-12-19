@@ -377,37 +377,6 @@ namespace MultiDelete
                     continue;
                 }
             }
-
-            // setLayout(MenuLayout.InfoLabel);
-            // Options options = new Options();
-            // if(File.Exists(optionsFile)) {
-            //     options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
-            // }
-
-            // if(String.IsNullOrWhiteSpace(options.RecordingsPath)) {
-            //     return;
-            // }
-
-            // if(!Directory.Exists(options.RecordingsPath)) {
-            //     MessageBox.Show("The Recordings-Path does not exist!", "MultiDelete", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //     return;
-            // }
-
-            // int deletedRecordings = 0;
-            // changeLocation(infoLabel, new Point(-8, 41));
-            // changeText(infoLabel, "Deleting Recordings (0)");
-
-            // foreach(string file in Directory.GetFiles(options.RecordingsPath)) {
-            //     if(cancelDeletion) {
-            //         return;
-            //     }
-
-            //     if(!file.EndsWith(".mp4") && !file.EndsWith(".webm") && !file.EndsWith(".mkv") && !file.EndsWith(".flv") && !file.EndsWith(".vob") && !file.EndsWith(".ogv") && !file.EndsWith(".ogg") && !file.EndsWith(".drc") && !file.EndsWith(".gif") && !file.EndsWith(".gifv") && !file.EndsWith(".mng") && !file.EndsWith(".avi") && !file.EndsWith(".MTS") && !file.EndsWith(".M2TS") && !file.EndsWith("TS") && !file.EndsWith(".mov") && !file.EndsWith(".qt") && !file.EndsWith(".wmv") && !file.EndsWith(".yuv") && !file.EndsWith(".rm") && !file.EndsWith(".rmvb") && !file.EndsWith(".viv") && !file.EndsWith(".asf") && !file.EndsWith(".amv") && !file.EndsWith(".m4p") && !file.EndsWith(".m4v") && !file.EndsWith(".mpg") && !file.EndsWith(".mp2") && !file.EndsWith(".mpeg") && !file.EndsWith(".mpe") && !file.EndsWith(".mpv") && !file.EndsWith(".mpg") && !file.EndsWith(".m2v") && !file.EndsWith(".m4v") && !file.EndsWith(".svi") && !file.EndsWith(".3gp") && !file.EndsWith(".3g2") && !file.EndsWith(".mxf") && !file.EndsWith(".roq") && !file.EndsWith(".nsv") && !file.EndsWith(".flv") && !file.EndsWith(".f4v") && !file.EndsWith(".f4p") && !file.EndsWith(".f4a") && !file.EndsWith(".f4b")) {
-            //         continue;
-            //     }
-
-            //     delFile(file, "Recordings", ref totalFilesSize, ref deletedRecordings, ref options);
-            // }
         }
 
         private void deleteCrashReports(ref long totalFilesSize) {
