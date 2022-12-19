@@ -79,7 +79,15 @@ namespace MultiDelete
             client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("MultiDelete", version));
             byte[] byteArray = new UTF8Encoding().GetBytes(ClientProperties.CLIENT_ID + ":" + ClientProperties.CLIENT_SECRET);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            HttpResponseMessage response = await client.GetAsync("repos/greyhayv/MultiDelete/releases/latest");
+            HttpResponseMessage response = new HttpResponseMessage();
+            try {
+                response = await client.GetAsync("repos/greyhayv/MultiDelete/releases/latest");
+            } catch {
+                if(openDialogIfNoNewVersion) {
+                    MessageBox.Show("No Internet");
+                }
+                return;
+            }
 
             if(response.IsSuccessStatusCode) {
                 ReleaseInfo latestRelease = JsonSerializer.Deserialize<ReleaseInfo>(response.Content.ReadAsStringAsync().Result);
