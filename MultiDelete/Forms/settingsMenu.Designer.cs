@@ -281,7 +281,7 @@ namespace MultiDelete
             keepLastWorldsNUD.Size = new Size(37, 26);
             keepLastWorldsNUD.TabStop = false;
             keepLastWorldsNUD.Value = 10;
-            keepLastWorldsNUD.Maximum = 1000;
+            keepLastWorldsNUD.Maximum = 10000;
             keepLastWorldsNUD.TextAlign = HorizontalAlignment.Center;
             keepLastWorldsNUD.ToolTip = toolTip.GetToolTip(keepLastWorldsLabel);
             //
@@ -441,6 +441,41 @@ namespace MultiDelete
             themePanel.Controls.Add(themeLabel);
             themePanel.Controls.Add(themeComboBox);
             //
+            // keepLastRecordingsLabel
+            //
+            keepLastRecordingsLabel.AutoSize = true;
+            keepLastRecordingsLabel.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            keepLastRecordingsLabel.TabStop = false;
+            keepLastRecordingsLabel.Text = "Keep last";
+            keepLastRecordingsLabel.Padding = new Padding(0, 5, 0, 0);
+            toolTip.SetToolTip(keepLastRecordingsLabel, "Select how many of the last Recordings MultiDelete should keep.");
+            //
+            // keepLastRecordingsNUD
+            //
+            keepLastRecordingsNUD.Size = new Size(37, 26);
+            keepLastRecordingsNUD.TabStop = false;
+            keepLastRecordingsNUD.Value = 0;
+            keepLastRecordingsNUD.Maximum = 100;
+            keepLastRecordingsNUD.TextAlign = HorizontalAlignment.Center;
+            keepLastRecordingsNUD.ToolTip = toolTip.GetToolTip(keepLastRecordingsLabel);
+            //
+            // keepLastRecordingsLabel2
+            //
+            keepLastRecordingsLabel2.AutoSize = true;
+            keepLastRecordingsLabel2.Font = new Font("Roboto", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            keepLastRecordingsLabel2.TabStop = false;
+            keepLastRecordingsLabel2.Text = "Recordings.";
+            keepLastRecordingsLabel2.Padding = new Padding(0, 5, 0, 0);
+            toolTip.SetToolTip(keepLastRecordingsLabel2, toolTip.GetToolTip(keepLastRecordingsLabel));
+            //
+            // keepLastRecordingsPanel
+            //
+            keepLastRecordingsPanel.Size = new Size(400, 34);
+            keepLastRecordingsPanel.FlowDirection = FlowDirection.LeftToRight;
+            keepLastRecordingsPanel.Controls.Add(keepLastRecordingsLabel);
+            keepLastRecordingsPanel.Controls.Add(keepLastRecordingsNUD);
+            keepLastRecordingsPanel.Controls.Add(keepLastRecordingsLabel2);
+            //
             // settingsTabPanel
             //
             settingsTabPanel.Dock = DockStyle.Bottom;
@@ -458,6 +493,7 @@ namespace MultiDelete
             settingsTabPanel.addControl("Criteria", endWithMTB);
             settingsTabPanel.addControl("Other Files", deleteRecordingsCheckBox);
             settingsTabPanel.addControl("Other Files", recordingsFTB);
+            settingsTabPanel.addControl("Other Files", keepLastRecordingsPanel);
             settingsTabPanel.addControl("Other Files", deleteCrashReportsCheckBox);
             settingsTabPanel.addControl("Other Files", deleteScreenshotsCheckBox);
             settingsTabPanel.addControl("Advanced", updateScreenPanel);
@@ -567,6 +603,14 @@ namespace MultiDelete
 
             keepLastWorldsLabel2.ForeColor = MultiDelete.fontColor;
 
+            keepLastRecordingsLabel.ForeColor = MultiDelete.fontColor;
+
+            keepLastRecordingsNUD.BackColor = MultiDelete.bgColor;
+            keepLastRecordingsNUD.ForeColor = MultiDelete.fontColor;
+            keepLastRecordingsNUD.BorderColor = MultiDelete.accentColor;
+
+            keepLastRecordingsLabel2.ForeColor = MultiDelete.fontColor;
+
             multiDeleteHeading.ForeColor = MultiDelete.fontColor;
 
             viewRepositoryLabel.LinkColor = MultiDelete.fontColor;
@@ -654,6 +698,10 @@ namespace MultiDelete
         private Label themeLabel = new Label();
         private ComboBox themeComboBox = new ComboBox();
         private FlowLayoutPanel themePanel = new FlowLayoutPanel();
+        private Label keepLastRecordingsLabel = new Label();
+        private Label keepLastRecordingsLabel2 = new Label();
+        private BNumericUpDown keepLastRecordingsNUD = new BNumericUpDown();
+        private FlowLayoutPanel keepLastRecordingsPanel = new FlowLayoutPanel();
 
         #endregion
     }

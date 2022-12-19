@@ -21,7 +21,9 @@ namespace MultiDelete
 
         private void settingsMenu_Load(object sender, EventArgs e)  {
             loadSettings();
+
             themeComboBox_SelectionChangeCommitted(new object(), new EventArgs());
+            deleteRecordingsCheckBox_CheckedChanged(new object(), new EventArgs());
         }
 
         private void loadSettings() {
@@ -49,6 +51,7 @@ namespace MultiDelete
                     MultiDelete.accentColor = ColorTranslator.FromHtml(options.CustomAccentColor);
                     MultiDelete.fontColor = ColorTranslator.FromHtml(options.CustomFontColor);
                     themeComboBox.SelectedItem = options.Theme.ToString();
+                    keepLastRecordingsNUD.Value = options.KeepLastRecordings;
                 } catch {
                     if(MessageBox.Show("There was an error importing the settings! Load default settings?", "MultiDelete", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes) {
                         loadDefaultSettings();
@@ -83,7 +86,8 @@ namespace MultiDelete
                 CustomAccentColor = "#414141",
                 CustomFontColor = "#C2C2C2",
                 moveToRecycleBin = false,
-                Theme = Themes.Dark
+                Theme = Themes.Dark,
+                KeepLastRecordings = 0
             };
 
             saveOptions(options);
@@ -127,6 +131,7 @@ namespace MultiDelete
             options.KeepLastWorlds = Decimal.ToInt32(keepLastWorldsNUD.Value);
             options.moveToRecycleBin = moveToRecycleBinCheckBox.Checked;
             options.Theme = (Themes)Enum.Parse(typeof(Themes), (string)themeComboBox.SelectedItem);
+            options.KeepLastRecordings = (int)keepLastRecordingsNUD.Value;
 
             if(options.Theme == Themes.Custom) {
                 options.CustomBgColor = ColorTranslator.ToHtml(MultiDelete.bgColor);
@@ -157,16 +162,19 @@ namespace MultiDelete
                 startWithLabel.ForeColor = MultiDelete.fontColor;
                 includeLabel.ForeColor = MultiDelete.fontColor;
                 endWithLabel.ForeColor = MultiDelete.fontColor;
-
-                deleteAllWorldsThatLabel.ForeColor = MultiDelete.fontColor;
-                startWithLabel.ForeColor = MultiDelete.fontColor;
-                includeLabel.ForeColor = MultiDelete.fontColor;
-                endWithLabel.ForeColor = MultiDelete.fontColor;
             }
         }
 
         private void deleteRecordingsCheckBox_CheckedChanged(object sender, EventArgs e) {
             recordingsFTB.FTBEnabled = deleteRecordingsCheckBox.Checked;
+            keepLastRecordingsNUD.Enabled = deleteRecordingsCheckBox.Checked;
+            if(deleteRecordingsCheckBox.Checked == false) {
+                keepLastRecordingsLabel.ForeColor = Color.FromArgb(94, 94, 94);
+                keepLastRecordingsLabel2.ForeColor = Color.FromArgb(94, 94, 94);
+            } else {
+                keepLastRecordingsLabel.ForeColor = MultiDelete.fontColor;
+                keepLastRecordingsLabel2.ForeColor = MultiDelete.fontColor;
+            }
         }
 
         private void addMultipleInstanceButton_Click(object sender, EventArgs e) {
@@ -346,6 +354,7 @@ namespace MultiDelete
         public string RecordingsPath { get; set; }
         public bool DeleteCrashReports { get; set; }
         public bool DeleteScreenshots { get; set; }
+        public int KeepLastRecordings { get; set; }
         public int ThreadCount { get; set; }
         public int KeepLastWorlds { get; set; }
         public string CustomBgColor { get; set; }

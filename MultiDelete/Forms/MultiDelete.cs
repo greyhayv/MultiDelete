@@ -158,6 +158,7 @@ namespace MultiDelete
                 options.UpdateScreenEvery = 1;
             }
 
+            //Searching worlds to delete
             foreach(string path in savesPathsFromInstancePaths(options.InstancePaths)) {
                 if(!Directory.Exists(path)) {
                     changeText(infoLabel, "The Saves-Path '" + path + "' doesnt exist!");
@@ -177,6 +178,7 @@ namespace MultiDelete
                 }
 
                 List<string> instanceWorlds = new List<string>();
+                List<DirectoryInfo> worldDIs = new List<DirectoryInfo>();
                 foreach(string world in Directory.GetDirectories(path)) {
                     if(cancelDeletion) {
                         return;
@@ -186,7 +188,7 @@ namespace MultiDelete
                         worldsToDelete.Add(world);
                         instanceWorlds.Add(world);
 
-                        updateWorldSearchingScreen(options.UpdateScreenEvery, ref worldsToDelete);
+                        updateWorldsSearchingScreen(options.UpdateScreenEvery, ref worldsToDelete);
 
                         continue;
                     }
@@ -201,7 +203,7 @@ namespace MultiDelete
                             worldsToDelete.Add(world);
                             instanceWorlds.Add(world);
 
-                            updateWorldSearchingScreen(options.UpdateScreenEvery, ref worldsToDelete);
+                            updateWorldsSearchingScreen(options.UpdateScreenEvery, ref worldsToDelete);
                         }
                     }
 
@@ -214,7 +216,7 @@ namespace MultiDelete
                             worldsToDelete.Add(world);
                             instanceWorlds.Add(world);
 
-                            updateWorldSearchingScreen(options.UpdateScreenEvery, ref worldsToDelete);
+                            updateWorldsSearchingScreen(options.UpdateScreenEvery, ref worldsToDelete);
                         }
                     }
 
@@ -227,21 +229,19 @@ namespace MultiDelete
                             worldsToDelete.Add(world);
                             instanceWorlds.Add(world);
 
-                            updateWorldSearchingScreen(options.UpdateScreenEvery, ref worldsToDelete);
+                            updateWorldsSearchingScreen(options.UpdateScreenEvery, ref worldsToDelete);
                         }
                     }
+
+                    worldDIs.Add(new DirectoryInfo(world));
                 }
 
                 //Remove last x worlds from list
-                List<DirectoryInfo> worldDIs = new List<DirectoryInfo>();
-                foreach(string instanceWorld in instanceWorlds) {
-                    worldDIs.Add(new DirectoryInfo(instanceWorld));
-                }
                 instanceWorlds = worldDIs.OrderByDescending(f => f.LastWriteTime).Select(f => f.FullName).ToList();
 
                 for(int i = 0; i < options.KeepLastWorlds; i++) {
                     if(instanceWorlds.Count <= i) {
-                        continue;
+                        break;
                     }
                     worldsToDelete.Remove(instanceWorlds[i]);
                 }
@@ -283,7 +283,7 @@ namespace MultiDelete
 
 
             if(options.DeleteRecordings) {
-                deleteRecordings(ref totalFilesSize);
+                deleteRecordings(ref totalFilesSize, options);
             }
             if(options.DeleteCrashReports) {
                 deleteCrashReports(ref totalFilesSize);
@@ -319,12 +319,8 @@ namespace MultiDelete
             countdownEvent.Signal();
         }
 
-        private void deleteRecordings(ref long totalFilesSize) {
+        private void deleteRecordings(ref long totalFilesSize, Options options) {
             setLayout(MenuLayout.InfoLabel);
-            Options options = new Options();
-            if(File.Exists(optionsFile)) {
-                options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
-            }
 
             if(String.IsNullOrWhiteSpace(options.RecordingsPath)) {
                 return;
@@ -335,10 +331,9 @@ namespace MultiDelete
                 return;
             }
 
-            int deletedRecordings = 0;
-            changeLocation(infoLabel, new Point(-8, 41));
-            changeText(infoLabel, "Deleting Recordings (0)");
-
+            List<string> recordingsToDelete = new List<string>();
+            List<FileInfo> recordingFIs = new List<FileInfo>();
+            //Search recordings to delete
             foreach(string file in Directory.GetFiles(options.RecordingsPath)) {
                 if(cancelDeletion) {
                     return;
@@ -348,8 +343,71 @@ namespace MultiDelete
                     continue;
                 }
 
-                delFile(file, "Recordings", ref totalFilesSize, ref deletedRecordings, ref options);
+                recordingsToDelete.Add(file);
+                changeText(infoLabel, "Searching Recordings (" + recordingsToDelete.Count.ToString() + ")");
+                refreshUI();
+
+                recordingFIs.Add(new FileInfo(file));
             }
+
+            //Remove last x recordings from list
+            recordingsToDelete = recordingFIs.OrderByDescending(f => f.LastWriteTime).Select(f => f.FullName).ToList();
+            recordingsToDelete.RemoveRange(0, options.KeepLastRecordings > recordingsToDelete.Count ? recordingsToDelete.Count : options.KeepLastRecordings);
+            
+            int deletedRecordings = 0;
+
+            changeText(infoLabel, "Deleting Recordings (0/" + recordingsToDelete.Count.ToString() + ")");
+            changeMaximum(progressBar, recordingsToDelete.Count);
+            changeValue(progressBar, 0);
+            setLayout(MenuLayout.ProgressBar);
+
+            //Delte recordings
+            foreach(string file in recordingsToDelete) {
+                if(cancelDeletion) {
+                    return;
+                }
+
+                if(!File.Exists(file)) {
+                    continue;
+                }
+
+                try {
+                    delFile(file, "Recordings", ref totalFilesSize, ref deletedRecordings, ref options);
+                } catch {
+                    continue;
+                }
+            }
+
+            // setLayout(MenuLayout.InfoLabel);
+            // Options options = new Options();
+            // if(File.Exists(optionsFile)) {
+            //     options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            // }
+
+            // if(String.IsNullOrWhiteSpace(options.RecordingsPath)) {
+            //     return;
+            // }
+
+            // if(!Directory.Exists(options.RecordingsPath)) {
+            //     MessageBox.Show("The Recordings-Path does not exist!", "MultiDelete", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //     return;
+            // }
+
+            // int deletedRecordings = 0;
+            // changeLocation(infoLabel, new Point(-8, 41));
+            // changeText(infoLabel, "Deleting Recordings (0)");
+
+            // foreach(string file in Directory.GetFiles(options.RecordingsPath)) {
+            //     if(cancelDeletion) {
+            //         return;
+            //     }
+
+            //     if(!file.EndsWith(".mp4") && !file.EndsWith(".webm") && !file.EndsWith(".mkv") && !file.EndsWith(".flv") && !file.EndsWith(".vob") && !file.EndsWith(".ogv") && !file.EndsWith(".ogg") && !file.EndsWith(".drc") && !file.EndsWith(".gif") && !file.EndsWith(".gifv") && !file.EndsWith(".mng") && !file.EndsWith(".avi") && !file.EndsWith(".MTS") && !file.EndsWith(".M2TS") && !file.EndsWith("TS") && !file.EndsWith(".mov") && !file.EndsWith(".qt") && !file.EndsWith(".wmv") && !file.EndsWith(".yuv") && !file.EndsWith(".rm") && !file.EndsWith(".rmvb") && !file.EndsWith(".viv") && !file.EndsWith(".asf") && !file.EndsWith(".amv") && !file.EndsWith(".m4p") && !file.EndsWith(".m4v") && !file.EndsWith(".mpg") && !file.EndsWith(".mp2") && !file.EndsWith(".mpeg") && !file.EndsWith(".mpe") && !file.EndsWith(".mpv") && !file.EndsWith(".mpg") && !file.EndsWith(".m2v") && !file.EndsWith(".m4v") && !file.EndsWith(".svi") && !file.EndsWith(".3gp") && !file.EndsWith(".3g2") && !file.EndsWith(".mxf") && !file.EndsWith(".roq") && !file.EndsWith(".nsv") && !file.EndsWith(".flv") && !file.EndsWith(".f4v") && !file.EndsWith(".f4p") && !file.EndsWith(".f4a") && !file.EndsWith(".f4b")) {
+            //         continue;
+            //     }
+
+            //     delFile(file, "Recordings", ref totalFilesSize, ref deletedRecordings, ref options);
+            // }
         }
 
         private void deleteCrashReports(ref long totalFilesSize) {
@@ -436,7 +494,7 @@ namespace MultiDelete
             }
         }
 
-        private void updateWorldSearchingScreen(int updateScreen, ref List<string> worldsToDelete) {
+        private void updateWorldsSearchingScreen(int updateScreen, ref List<string> worldsToDelete) {
             if(worldsToDelete.Count % updateScreen == 0) {
                 changeText(infoLabel, "Searching Worlds (" + worldsToDelete.Count.ToString() + ")");
                 refreshUI();
