@@ -589,6 +589,7 @@ namespace MultiDelete
 
             addMultipleInstanceButton.ForeColor = MultiDelete.fontColor;
             addMultipleInstanceButton.BorderColor = MultiDelete.accentColor;
+            addMultipleInstanceButton.BackgroundColor = MultiDelete.bgColor;
 
             resetSettingsButton.ForeColor = MultiDelete.fontColor;
             resetSettingsButton.BorderColor = MultiDelete.accentColor;

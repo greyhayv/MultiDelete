@@ -48,7 +48,7 @@
             // remindMeLaterButton
             // 
             this.remindMeLaterButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.remindMeLaterButton.BackColor = System.Drawing.Color.Transparent;
+            this.remindMeLaterButton.BackgroundColor = System.Drawing.Color.Transparent;
             this.remindMeLaterButton.BackgroundColor = System.Drawing.Color.Transparent;
             this.remindMeLaterButton.BorderColor = MultiDelete.accentColor;
             this.remindMeLaterButton.BorderRadius = 20;
@@ -68,7 +68,7 @@
             // downloadButton
             // 
             this.downloadButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.downloadButton.BackColor = System.Drawing.Color.Transparent;
+            this.downloadButton.BackgroundColor = System.Drawing.Color.Transparent;
             this.downloadButton.BackgroundColor = System.Drawing.Color.Transparent;
             this.downloadButton.BorderColor = MultiDelete.accentColor;
             this.downloadButton.BorderRadius = 20;
@@ -88,7 +88,7 @@
             // closeButton
             // 
             this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.closeButton.BackColor = System.Drawing.Color.Transparent;
+            this.closeButton.BackgroundColor = System.Drawing.Color.Transparent;
             this.closeButton.BackgroundColor = System.Drawing.Color.Transparent;
             this.closeButton.BorderColor = MultiDelete.accentColor;
             this.closeButton.BorderRadius = 20;

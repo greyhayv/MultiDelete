@@ -2,6 +2,8 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace MultiDelete
 {
@@ -13,6 +15,7 @@ namespace MultiDelete
         private bool topLineBorderStyle = false;
         private bool disableAnimations = false;
         private ToolTip toolTip = new ToolTip();
+        private bool cancelHoverAnimation = false;
 
         public int BorderSize { get => borderSize; set { borderSize = value; Invalidate(); } }
         public int BorderRadius { get => borderRadius; set { borderRadius = value; Invalidate(); } }
@@ -20,29 +23,24 @@ namespace MultiDelete
         public bool TopLineBorderStyle { get => topLineBorderStyle; set {topLineBorderStyle = value; Invalidate(); } }
         public bool DisableAnimations { get => disableAnimations; set {
             disableAnimations = value;
-            FlatAppearance.MouseOverBackColor = Color.FromArgb(BackColor.A, BackColor.R, BackColor.G, BackColor.B);
-            FlatAppearance.MouseDownBackColor = Color.FromArgb(BackColor.A, BackColor.R, BackColor.G, BackColor.B);
+            FlatAppearance.MouseDownBackColor = BackColor;
         }}
         public Color BackgroundColor
         { get => BackColor; set { 
-                BackColor = value; 
+                BackColor = value;
                 if(disableAnimations) {
-                    FlatAppearance.MouseOverBackColor = Color.FromArgb(BackColor.A, BackColor.R, BackColor.G, BackColor.B);
-                    FlatAppearance.MouseDownBackColor = Color.FromArgb(BackColor.A, BackColor.R, BackColor.G, BackColor.B);
-
                     return;
                 }
                 if(BackColor.A == 255) {
-                    try {
-                        FlatAppearance.MouseOverBackColor = Color.FromArgb(BackColor.R + 5, BackColor.G + 5, BackColor.B + 5);
-                        FlatAppearance.MouseDownBackColor = Color.FromArgb(BackColor.R + 8, BackColor.G + 8, BackColor.B + 8);
-                    } catch {
-                        FlatAppearance.MouseOverBackColor = Color.FromArgb(BackColor.A, BackColor.R, BackColor.G, BackColor.B);
-                        FlatAppearance.MouseDownBackColor = Color.FromArgb(BackColor.A, BackColor.R, BackColor.G, BackColor.B);
+                    HSLColor color = HSLColor.FromColor(MultiDelete.bgColor);
+                    if((Math.Max(MultiDelete.bgColor.R, Math.Max(MultiDelete.bgColor.G, MultiDelete.bgColor.B)) / 255d) > 0.5) {
+                        color.L = color.L < 0.1 ? 0 : color.L - 0.1;
+                    } else {
+                        color.L = color.L > 0.9 ? 1 : color.L + 0.1;
                     }
+                    FlatAppearance.MouseDownBackColor = color.ToColor();
                 } else {
-                    FlatAppearance.MouseOverBackColor = Color.FromArgb(BackColor.A + 20 > 255 ? 255 : BackColor.A + 20, BackColor.R, BackColor.G, BackColor.B);
-                    FlatAppearance.MouseDownBackColor = Color.FromArgb(BackColor.A + 40 > 255 ? 255 : BackColor.A + 40, BackColor.R, BackColor.G, BackColor.B);
+                    FlatAppearance.MouseDownBackColor = Color.FromArgb(BackColor.A + 40 > 255 ? 255 : BackColor.A + 40, MultiDelete.bgColor.R, MultiDelete.bgColor.G, MultiDelete.bgColor.B);
                 } 
         }}
         public Color TextColor { get => ForeColor; set => ForeColor = value; }
@@ -56,9 +54,11 @@ namespace MultiDelete
             BackColor = Color.Transparent;
             TabStop = false; 
             ForeColor = Color.FromArgb(194, 194, 194);
-            FlatAppearance.MouseOverBackColor = Color.FromArgb(BackColor.A + 20 > 255 ? 255 : BackColor.A + 20, BackColor.R, BackColor.G, BackColor.B);
-            FlatAppearance.MouseDownBackColor = Color.FromArgb(BackColor.A + 40 > 255 ? 255 : BackColor.A + 40, BackColor.R, BackColor.G, BackColor.B);
+            FlatAppearance.MouseOverBackColor = BackColor;
+            FlatAppearance.MouseDownBackColor = BackColor;
             toolTip.ShowAlways = true;
+            MouseEnter += new EventHandler(ButtonMouseEnter);
+            MouseLeave += new EventHandler(ButtonMouseLeave);
         }
 
         private GraphicsPath GetFigurePath(RectangleF rect, float radius)
@@ -76,7 +76,11 @@ namespace MultiDelete
 
         protected override void OnPaint(PaintEventArgs pevent)
         {
-            base.OnPaint(pevent);
+            try {
+                base.OnPaint(pevent);
+            } catch {
+                return;
+            }
             pevent.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
             RectangleF rectSurface = new RectangleF(0, 0, Width, Height);
@@ -129,11 +133,46 @@ namespace MultiDelete
             }
         }
 
-        protected override void OnHandleCreated(EventArgs e)
-        {
-            base.OnHandleCreated(e);
+        private void ButtonMouseEnter(object sender, EventArgs e) {
+            if(!disableAnimations) {
+                Task.Run(() => updateMouseHover(sender));
+            }
+        }
 
-            Parent.BackColorChanged += new EventHandler(Container_BackColorChanged);
+        private void ButtonMouseLeave(object sender, EventArgs e) {
+            cancelHoverAnimation = true;
+        }
+
+        private void updateMouseHover(object sender) {
+            BButton button = (BButton)sender;
+            double value = (Math.Max(MultiDelete.bgColor.R, Math.Max(MultiDelete.bgColor.G, MultiDelete.bgColor.B)) / 255d);
+            while(!cancelHoverAnimation) {
+                Point mouseLocation = new Point();
+                this.Invoke((Action)(() => mouseLocation = button.PointToClient(Cursor.Position)));
+                Bitmap bitmap = new Bitmap(button.Size.Width, button.Size.Height);
+                for(int x = 0; x < bitmap.Width; x++) {
+                    for(int y = 0; y < bitmap.Height; y++) {
+                        double distance = Math.Sqrt(Math.Pow(mouseLocation.X - x, 2) + Math.Pow(mouseLocation.Y - y, 2));
+                        int a = (int)(50 - (distance * 0.5));
+                        Color color = new Color();
+                        if(value > 0.5) {
+                            color = Color.FromArgb((int)(a > 20 ? a : 20), 0, 0, 0);
+                        } else {
+                            color = Color.FromArgb((int)(a > 20 ? a : 20), 255, 255, 255);
+                        }
+                        try {
+                            bitmap.SetPixel(x, y, color);
+                        } catch {
+                            cancelHoverAnimation = true;
+                            break;
+                        }
+                    }
+                }
+                button.BackgroundImage = bitmap;
+                Thread.Sleep(5);
+            }
+            cancelHoverAnimation = false;
+            button.BackgroundImage = null;
         }
 
         private void Container_BackColorChanged(object sender, EventArgs e)

@@ -25,10 +25,10 @@ namespace MultiDelete
         public override Color BackColor { get => base.BackColor; set { 
             base.BackColor = value;
             foreach(BButton button in folderButtons) {
-                button.BackColor = value;
+                button.BackgroundColor = value;
             }
             foreach(BButton button in removeButtons) {
-                button.BackColor = value;
+                button.BackgroundColor = value;
             }
         } }
         public override Color BorderColor { get => base.BorderColor; set { 

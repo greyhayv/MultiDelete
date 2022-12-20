@@ -42,7 +42,7 @@ namespace MultiDelete
             // deleteWorldsButton
             // 
             this.deleteWorldsButton.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.deleteWorldsButton.BackColor = System.Drawing.Color.Transparent;
+            this.deleteWorldsButton.BackgroundColor = System.Drawing.Color.Transparent;
             this.deleteWorldsButton.BackgroundColor = System.Drawing.Color.Transparent;
             this.deleteWorldsButton.BorderRadius = 20;
             this.deleteWorldsButton.BorderSize = 1;
@@ -57,7 +57,7 @@ namespace MultiDelete
             // 
             // settingsButton
             // 
-            this.settingsButton.BackColor = System.Drawing.Color.Transparent;
+            this.settingsButton.BackgroundColor = System.Drawing.Color.Transparent;
             this.settingsButton.BackgroundColor = System.Drawing.Color.Transparent;
             this.settingsButton.BorderRadius = 18;
             this.settingsButton.BorderSize = 1;
@@ -95,7 +95,7 @@ namespace MultiDelete
             // okButton
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.okButton.BackColor = System.Drawing.Color.Transparent;
+            this.okButton.BackgroundColor = System.Drawing.Color.Transparent;
             this.okButton.BackgroundColor = System.Drawing.Color.Transparent;
             this.okButton.BorderRadius = 20;
             this.okButton.BorderSize = 1;
@@ -112,7 +112,7 @@ namespace MultiDelete
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.BackColor = System.Drawing.Color.Transparent;
+            this.cancelButton.BackgroundColor = System.Drawing.Color.Transparent;
             this.cancelButton.BackgroundColor = System.Drawing.Color.Transparent;
             this.cancelButton.BorderRadius = 20;
             this.cancelButton.BorderSize = 1;
@@ -154,17 +154,21 @@ namespace MultiDelete
         public void updateColors() {
             deleteWorldsButton.BorderColor = MultiDelete.accentColor;
             deleteWorldsButton.ForeColor = MultiDelete.fontColor;
+            deleteWorldsButton.BackgroundColor = MultiDelete.bgColor;
 
             settingsButton.BorderColor = MultiDelete.accentColor;
             settingsButton.ForeColor = MultiDelete.fontColor;
+            settingsButton.BackgroundColor = MultiDelete.bgColor;
 
             infoLabel.ForeColor = MultiDelete.fontColor;
 
             okButton.BorderColor = MultiDelete.accentColor;
             okButton.ForeColor = MultiDelete.fontColor;
+            okButton.BackgroundColor = MultiDelete.bgColor;
 
             cancelButton.BorderColor = MultiDelete.accentColor;
             cancelButton.ForeColor = MultiDelete.fontColor;
+            cancelButton.BackgroundColor = MultiDelete.bgColor;
 
             BackColor = MultiDelete.bgColor;
 

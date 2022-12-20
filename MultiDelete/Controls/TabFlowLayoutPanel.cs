@@ -31,7 +31,7 @@ namespace MultiDelete
                 panel.BackColor = value;
             }
             foreach(BButton button in tabButtons.Values) {
-                button.BackColor = value;
+                button.BackgroundColor = value;
             }
         } }
 
