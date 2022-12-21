@@ -15,7 +15,7 @@ namespace MultiDelete
 {
     public partial class MultiDelete : Form
     {
-        public static string version = "v1.4";
+        public static string version = "v1.3";
         public static Color bgColor;
         public static Color accentColor;
         public static Color fontColor;
@@ -127,9 +127,6 @@ namespace MultiDelete
         }
 
         private void deleteWorlds() {
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-            stopwatch.Start();
-
             setLayout(MenuLayout.InfoLabel);
 
             cancelDeletion = false;
@@ -302,9 +299,6 @@ namespace MultiDelete
             }
 
             showResults(ref worldsToDelete, totalFilesSize);
-
-            stopwatch.Stop();
-            Console.WriteLine(stopwatch.ElapsedMilliseconds);
         }
 
         private void delWorldsThread(int startIndex, int endIndex, ref List<string> worldsToDelete, ref int totalDeletedWorlds, ref long deletedFileSize, ref CountdownEvent countdownEvent) {
