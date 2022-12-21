@@ -8,9 +8,7 @@ namespace Updater
         static void Main(string[] args)
         {
             if(args.Length == 0) {
-                Console.WriteLine("Please enter the version you want to update to as the first argument.");
-                Console.ReadKey();
-                return;
+                throwError("Please enter the version you want to update to as the first argument.");
             }
 
             updateMultiDelete(args[0]);
@@ -25,60 +23,13 @@ namespace Updater
                     process.WaitForExit();
                 }
             } catch(Exception e) {
-                Console.WriteLine(e.ToString());
-                Console.ReadKey();
-                return;
-            }
-
-            //Download zip of newest version
-            string zipPath = Directory.GetCurrentDirectory() + @"\MultiDelete" + version.Substring(1) + ".zip";
-            if(!File.Exists(zipPath)) {
-                Console.WriteLine("Downloading newest version");
-                HttpClient client = new HttpClient();
-                Uri uri = new Uri("https://github.com/greyhayv/MultiDelete/releases/download/" + version + "/MultiDelete" + version.Substring(1) + ".zip");
-                HttpResponseMessage respone = client.GetAsync(uri.ToString()).Result;
-                if(respone.IsSuccessStatusCode) {
-                    byte[] zipBytes = respone.Content.ReadAsByteArrayAsync().Result;
-                    File.WriteAllBytes(zipPath, zipBytes);
-                } else {
-                    Console.WriteLine("There was an error downloading the update:");
-                    Console.WriteLine(respone.StatusCode);
-                    Console.ReadKey();
-                    return;
-                }
-            }
-
-            if(Path.GetFileNameWithoutExtension(System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName) == "newUpdater") {
-                if(File.Exists("Updater.exe")) {
-                    File.Delete("Updater.exe");
-                }
-                File.Move("newUpdater.exe", "Updater.exe");
-            } else {
-                //update Updater
-                Console.WriteLine("Excuting new updater");
-                using(ZipArchive archive = ZipFile.OpenRead(zipPath)) {
-                    ZipArchiveEntry? entry = archive.GetEntry("Updater.exe");
-                    if(entry != null) {
-                        string newUpdaterDir = Directory.GetCurrentDirectory() + "\\newUpdater.exe";
-                        if(File.Exists(newUpdaterDir)) {
-                            File.Delete(newUpdaterDir);
-                        }
-                        entry.ExtractToFile(newUpdaterDir);
-                        Process process = new Process();
-                        process.StartInfo.FileName = "newUpdater.exe";
-                        process.StartInfo.UseShellExecute = true;
-                        process.StartInfo.Verb = "runas";
-                        process.StartInfo.Arguments = version;
-                        process.Start();
-                        return;
-                    }
-                }
+                throwError(e);
             }
 
             //Delete current version
             Console.WriteLine("Deleting current version");
             foreach(string file in Directory.GetFiles(Directory.GetCurrentDirectory())) {
-                if(file.EndsWith("\\Updater.exe") || file == zipPath) {
+                if(file.EndsWith("\\Updater.exe")) {
                     continue;
                 }
 
@@ -87,48 +38,91 @@ namespace Updater
                     File.Delete(file);
                     Console.WriteLine("Deleted " + file);
                 } catch(Exception e) {
-                    Console.WriteLine(e.ToString());
-                    Console.ReadKey();
-                    return;
+                    throwError(e);
                 }
             }
 
+            //Download zip of newest version
+            string zipPath = Directory.GetCurrentDirectory() + @"\MultiDelete" + version.Substring(1) + ".zip";
+            Console.WriteLine("Downloading newest version");
+            HttpClient client = new HttpClient();
+            Uri uri = new Uri("https://github.com/greyhayv/MultiDelete/releases/download/" + version + "/MultiDelete" + version.Substring(1) + ".zip");
+            HttpResponseMessage response = new HttpResponseMessage();
+            try {
+                response = client.GetAsync(uri.ToString()).Result;
+            } catch(Exception e) {
+                throwError(e);
+            }
+            if(response.IsSuccessStatusCode) {
+                byte[] zipBytes = response.Content.ReadAsByteArrayAsync().Result;
+                File.WriteAllBytes(zipPath, zipBytes);
+            } else {
+                throwError("There was an error downloading the update:\n" + response.StatusCode);
+            }
+
+            //rename current updater
+            if(File.Exists("OldUpdater.exe")) {
+                File.Delete("OldUpdater.exe");
+            }
+            File.Move(getProgramFilePath(), "OldUpdater.exe");
+
             //unzip file
+            Console.WriteLine("unzipping zip");
             try {
                 using(ZipArchive archive = ZipFile.OpenRead(zipPath)) {
                     foreach(ZipArchiveEntry entry in archive.Entries) {
-                        if(entry.ToString() == "Updater.exe") {
-                            continue;
-                        }
-                        
                         entry.ExtractToFile(Directory.GetCurrentDirectory() + "\\" + entry.ToString());
                         Console.WriteLine("Extracted " + entry.ToString());
                     }
                 }
             } catch(Exception e) {
-                Console.WriteLine(e.ToString());
-                Console.ReadKey();
-                return;
+                throwError(e);
             }
 
             //delete zip
             try {
                 File.Delete(zipPath);
             } catch(Exception e) {
-                Console.WriteLine(e.ToString());
-                Console.ReadKey();
-                return;
+                throwError(e);
             }
 
-            Console.WriteLine("Update finished! Starting MultiDelete!");
-
             //Start MultiDelete
+            Console.WriteLine("Update finished! Starting MultiDelete!");
             try {
                 Process.Start("MultiDelete.exe");
             } catch(Exception e) {
-                Console.WriteLine(e.ToString());
-                Console.ReadKey();
-                return;
+                throwError(e);
+            }
+
+            //Delete current installer
+            try {
+                Process.Start(new ProcessStartInfo() {
+                    Arguments = "/C choice /C Y /N /D Y /T 3 & Del \"" + Directory.GetCurrentDirectory() + "\\OldUpdater.exe" +"\"",
+                    WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true, FileName = "cmd.exe"
+                });
+            } catch(Exception e) {
+                throwError(e);
+            }
+        }
+
+        public static void throwError(Exception e) {
+            Console.WriteLine(e.ToString());
+            Console.ReadKey();
+            System.Environment.Exit(-1);
+        }
+
+        public static void throwError(string s) {
+            Console.WriteLine(s);
+            Console.ReadKey();
+            System.Environment.Exit(-1);
+        }
+
+        public static string getProgramFilePath() {
+            string? path = System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName;
+            if(path != null) {
+                return path;
+            } else {
+                return "";
             }
         }
     }

@@ -15,7 +15,7 @@ namespace MultiDelete
 {
     public partial class MultiDelete : Form
     {
-        public static string version = "v1.3";
+        public static string version = "v1.4";
         public static Color bgColor;
         public static Color accentColor;
         public static Color fontColor;
@@ -43,7 +43,6 @@ namespace MultiDelete
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
             if(!Directory.Exists(programPath)) {
                 Directory.CreateDirectory(programPath);
             }
@@ -77,8 +76,8 @@ namespace MultiDelete
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("MultiDelete", version));
-            byte[] byteArray = new UTF8Encoding().GetBytes(ClientProperties.CLIENT_ID + ":" + ClientProperties.CLIENT_SECRET);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            byte[] authBytes = new UTF8Encoding().GetBytes(ClientProperties.CLIENT_ID + ":" + ClientProperties.CLIENT_SECRET);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authBytes));
             HttpResponseMessage response = new HttpResponseMessage();
             try {
                 response = await client.GetAsync("repos/greyhayv/MultiDelete/releases/latest");
@@ -128,6 +127,9 @@ namespace MultiDelete
         }
 
         private void deleteWorlds() {
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+
             setLayout(MenuLayout.InfoLabel);
 
             cancelDeletion = false;
@@ -289,7 +291,6 @@ namespace MultiDelete
                 }
             }
 
-
             if(options.DeleteRecordings) {
                 deleteRecordings(ref totalFilesSize, options);
             }
@@ -301,6 +302,9 @@ namespace MultiDelete
             }
 
             showResults(ref worldsToDelete, totalFilesSize);
+
+            stopwatch.Stop();
+            Console.WriteLine(stopwatch.ElapsedMilliseconds);
         }
 
         private void delWorldsThread(int startIndex, int endIndex, ref List<string> worldsToDelete, ref int totalDeletedWorlds, ref long deletedFileSize, ref CountdownEvent countdownEvent) {
