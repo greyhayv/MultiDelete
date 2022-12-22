@@ -1,22 +1,19 @@
 # MultiDelete
-A GUI-Based, easy to use and install Tool to delete Minecraft Worlds, Recordings, Rawalle-logs, Screenshots and Crash-reports in multiple Instances of Minecraft with just one click.
+MultiDelete is a GUI-Based Application to delete your Minecraft worlds and more. It is fast, has a lot of different options and is very easy to install and use.
 
-## Features
--You can pick what instances to delete from.  
--You can pick what the world name has to start with, include or end with. (So you dont accidentally delete Practice Maps)  
--It can delete Recordings, Rawalle-logs, Crash-reports and Screenshots  
--Cancel Button
-
-![Deleting Worlds](https://user-images.githubusercontent.com/107059342/177053350-293e1eaa-a499-49c4-a5c5-41f73faddfa3.png)
+![deletingWorlds](https://user-images.githubusercontent.com/107059342/205977255-5fe9b666-8dce-4e0e-a4b4-6378a50e425c.png)
 
 ## Settings
-MultiDelete lets you configure which Instances to delete Worlds in and exactly which Worlds to delete! You can also select if it should delete your Recordings, Rawalle-logs, Screenshots and/or Crash-reports! It also lets you configure how often the screen should update (less updates = way faster world deltion)
-
-![Settings](https://user-images.githubusercontent.com/107059342/186909501-2d2779c3-fa9f-4b47-8477-3ac930a0a6ba.png)
+![Instances](https://user-images.githubusercontent.com/107059342/209198899-ae8c426a-7538-4da7-b399-cb552d29e0bc.png)  
+![Criteria](https://user-images.githubusercontent.com/107059342/209198916-5fdbd732-cca0-4053-8cbc-c26459ef8059.png)  
+![OtherFiles](https://user-images.githubusercontent.com/107059342/209198934-c3ae5f33-0582-4075-b906-8750d556bcf1.png)  
+![Advanced](https://user-images.githubusercontent.com/107059342/209198946-433f5543-71ac-4ac4-ae5f-f2733e1e4fdf.png)  
+![Appearance](https://user-images.githubusercontent.com/107059342/209198951-38d70f05-0aa9-4300-8d8e-f9aca4721a5b.png)  
 
 ## Launch Arguments
 `-delWorlds` This starts world deletion on startup  
-`-closeAfterDeletion` This makes the program close after all worlds have been deleted
+`-closeAfterDeletion` This makes the program close after world deletion is finished  
+`-dontCheckUpdates` This makes it so MultiDelete doesnt check for updates when started  
 
 ## Installation
 Click on the latest release, download the installer, execute it and go through the steps.
