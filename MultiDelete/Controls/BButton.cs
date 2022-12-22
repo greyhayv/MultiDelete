@@ -28,6 +28,7 @@ namespace MultiDelete
         public Color BackgroundColor
         { get => BackColor; set { 
                 BackColor = value;
+                FlatAppearance.MouseOverBackColor = value;
                 if(disableAnimations) {
                     return;
                 }
