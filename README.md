@@ -13,7 +13,7 @@ MultiDelete is a GUI-Based Application to delete your Minecraft worlds and more.
 ## Launch Arguments
 `-delWorlds` This starts world deletion on startup  
 `-closeAfterDeletion` This makes the program close after world deletion is finished  
-`-dontCheckUpdates` This makes it so MultiDelete doesnt check for updates when started  
+`-dontCheckUpdates` This makes it so MultiDelete doesnt check for updates upon startup
 
 ## Installation
 Click on the latest release, download the installer, execute it and go through the steps.
