@@ -143,9 +143,9 @@ namespace MultiDelete
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MultiDelete";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MultiDelete";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.Load += new System.EventHandler(this.MultiDelete_Load);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MultiDelete_FormClosed);
             this.updateColors();
             this.ResumeLayout(false);
             this.PerformLayout();

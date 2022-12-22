@@ -27,21 +27,30 @@ namespace MultiDelete
         private bool checkUpdates = true;
 
         public MultiDelete() {
-            Theme theme;
+            Options options;
             try {
-                Options options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
-                theme = new Theme(options.Theme);
+                options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
             } catch {
-                theme = new Theme(Themes.Dark);
+                options = new Options();
             }
+
+            Theme theme = new Theme(options.Theme);
+
             bgColor = theme.BgColor;
             accentColor = theme.AccentColor;
             fontColor = theme.FontColor;
 
+            if(!options.Location.IsEmpty) {
+                this.StartPosition = FormStartPosition.Manual;
+                this.Location = options.Location;
+            } else {
+                this.StartPosition = FormStartPosition.CenterScreen;
+            }
+
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void MultiDelete_Load(object sender, EventArgs e)
         {
             if(!Directory.Exists(programPath)) {
                 Directory.CreateDirectory(programPath);
@@ -68,6 +77,17 @@ namespace MultiDelete
             if(checkUpdates) {
                 Task.Run(() => checkForUpdates(false));
             }
+        }
+
+        private void MultiDelete_FormClosed(object sender, FormClosedEventArgs e) {
+            Options options;
+            try {
+                options = JsonSerializer.Deserialize<Options>(File.ReadAllText(optionsFile));
+            } catch {
+                options = new Options();
+            }
+            options.Location = new Point(this.Left, this.Top);
+            File.WriteAllText(optionsFile, JsonSerializer.Serialize(options, new JsonSerializerOptions() { WriteIndented = true }));
         }
 
         public async void checkForUpdates(bool openDialogIfNoNewVersion) {

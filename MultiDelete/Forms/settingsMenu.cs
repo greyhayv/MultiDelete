@@ -104,8 +104,7 @@ namespace MultiDelete
         }
 
         private void saveOptions(Options options) {
-            JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true };
-            File.WriteAllText(optionsFile, JsonSerializer.Serialize(options, jsonSerializerOptions));
+            File.WriteAllText(optionsFile, JsonSerializer.Serialize(options, new JsonSerializerOptions() { WriteIndented = true }));
         }
 
         private void saveOptions() {
@@ -362,5 +361,6 @@ namespace MultiDelete
         public string CustomFontColor { get; set; }
         public bool moveToRecycleBin { get; set; }
         public Themes Theme { get; set; }
+        public Point Location { get; set; }
     }
 }
