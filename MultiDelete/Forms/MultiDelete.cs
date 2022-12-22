@@ -476,7 +476,11 @@ namespace MultiDelete
 
             changeVisibilaty(progressBar, false);
             if(worldsToDelete.Count == 0) {
-                changeText(infoLabel, "No Worlds got found! (" + fileSize + ")");
+                if(totalFilesSize > 0) {
+                    changeText(infoLabel, "Deleted " + fileSize + " of files!");
+                } else {
+                    changeText(infoLabel, "No Worlds got found!");
+                }
             } else if(worldsToDelete.Count == 1) {
                 changeText(infoLabel, "Deleted 1 World! (" + fileSize + ")");
             } else {
