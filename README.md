@@ -21,7 +21,7 @@ Open the scripts folder in your wall folder and edit functions.ahk. Replace the 
     WorldBop() {
       Run "C:\Program Files (x86)\MultiDelete\MultiDelete.exe" -delWorlds -closeAfterDeletion -dontCheckUpdates
     }  
-You may need to change the path of the program if yours is different and you may modify the launch arguments to your needs. You can find a list of all launch args [here](https://github.com/greyhayv/MultiDelete#launch-arguments).
+You may need to change the path of the program if yours is different and you may modify the launch arguments to your needs. You can find a list of all launch args [here](https://github.com/greyhayv/MultiDelete#launch-arguments). Now when you click the Delete Worlds option in the tray it will delete your worlds using MultiDelete.
 
 ## Installation
 Click on the latest release, download the installer, execute it and go through the steps.
