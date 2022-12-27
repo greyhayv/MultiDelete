@@ -24,7 +24,6 @@ namespace MultiDelete
         private readonly string optionsFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\MultiDelete\options.json";
         private bool cancelDeletion = false;
         private bool closeAfterDeletion = false;
-        private bool checkUpdates = true;
 
         public MultiDelete() {
             Options options;
@@ -56,6 +55,7 @@ namespace MultiDelete
                 Directory.CreateDirectory(programPath);
             }
 
+            bool checkUpdates = true;
             //Check launch arguments
             string[] launchArgs = Environment.GetCommandLineArgs();
             if(launchArgs.Length > 1) {
