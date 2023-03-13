@@ -16,7 +16,7 @@ MultiDelete is a GUI-Based Application to delete your Minecraft worlds and more.
 `-dontCheckUpdates` This makes it so MultiDelete doesnt check for updates upon startup
 
 ## How to use MultiDelete with [MultiResetWall](https://github.com/Specnr/MultiResetWall)
-Open the scripts folder in your wall folder and edit functions.ahk. Replace the WorldBop function at line 527 with this:  
+Open the scripts folder in your wall folder and edit functions.ahk. Replace the WorldBop function at line 773 with this:  
 
     WorldBop() {
       Run "C:\Program Files (x86)\MultiDelete\MultiDelete.exe" -delWorlds -closeAfterDeletion -dontCheckUpdates
